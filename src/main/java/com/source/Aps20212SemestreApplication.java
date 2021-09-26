@@ -1,13 +1,14 @@
 package com.source;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import javafx.application.Application;
 
 @SpringBootApplication
 public class Aps20212SemestreApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Aps20212SemestreApplication.class, args);
+		Application.launch(ChartApplication.class, args);
 	}
 
 }

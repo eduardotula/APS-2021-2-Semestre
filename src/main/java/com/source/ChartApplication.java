@@ -23,10 +23,11 @@ public class ChartApplication extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		applicationContext.publishEvent(new StageReadyEvent(stage));
-		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/teste.fxml"));
+		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/view/models/MainFrame.fxml"));
 		stage.setTitle("pepega");
-		stage.setScene(new Scene(root,400,300));
+		stage.setScene(new Scene(root,600,500));
 		stage.show();
+		
 	}
 	
 	

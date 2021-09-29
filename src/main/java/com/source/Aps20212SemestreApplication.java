@@ -8,7 +8,9 @@ import javafx.application.Application;
 public class Aps20212SemestreApplication {
 
 	public static void main(String[] args) {
+		
 		Application.launch(ChartApplication.class, args); //Inicia a Aplicação
+		nu.pattern.OpenCV.loadLocally();
 	}
 
 }

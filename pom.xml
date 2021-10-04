@@ -28,11 +28,10 @@
 			<artifactId>javafx-fxml</artifactId>
 			<version>11.0.1</version>
 		</dependency>
-		<!-- OpenCv Repository -->
 		<dependency>
-			<groupId>org.openpnp</groupId>
-			<artifactId>opencv</artifactId>
-			<version>3.4.2-0</version>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv-platform</artifactId>
+			<version>1.5.6</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
 		<dependency>

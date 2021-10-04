@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class ChartApplication extends Application {
 	private ConfigurableApplicationContext applicationContext;
-
+	public static Stage stage;
 	
 	@Override
 	public void init() throws Exception {
@@ -24,6 +24,7 @@ public class ChartApplication extends Application {
 	public void start(Stage stage) throws Exception {
 		applicationContext.publishEvent(new StageReadyEvent(stage));
 		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/view/models/MainFrame.fxml"));
+		ChartApplication.stage = stage;
 		stage.setTitle("pepega");
 		stage.setScene(new Scene(root,600,500));
 		stage.show();

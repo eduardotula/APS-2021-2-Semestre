@@ -2,24 +2,11 @@ package com.view.controllers;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
-import org.bytedeco.javacv.CanvasFrame;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.FrameGrabber.Exception;
-import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
-import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
-
-import com.source.ChartApplication;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -33,7 +20,6 @@ import javafx.stage.FileChooser;
 
 public class CMainFrame{
 	
-	File fImg;
 	@FXML
 	public StackPane stack1;
 	@FXML
@@ -58,15 +44,18 @@ public class CMainFrame{
 			img.fitWidthProperty().bind(stack1.widthProperty()); 
 			img.fitHeightProperty().bind(stack1.heightProperty());
 			FileChooser cho = new FileChooser();
-			fImg = cho.showOpenDialog(null);
+			File fImg = cho.showOpenDialog(null);
 			
 			System.out.println(stack1.getWidth());
 			System.out.println(stack1.getHeight());
-			//img.setFitHeight(stack1.getHeight());
-			//img.setFitWidth(stack1.getWidth());
 			
 			img.setImage(new Image(fImg.toURI().toURL().toString()));
 			btnDetectFace.setDisable(false);
+			Mat grabbedImage = opencv_imgcodecs.imread(fImg.getAbsolutePath());
+			int height = grabbedImage.rows();
+			int width = grabbedImage.cols();
+			System.out.println(height);
+			System.out.println(width);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			new Alert(AlertType.ERROR,"Formato Inválido").showAndWait();
@@ -75,11 +64,7 @@ public class CMainFrame{
 	@FXML
 	public void actDetectFace() {
 		
-		Mat grabbedImage = opencv_imgcodecs.imread(fImg.getAbsolutePath());
-		int height = grabbedImage.rows();
-		int width = grabbedImage.cols();
-		System.out.println(height);
-		System.out.println(width);
+
 		
 	}
 	@FXML

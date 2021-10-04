@@ -1,5 +1,7 @@
 package com.source;
 
+import java.io.File;
+
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,10 +25,11 @@ public class Aplicacao extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		applicationContext.publishEvent(new StageReadyEvent(stage));
-		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("com/view/models/MainFrame.fxml"));
+		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("models/MainFrame.fxml"));
 		Aplicacao.stage = stage;
 		stage.setTitle("pepega");
 		stage.setScene(new Scene(root,600,500));
+		
 		stage.show();
 		
 	}

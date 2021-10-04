@@ -16,7 +16,7 @@ public class Aps20212SemestreApplication {
 
 	public static void main(String[] args) {
 		
-		Application.launch(ChartApplication.class, args); //Inicia a Aplicação
+		Application.launch(Aplicacao.class, args); //Inicia a Aplicação
 	}
 
 }

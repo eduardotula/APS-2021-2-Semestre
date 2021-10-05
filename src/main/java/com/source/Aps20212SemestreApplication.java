@@ -15,9 +15,7 @@ import javafx.application.Application;
 	})
 public class Aps20212SemestreApplication {
 
-	public static String[] args;
 	public static void main(String[] args) {
-		Aps20212SemestreApplication.args = args;
 		Application.launch(Aplicacao.class, args); //Inicia a Aplicação
 	}
 

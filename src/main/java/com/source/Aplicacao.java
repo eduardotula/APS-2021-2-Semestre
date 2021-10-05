@@ -1,6 +1,5 @@
 package com.source;
 
-import java.io.File;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
@@ -20,10 +19,7 @@ public class Aplicacao extends Application {
 	public void init() throws Exception {
 		super.init();
 		
-		//applicationContext = new SpringApplicationBuilder(Aps20212SemestreApplication.class).run();
-		SpringApplicationBuilder builder = new SpringApplicationBuilder(Aps20212SemestreApplication.class);
-		builder.headless(false);
-		applicationContext = builder.run(Aps20212SemestreApplication.args);
+		applicationContext = new SpringApplicationBuilder(Aps20212SemestreApplication.class).run();
 	}
 
 	@Override

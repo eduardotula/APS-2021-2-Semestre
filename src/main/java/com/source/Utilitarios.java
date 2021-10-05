@@ -8,9 +8,19 @@ package com.source;
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.nio.ByteBuffer;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameConverter;
+import org.bytedeco.javacv.JavaFXFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.global.opencv_imgcodecs;
+import org.bytedeco.opencv.opencv_core.RectVector;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 
@@ -23,18 +33,12 @@ import javafx.scene.image.Image;
  */
 public class Utilitarios {
     
-    public BufferedImage convertMatToImage(org.bytedeco.opencv.opencv_core.Mat grabbedImage) {
-        int type = BufferedImage.TYPE_BYTE_GRAY;
-        if (grabbedImage.channels() > 1) {
-            type = BufferedImage.TYPE_3BYTE_BGR;
-        }
-
-        int bufferSize = grabbedImage.channels() * grabbedImage.cols() * grabbedImage.rows();
-        byte[] bytes = new byte[bufferSize];
-        BufferedImage imagem = new BufferedImage(grabbedImage.cols(), grabbedImage.rows(), type);
-        byte[] targetPixels = ((DataBufferByte) imagem.getRaster().getDataBuffer()).getData();
-        System.arraycopy(bytes, 0, targetPixels, 0, bytes.length);
-        return imagem;
+    public Image convertMatToImage(org.bytedeco.opencv.opencv_core.Mat grabbedImage) {
+    	OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
+    	Frame fram = converter.convert(grabbedImage);
+    	JavaFXFrameConverter fxConverter = new JavaFXFrameConverter();
+    	Image img =  fxConverter.convert(fram);
+    	return img;
     }
     
     public void mostraImagem(BufferedImage imagem) {

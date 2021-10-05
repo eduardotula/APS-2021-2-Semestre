@@ -85,10 +85,11 @@ public class CMainFrame{
 			System.out.println(rect.x() + "   " + rect.y() + "  " + rect.width() + "  " + rect.height());
 			opencv_imgproc.rectangle(grabbedImage, new Point(rect.x(),rect.y()),
 					new Point(rect.x() + rect.width(), rect.y() + rect.height()),
-					 Scalar.RED, 1, Core, 0);
+					 Scalar.RED, 1, opencv_imgproc.LINE_AA, 0);
 		}
 		Utilitarios ut = new Utilitarios();
-		ut.mostraImagem(ut.convertMatToImage(grabbedImage));
+		Image imgRect = ut.convertMatToImage(grabbedImage);
+		img2.setImage(imgRect);
 	}
 	
 	@FXML

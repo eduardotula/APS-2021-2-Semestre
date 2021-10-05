@@ -13,13 +13,17 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Aplicacao extends Application {
-	private ConfigurableApplicationContext applicationContext;
+	public static ConfigurableApplicationContext applicationContext;
 	public static Stage stage;
 	
 	@Override
 	public void init() throws Exception {
 		super.init();
-		applicationContext = new SpringApplicationBuilder(Aps20212SemestreApplication.class).run();
+		
+		//applicationContext = new SpringApplicationBuilder(Aps20212SemestreApplication.class).run();
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(Aps20212SemestreApplication.class);
+		builder.headless(false);
+		applicationContext = builder.run(Aps20212SemestreApplication.args);
 	}
 
 	@Override

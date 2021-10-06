@@ -1,6 +1,8 @@
 
 package com.view.controllers;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -71,6 +73,11 @@ public class CMainFrame {
 		cas = new CascadeClassifier();
 		loadClassifiers("com/classifiers/haar");
 		//loadClassifiers("com/classifiers/lbp");
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		
+		for(GraphicsDevice devices : env.getScreenDevices()) {
+			System.out.println(devices.getIDstring());
+		}
 	}
 
 	@FXML
@@ -146,7 +153,7 @@ public class CMainFrame {
 		loadClassifiers("com/classifiers/lbp");
 	}
 
-	private Thread loadClassifiers(String folderPath) {
+	private synchronized Thread loadClassifiers(String folderPath) {
 
 		Task<Integer> loadClassifiers = new Task<Integer>() {
 

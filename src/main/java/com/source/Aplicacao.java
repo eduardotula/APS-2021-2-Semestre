@@ -40,6 +40,7 @@ public class Aplicacao extends Application {
 	public void stop() throws Exception {
 		super.stop();
 		applicationContext.close();
+		System.exit(0);
 	}
 
 

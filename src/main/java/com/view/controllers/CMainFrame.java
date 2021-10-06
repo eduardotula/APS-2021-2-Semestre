@@ -1,9 +1,12 @@
+
 package com.view.controllers;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
+import org.bytedeco.flycapture.FlyCapture2.CameraStats;
+import org.bytedeco.opencv.global.opencv_features2d;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -11,11 +14,17 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_face.Facemark;
+import org.bytedeco.opencv.opencv_face.FacemarkKazemi;
+import org.bytedeco.opencv.opencv_features2d.SIFT;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
+import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import org.opencv.core.Core;
 import org.opencv.core.MatOfRect;
+import org.opencv.face.Face;
 
-import com.source.Utilitarios;
+import com.source.control.Utilitarios;
+import com.source.control.WebcamThread;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -30,6 +39,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 
+/**
+ * @author Eduardo Muterle
+ * Classe controladora de listners interface gráfica MainFrame.fxml
+ * Esta classe contem todas as funções necessarias para reconhecer uma imagem  
+ *
+ */
 public class CMainFrame {
 
 	@FXML
@@ -41,21 +56,53 @@ public class CMainFrame {
 	@FXML
 	public ImageView img;
 	@FXML
-	public ImageView img2;
-	@FXML
 	public Button btnCarregar;
 	@FXML
 	public Button btnDetectFace;
-
-	Mat grabbedImage;
+	@FXML
+	public Button btnStartCamera;
+	
+	private Mat grabbedImage;
 	private CascadeClassifier cas;
-
+	private boolean cameraStatus = false;
+	private VideoCapture capture;
+	
 	public CMainFrame() {
 		cas = new CascadeClassifier();
 		loadClassifiers("com/classifiers/haar");
-		// loadClassifiers("com/classifiers/lbp");
+		//loadClassifiers("com/classifiers/lbp");
 	}
 
+	@FXML
+	public void actStartCamera() {
+		try {
+			if(!cameraStatus) {
+				if(capture == null) {
+					capture = new VideoCapture(0);
+				}
+				
+				WebcamThread web = new WebcamThread(img, capture, cas);
+				new Thread(web).start();
+				
+				cameraStatus = true;
+				btnCarregar.setDisable(true);
+				btnStartCamera.setText("Parar Camera");
+
+			}else {
+				capture.close();
+				capture = null;
+				cameraStatus = false;
+				btnStartCamera.setText("Abrir Camera");
+				btnCarregar.setDisable(false);
+				img.setImage(null);
+			}
+			img.fitWidthProperty().bind(stack1.widthProperty());
+			img.fitHeightProperty().bind(stack1.heightProperty());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 	@FXML
 	public void actBtnCarregar() {
 		try {
@@ -65,8 +112,6 @@ public class CMainFrame {
 			FileChooser cho = new FileChooser();
 			File fImg = cho.showOpenDialog(null);
 
-			System.out.println(stack1.getWidth());
-			System.out.println(stack1.getHeight());
 
 			img.setImage(new Image(fImg.toURI().toURL().toString()));
 			btnDetectFace.setDisable(false);
@@ -84,20 +129,8 @@ public class CMainFrame {
 	@FXML
 	public void actDetectFace() {
 		try {
-			Mat imgCinza = new Mat();
-			opencv_imgproc.cvtColor(grabbedImage, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
-			RectVector facesDetect = new RectVector();
-			cas.detectMultiScale(imgCinza, facesDetect);
-			System.out.println(facesDetect.get().length);
-			for (Rect rect : facesDetect.get()) {
-				System.out.println(rect.x() + "   " + rect.y() + "  " + rect.width() + "  " + rect.height());
-				opencv_imgproc.rectangle(grabbedImage, new Point(rect.x(), rect.y()),
-						new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.RED, 1, opencv_imgproc.LINE_AA,
-						0);
-			}
-			Utilitarios ut = new Utilitarios();
-			Image imgRect = ut.convertMatToImage(grabbedImage);
-			img2.setImage(imgRect);
+			Image imgRect = Utilitarios.detectFaces(cas, grabbedImage);
+			img.setImage(imgRect);
 		} catch (Exception e) {
 			new Alert(AlertType.ERROR,"Falha ao converter imagem");
 			e.printStackTrace();
@@ -113,12 +146,12 @@ public class CMainFrame {
 		loadClassifiers("com/classifiers/lbp");
 	}
 
-	private void loadClassifiers(String folderPath) {
+	private Thread loadClassifiers(String folderPath) {
 
-		Task<Void> loadClassifiers = new Task<Void>() {
+		Task<Integer> loadClassifiers = new Task<Integer>() {
 
 			@Override
-			protected Void call() throws Exception {
+			protected Integer call() throws Exception {
 				File file;
 				try {
 					file = new File(getClass().getClassLoader().getResource(folderPath).toURI());
@@ -136,7 +169,7 @@ public class CMainFrame {
 				return null;
 			}
 		};
-		new Thread(loadClassifiers).start();
+		return new Thread(loadClassifiers);
 	}
 
 }

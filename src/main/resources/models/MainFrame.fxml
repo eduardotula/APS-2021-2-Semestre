@@ -65,7 +65,6 @@
             <GridPane alignment="TOP_CENTER">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -73,28 +72,13 @@
                <children>
                   <StackPane fx:id="stack1" prefHeight="150.0" prefWidth="200.0">
                      <children>
-                        <ImageView fx:id="img" fitHeight="277.0" fitWidth="255.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="img" fitHeight="402.0" fitWidth="346.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../../../../../../../Google%20Drive/Variedades%20Florense%20Logo.png" />
                            </image>
                         </ImageView>
                      </children>
                   </StackPane>
-                  <GridPane GridPane.columnIndex="1">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <StackPane prefHeight="150.0" prefWidth="200.0">
-                           <children>
-                              <ImageView fx:id="img2" fitHeight="393.0" fitWidth="342.0" pickOnBounds="true" preserveRatio="true" />
-                           </children>
-                        </StackPane>
-                     </children>
-                  </GridPane>
                </children>
             </GridPane>
          </content>
@@ -104,6 +88,7 @@
       <FlowPane alignment="CENTER" columnHalignment="CENTER" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="btnCarregar" alignment="CENTER" mnemonicParsing="false" onAction="#actBtnCarregar" text="Carregar Imagem" />
+            <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#actStartCamera" text="Abrir camera" />
             <Button fx:id="btnDetectFace" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#actDetectFace" text="Detect Face" />
          </children>
       </FlowPane>

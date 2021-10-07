@@ -19,18 +19,24 @@ import org.bytedeco.javacv.JavaFXFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 /**
  *
@@ -46,15 +52,16 @@ public class Utilitarios {
 		return img;
 	}
 
-	public void mostraImagem(BufferedImage imagem) {
-		ImageIcon icon = new ImageIcon(imagem);
-		JFrame frame = new JFrame("YEP");
-		frame.setLayout(new FlowLayout());
-		frame.setSize(imagem.getWidth() + 50, imagem.getHeight() + 50);
-		JLabel lbl = new JLabel();
-		lbl.setIcon(icon);
-		frame.add(lbl);
-		frame.setVisible(true);
+	public static void showImage(Image img) {
+		Stage stage = new Stage();
+		StackPane pa = new StackPane();
+		ImageView vi = new ImageView();
+		pa.getChildren().add(vi);
+		stage.setScene(new Scene(pa, 500, 600));
+		vi.setFitHeight(img.getHeight());
+		vi.setFitWidth(img.getWidth());
+		vi.setImage(img);
+		stage.show();
 	}
 
 	/**
@@ -87,16 +94,48 @@ public class Utilitarios {
 		return facesDetect;
 	}
 	
-	public static DoublePointer faceRecognizer() {
+	/**Treina um modelo fisher face dado um vetore de imagens Mat
+	 * Este metodo irá utilizar somente o rosto com a maior resolução
+	 * 
+	 * @param cas Classificador cascade já com classificadors carregados
+	 * @param src Vetor de imagens Mat para ser usado na criação do modelo
+	 * @return
+	 * @throws Exception 
+	 * */
+	public static DoublePointer fisherFaceRecTrain(CascadeClassifier cas, MatVector src) throws Exception {
+		if(src.get().length <= 0) { throw new Exception("Vetores de imagem não pode estar vazio");}
+		
 		FaceRecognizer fac = FisherFaceRecognizer.create();
-		fac.train(null, null);
-	    FaceRecognizer lbphFaceRecognizer = LBPHFaceRecognizer.create();
-	    lbphFaceRecognizer.read(trainedResult);
-		IntPointer label = new IntPointer(1);
-        DoublePointer confidence = new DoublePointer(1);
-        lbphFaceRecognizer.predict(face, label, confidence);
-        int prediction = label.get(0);
+		RectVector facesDetectadas = new RectVector();
+		Mat imagemResized = new Mat();
+		MatVector rostosProcessados = new MatVector();
+		
+		for(Mat image : src.get()) {
+			facesDetectadas = detectFaces(cas, image);
+			Rect rostoPrimario = new Rect();
+			
+			//Obtem o rosto detectado com maior resolução do frame
+			for(Rect f : facesDetectadas.get()) {
+				if(f.width() > rostoPrimario.width() && f.height() > rostoPrimario.height()) {
+					rostoPrimario = f;
+				}
+			}
+			
+			if(rostoPrimario.width() > 0 && rostoPrimario.height() > 0) {
+				//Ajusta o tamanho 
+				//imagemResized.create(0, null, 0);
+				opencv_imgproc.resize(image, imagemResized, new Size(100, 100),
+					      1.0, 1.0, opencv_imgproc.INTER_CUBIC);
+				rostosProcessados.put(imagemResized);
+			}
+			//
+		}
+		if(rostosProcessados.get().length <= 0) { throw new Exception("Não foi encontrado nenhum rosto no vetor de imagens");}
+		
 		return null;
+	}
+	public static void fi(CascadeClassifier cas, String path) {
+		
 	}
 
 }

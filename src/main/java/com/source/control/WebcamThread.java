@@ -25,7 +25,7 @@ public class WebcamThread extends Task<Void>{
 		Mat frame = new Mat();
 		while(cap != null && cap.isOpened() && view.isVisible()) {
 			cap.read(frame);
-			Image imgRect = Utilitarios.detectFaces(cas, frame);
+			Image imgRect = Utilitarios.detectFacesImage(cas, frame);
 			view.setImage(imgRect);
 			System.out.println(cap.isOpened());
 		}

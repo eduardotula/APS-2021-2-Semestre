@@ -136,7 +136,7 @@ public class CMainFrame {
 	@FXML
 	public void actDetectFace() {
 		try {
-			Image imgRect = Utilitarios.detectFaces(cas, grabbedImage);
+			Image imgRect = Utilitarios.dete(cas, grabbedImage);
 			img.setImage(imgRect);
 		} catch (Exception e) {
 			new Alert(AlertType.ERROR,"Falha ao converter imagem");

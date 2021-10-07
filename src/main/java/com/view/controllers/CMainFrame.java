@@ -67,6 +67,9 @@ public class CMainFrame {
 	public Button btnDetectFace;
 	@FXML
 	public Button btnStartCamera;
+	@FXML
+	public Button btnTeste;
+	
 	
 	private Mat grabbedImage;
 	private CascadeClassifier cas;
@@ -75,7 +78,7 @@ public class CMainFrame {
 	
 	public CMainFrame() {
 		cas = new CascadeClassifier();
-		loadClassifiers("com/classifiers/haar");
+		loadClassifiers("com/classifiers/haar").start();
 		loadClassifiers("com/classifiers/lbp");
 
 	}
@@ -111,6 +114,11 @@ public class CMainFrame {
 
 	}
 	@FXML
+	public void actBtnTeste() {
+		Utilitarios.fi(cas, "C:/FotoTeste.jpg");
+	}
+	
+	@FXML
 	public void actBtnCarregar() {
 		try {
 			
@@ -136,7 +144,7 @@ public class CMainFrame {
 	@FXML
 	public void actDetectFace() {
 		try {
-			Image imgRect = Utilitarios.dete(cas, grabbedImage);
+			Image imgRect = Utilitarios.detectFacesImage(cas, grabbedImage);
 			img.setImage(imgRect);
 		} catch (Exception e) {
 			new Alert(AlertType.ERROR,"Falha ao converter imagem");

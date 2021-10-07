@@ -1,17 +1,17 @@
 package com.source;
 
 
+import java.io.File;
+import java.net.URL;
+
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class Aplicacao extends Application {
@@ -24,14 +24,19 @@ public class Aplicacao extends Application {
 	}
 
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage stage){
 		
-		applicationContext.publishEvent(new StageReadyEvent(stage));
-		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("models/MainFrame.fxml"));
-		Aplicacao.stage = stage;
-		stage.setTitle("pepega");
-		stage.setScene(new Scene(root,600,500));
-		stage.show();
+		try {
+			applicationContext.publishEvent(new StageReadyEvent(stage));
+			
+			Parent root = FXMLLoader.load(Thread.currentThread().getContextClassLoader().getResource("com/view/models/MainFrame.fxml"));
+			Aplicacao.stage = stage;
+			stage.setTitle("pepega");
+			stage.setScene(new Scene(root,600,500));
+			stage.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

@@ -11,6 +11,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.JavaFXFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
@@ -20,6 +23,9 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_face.FaceRecognizer;
+import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
+import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
 import javafx.scene.control.Alert;
@@ -59,11 +65,8 @@ public class Utilitarios {
 	 * @return Image retorna uma imagem com rostos contornado por um retangulo
 	 * @throws Exception
 	 */
-	public static Image detectFaces(CascadeClassifier cas, Mat grabbedImage) throws Exception {
-		Mat imgCinza = new Mat();
-		opencv_imgproc.cvtColor(grabbedImage, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
-		RectVector facesDetect = new RectVector();
-		cas.detectMultiScale(imgCinza, facesDetect);
+	public static Image detectFacesImage(CascadeClassifier cas, Mat grabbedImage) throws Exception {
+		RectVector facesDetect = detectFaces(cas, grabbedImage);
 		System.out.println(facesDetect.get().length);
 		for (Rect rect : facesDetect.get()) {
 			System.out.println(rect.x() + "   " + rect.y() + "  " + rect.width() + "  " + rect.height());
@@ -74,6 +77,26 @@ public class Utilitarios {
 		Utilitarios ut = new Utilitarios();
 		Image imgRect = ut.convertMatToImage(grabbedImage);
 		return imgRect;
+	}
+	
+	public static RectVector detectFaces(CascadeClassifier cas, Mat grabbedImage) {
+		Mat imgCinza = new Mat();
+		opencv_imgproc.cvtColor(grabbedImage, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
+		RectVector facesDetect = new RectVector();
+		cas.detectMultiScale(imgCinza, facesDetect);
+		return facesDetect;
+	}
+	
+	public static DoublePointer faceRecognizer() {
+		FaceRecognizer fac = FisherFaceRecognizer.create();
+		fac.train(null, null);
+	    FaceRecognizer lbphFaceRecognizer = LBPHFaceRecognizer.create();
+	    lbphFaceRecognizer.read(trainedResult);
+		IntPointer label = new IntPointer(1);
+        DoublePointer confidence = new DoublePointer(1);
+        lbphFaceRecognizer.predict(face, label, confidence);
+        int prediction = label.get(0);
+		return null;
 	}
 
 }

@@ -8,6 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import org.bytedeco.flycapture.FlyCapture2.CameraStats;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.javacv.VideoInputFrameGrabber;
 import org.bytedeco.opencv.global.opencv_features2d;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
@@ -72,12 +76,8 @@ public class CMainFrame {
 	public CMainFrame() {
 		cas = new CascadeClassifier();
 		loadClassifiers("com/classifiers/haar");
-		//loadClassifiers("com/classifiers/lbp");
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		
-		for(GraphicsDevice devices : env.getScreenDevices()) {
-			System.out.println(devices.getIDstring());
-		}
+		loadClassifiers("com/classifiers/lbp");
+
 	}
 
 	@FXML

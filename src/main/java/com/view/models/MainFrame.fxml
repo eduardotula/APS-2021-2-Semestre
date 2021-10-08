@@ -33,7 +33,6 @@
 -->
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ScrollPane?>
@@ -50,12 +49,7 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
-               <items>
-                  <CheckMenuItem fx:id="rdnHaar" mnemonicParsing="false" onAction="#actHaarSelected" text="Haar" />
-                  <CheckMenuItem fx:id="rdnLpb" mnemonicParsing="false" onAction="#actLbpSelected" text="LPB" />
-               </items>
-          </Menu>
+          <Menu mnemonicParsing="false" text="File" />
         </menus>
       </MenuBar>
    </top>

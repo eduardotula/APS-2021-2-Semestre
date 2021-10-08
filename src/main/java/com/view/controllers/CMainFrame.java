@@ -1,48 +1,32 @@
 
 package com.view.controllers;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.util.List;
 
-import org.bytedeco.flycapture.FlyCapture2.CameraStats;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.javacv.VideoInputFrameGrabber;
-import org.bytedeco.opencv.global.opencv_features2d;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Point;
-import org.bytedeco.opencv.opencv_core.Rect;
-import org.bytedeco.opencv.opencv_core.RectVector;
-import org.bytedeco.opencv.opencv_core.Scalar;
-import org.bytedeco.opencv.opencv_face.Facemark;
-import org.bytedeco.opencv.opencv_face.FacemarkKazemi;
-import org.bytedeco.opencv.opencv_features2d.SIFT;
+import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_face.FaceRecognizer;
+import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
-import org.opencv.core.Core;
-import org.opencv.core.MatOfRect;
-import org.opencv.face.Face;
 
 import com.source.control.Utilitarios;
-import com.source.control.WebcamThread;
+import com.source.control.WebcamThreadDetect;
 
-import javafx.application.Platform;
+import facerecognizers.FisherRecog;
+import facerecognizers.LBPHFaceReco;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 
 /**
@@ -55,10 +39,6 @@ public class CMainFrame {
 
 	@FXML
 	public StackPane stack1;
-	@FXML
-	public CheckMenuItem rdnHaar;
-	@FXML
-	public CheckMenuItem rdnLpb;
 	@FXML
 	public ImageView img;
 	@FXML
@@ -73,13 +53,13 @@ public class CMainFrame {
 	
 	private Mat grabbedImage;
 	private CascadeClassifier cas;
+	
 	private boolean cameraStatus = false;
 	private VideoCapture capture;
 	
 	public CMainFrame() {
 		cas = new CascadeClassifier();
-		loadClassifiers("com/classifiers/haar").start();
-		loadClassifiers("com/classifiers/lbp");
+		loadClassifiers("com/classifiers/haar",cas).start();
 
 	}
 
@@ -90,8 +70,8 @@ public class CMainFrame {
 				if(capture == null) {
 					capture = new VideoCapture(0);
 				}
-				
-				WebcamThread web = new WebcamThread(img, capture, cas);
+				FisherRecog recog = new FisherRecog(cas);
+				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas,null, recog);
 				new Thread(web).start();
 				
 				cameraStatus = true;
@@ -115,7 +95,25 @@ public class CMainFrame {
 	}
 	@FXML
 	public void actBtnTeste() {
-		Utilitarios.fi(cas, "C:/fotoTeste.jpg");
+		try {
+			FisherRecog lbph = new FisherRecog(cas);
+			FileChooser c = new FileChooser();
+			c.initialFileNameProperty().set("C:\\Users\\loja 65\\git\\APS-2021-2-Semestre\\Rostos");
+			List<File> files = c.showOpenMultipleDialog(null);
+			MatVector vec = new MatVector();
+			for(File file : files) {
+				vec.push_back(opencv_imgcodecs.imread(file.getAbsolutePath()));
+			}
+			FaceRecognizer rec = lbph.train(vec);
+			rec.setThreshold(50);
+			Mat grabbedImage = opencv_imgcodecs.imread(files.get(0).getAbsolutePath());
+			
+			Mat imgPro = lbph.processImage(grabbedImage, Utilitarios.detectFaces(cas, grabbedImage));
+			double prec = lbph.identificarRosto(rec, imgPro);
+			System.out.println(prec);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@FXML
@@ -144,7 +142,7 @@ public class CMainFrame {
 	@FXML
 	public void actDetectFace() {
 		try {
-			Image imgRect = Utilitarios.detectFacesImage(cas, grabbedImage);
+			Image imgRect = Utilitarios.detectFaceRect(cas, grabbedImage);
 			img.setImage(imgRect);
 		} catch (Exception e) {
 			new Alert(AlertType.ERROR,"Falha ao converter imagem");
@@ -152,16 +150,8 @@ public class CMainFrame {
 		}
 	}
 
-	@FXML
-	public void actHaarSelected() {
-		loadClassifiers("com/classifiers/haar");
-	}
 
-	public void actLbpSelected() {
-		loadClassifiers("com/classifiers/lbp");
-	}
-
-	private synchronized Thread loadClassifiers(String folderPath) {
+	private synchronized Thread loadClassifiers(String folderPath, CascadeClassifier cascas) {
 
 		Task<Integer> loadClassifiers = new Task<Integer>() {
 
@@ -173,7 +163,7 @@ public class CMainFrame {
 					File[] files = file.listFiles();
 					for (File fier : files) {
 						System.out.println(fier.getPath());
-						cas.load(fier.getPath().toString());
+						cascas.load(fier.getPath().toString());
 					}
 				} catch (Exception e) {
 

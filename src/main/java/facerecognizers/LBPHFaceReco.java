@@ -12,21 +12,21 @@ import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
+import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
 import com.source.control.Utilitarios;
 
+public class LBPHFaceReco extends FaceRecog{
 
-public class FisherRecog extends FaceRecog{
-	
 	private CascadeClassifier cas;
 	private RectVector facesDetectadas;
-	private Mat imagemResized;
+	private Mat imgProc;
 	private MatVector rostosProcessados;
 	private Mat labels;
 	private Rect rostoPrimario;
 
-	public FisherRecog(CascadeClassifier cas) {
+	public LBPHFaceReco(CascadeClassifier cas) {
 		this.cas = cas;
 	}
 
@@ -52,16 +52,15 @@ public class FisherRecog extends FaceRecog{
 		for(Mat image : src.get()) {
 			//Detecta os rostos de uma imagem
 			facesDetectadas = Utilitarios.detectFaces(cas, image);
-			imagemResized = processImage(image, facesDetectadas);
-
-			rostosProcessadosList.add(imagemResized);
+			imgProc = processImage(image, facesDetectadas);
+			rostosProcessadosList.add(imgProc);
 		}
 		rostosProcessados = new MatVector(rostosProcessadosList.size());
 		labels = new Mat(rostosProcessadosList.size(), 1, opencv_core.CV_32SC1);
+		System.out.println(rostosProcessadosList.size()  + "   lenth2");
         //IntBuffer labelsBuf = labels.createBuffer();
 		for(int i = 0;i<rostosProcessadosList.size();i++) {
 			rostosProcessados.put(i,rostosProcessadosList.get(i));
-
 			//labelsBuf.put(i, label);
 			labels.data().put(i, Integer.valueOf(1).byteValue());
 			System.out.println(i + "  loop");
@@ -69,17 +68,19 @@ public class FisherRecog extends FaceRecog{
 		
 		if(rostosProcessados.get().length <= 0) {labels.close(); rostosProcessados.close();
 		throw new Exception("Não foi encontrado nenhum rosto no vetor de imagens");}
-
+		System.out.println(labels.cols());
+		System.out.println(labels.rows());
+		System.out.println(labels.depth());
+		System.out.println(labels.data().getInt(0));
 		recognizer.train(rostosProcessados,labels);
 		releaseResources();
 		return recognizer;
 	}
 	/**
-	 * Processa a imagem de acordo com os padroes FisherFace
+	 * Processa a imagem de acordo com os padroes LBPH
 	 * detectRostoPrincipal, recortarRosto, resize para 1000 pixels e converte para BGR2GRAY
 	 * @param imagem para ser processada
-	 * @param facesDetectadas lista de faces identificadas no frame
-	 * @return imagem processada*/
+	 * @param facesDetectadas lista de faces identificadas no frame*/
 	@Override
 	public Mat processImage(Mat imagem, RectVector facesDetectadas)throws Exception {
 		Mat image = imagem;
@@ -95,14 +96,13 @@ public class FisherRecog extends FaceRecog{
 			image = recortarRosto(rostoPrimario, image);
 			System.out.println(image.type() + "   tipo");
 			//Ajusta o tamanho 
-			opencv_imgproc.resize(image, imagemRes, new Size(150, 150),
+			opencv_imgproc.resize(image, imagemRes, new Size(100, 100),
 			      1.0, 1.0, opencv_imgproc.INTER_CUBIC);
 			if(image.type() > 0) {
 				opencv_imgproc.cvtColor(imagemRes, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
 				image = imgCinza;
 			}
 		}
-		
 		return image;
 	}
 	
@@ -112,7 +112,7 @@ public class FisherRecog extends FaceRecog{
 	 */
 	@Override
 	public FaceRecognizer train(MatVector src) throws Exception {
-		FaceRecognizer recognizer = FisherFaceRecognizer.create();
+		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
 		return train(src, recognizer);
 	}
 	/**Carrega um modelo de FisherFaceRecognizer e realiza o treino para um conjunto de imagens src
@@ -122,7 +122,7 @@ public class FisherRecog extends FaceRecog{
 	 */
 	@Override
 	public FaceRecognizer train(MatVector src, String modelPath) throws Exception{
-		FaceRecognizer recognizer = FisherFaceRecognizer.create();
+		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
 		recognizer.read(modelPath);
 		return train(src, recognizer);
 	}
@@ -147,7 +147,7 @@ public class FisherRecog extends FaceRecog{
 		try {
 			cas.close();
 			facesDetectadas.close();
-			imagemResized.close();
+			imgProc.close();
 			rostosProcessados.close();
 			labels.close();
 			rostoPrimario.close();

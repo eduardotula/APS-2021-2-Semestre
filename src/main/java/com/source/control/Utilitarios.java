@@ -94,6 +94,7 @@ public class Utilitarios {
 	public static RectVector detectFaces(CascadeClassifier cas, Mat grabbedImage) {
 		Mat imgCinza = new Mat();
 		opencv_imgproc.cvtColor(grabbedImage, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
+		showImage(convertMatToImage(grabbedImage));
 		RectVector facesDetect = new RectVector();
 		cas.detectMultiScale(imgCinza, facesDetect);
 		return facesDetect;
@@ -102,15 +103,18 @@ public class Utilitarios {
 
 	public static void fi(CascadeClassifier cas, String path) {
 		Mat img = opencv_imgcodecs.imread(path);
-		MatVector vec = new MatVector(img);
-		System.out.println(img.arrayWidth());
+		Mat img2 = opencv_imgcodecs.imread("C:/aaa.png");
+
+		MatVector vec = new MatVector();
+		vec.push_back(img);
+		vec.push_back(img2);
 		try {
 	        IntPointer label = new IntPointer(1);
 	        DoublePointer confidence = new DoublePointer(1);
 			FisherRecog fisher = new FisherRecog(cas);
+			System.out.println(vec.get().length);
 			FaceRecognizer rec = fisher.train(vec);
-			rec.predict(img, label, confidence);
-			System.out.println(confidence);
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

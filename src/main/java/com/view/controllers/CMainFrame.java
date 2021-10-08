@@ -115,7 +115,7 @@ public class CMainFrame {
 	}
 	@FXML
 	public void actBtnTeste() {
-		Utilitarios.fi(cas, "C:/FotoTeste.jpg");
+		Utilitarios.fi(cas, "C:/fotoTeste.jpg");
 	}
 	
 	@FXML

@@ -71,7 +71,7 @@ public abstract class FaceRecog {
 				opencv_imgproc.cvtColor(imgProc, imgProc, opencv_imgproc.COLOR_BGR2GRAY);
 			}
 		}else {
-			imgProc.close(); facePrincipal.close(); throw new Exception();
+			imgProc.close(); facePrincipal.close(); throw new Exception("Imagem não pode ter tamanho 0");
 		}
 		System.out.println("facesDetectadas " + facePrincipal.width());
 		System.out.println("output image rows " + imgProc.rows());

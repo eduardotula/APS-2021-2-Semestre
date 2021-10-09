@@ -5,6 +5,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_face.EigenFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
@@ -66,7 +67,6 @@ public class CMainFrame {
 	@FXML
 	public void actStartCamera() {
 		FaceRecognizer rec = FisherFaceRecognizer.create();
-		rec.read("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/modelCam.xml");	
 		try {
 			if(!cameraStatus) {
 				if(capture == null) {

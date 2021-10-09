@@ -19,9 +19,6 @@ import com.source.control.Utilitarios;
 public class FisherRecog extends FaceRecog{
 	
 	private CascadeClassifier cas;
-	private RectVector facesDetectadas;
-	private MatVector rostosProcessados;
-	private Mat labels;
 
 	public FisherRecog(CascadeClassifier cas) {
 		this.cas = cas;
@@ -36,13 +33,15 @@ public class FisherRecog extends FaceRecog{
 	 * @return Retorna FaceRecognizer treinado
 	 * @throws Exception 
 	 * */
+	@SuppressWarnings("resource")
 	@Override
 	public FaceRecognizer train(MatVector src, FaceRecognizer recognizer) throws Exception {
 		System.out.println(src.get().length + "  lengh1");
 		if(src.get().length <= 0) { throw new Exception("Vetores de imagem não pode estar vazio");}
-		labels = new Mat();
-		facesDetectadas = new RectVector();
+		Mat labels = new Mat();
+		RectVector facesDetectadas = new RectVector();
 		List<Mat> rostosProcessadosList = new ArrayList<Mat>();
+		MatVector rostosProcessados;
 		Rect rostoPrincipal = new Rect();
 		System.out.println("quantidade de imagens para treinamento " + src.size());
 		
@@ -53,7 +52,7 @@ public class FisherRecog extends FaceRecog{
 			image = processImage(image, rostoPrincipal);
 
 			rostosProcessadosList.add(image);
-			Thread.sleep(10);
+			Thread.sleep(5);
 		}
 		
 		rostosProcessados = new MatVector(rostosProcessadosList.size());
@@ -67,7 +66,7 @@ public class FisherRecog extends FaceRecog{
 			System.out.println(i + "  loop");
 		}
 		
-		if(rostosProcessados.get().length <= 0) {labels.close(); rostosProcessados.close();
+		if(rostosProcessados.get().length <= 0) {		releaseResources(rostoPrincipal,labels,facesDetectadas,rostosProcessados);
 		throw new Exception("Não foi encontrado nenhum rosto no vetor de imagens");}
 
 		recognizer.train(rostosProcessados,labels);
@@ -111,6 +110,7 @@ public class FisherRecog extends FaceRecog{
 		recog.predict(imgProc, label, predic);
 		System.out.println(label[0] + "  prediction");
 		System.out.println(predic[0]+ " confianca");
+		releaseResources(imgProc);
 		return (int)label[0];
 	}
 	

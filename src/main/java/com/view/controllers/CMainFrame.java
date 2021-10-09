@@ -9,7 +9,9 @@ import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
+import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
@@ -17,6 +19,7 @@ import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import com.source.control.Utilitarios;
 import com.source.control.WebcamThreadDetect;
 
+import facerecognizers.FaceRecog;
 import facerecognizers.FisherRecog;
 import facerecognizers.LBPHFaceReco;
 import javafx.concurrent.Task;
@@ -56,22 +59,26 @@ public class CMainFrame {
 	
 	private boolean cameraStatus = false;
 	private VideoCapture capture;
+	private CascadeClassifier cas2;
 	
 	public CMainFrame() {
 		cas = new CascadeClassifier();
+		cas2 = new CascadeClassifier();
 		loadClassifiers("com/classifiers/haar",cas).start();
-
+		loadClassifiers("com/classifiers/haar", cas2).start();
 	}
 
 	@FXML
 	public void actStartCamera() {
+		FaceRecognizer rec = FisherFaceRecognizer.create();
+		rec.read("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/model.xml");	
 		try {
 			if(!cameraStatus) {
 				if(capture == null) {
 					capture = new VideoCapture(0);
 				}
 				FisherRecog recog = new FisherRecog(cas);
-				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas,null, recog);
+				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas,rec, recog);
 				new Thread(web).start();
 				
 				cameraStatus = true;
@@ -95,8 +102,16 @@ public class CMainFrame {
 	}
 	@FXML
 	public void actBtnTeste() {
+		FaceRecognizer rec = FisherFaceRecognizer.create();
+		rec.read("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/model.xml");	
+		FisherRecog f = new FisherRecog(cas);
 		try {
-			FisherRecog lbph = new FisherRecog(cas);
+			Mat img = opencv_imgcodecs.imread("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/aaa.jpg");
+			f.identificarRosto(rec, img);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+			/*FisherRecog lbph = new FisherRecog(cas);
 			FileChooser c = new FileChooser();
 			c.initialFileNameProperty().set("C:\\Users\\loja 65\\git\\APS-2021-2-Semestre\\Rostos");
 			List<File> files = c.showOpenMultipleDialog(null);
@@ -104,16 +119,18 @@ public class CMainFrame {
 			for(File file : files) {
 				vec.push_back(opencv_imgcodecs.imread(file.getAbsolutePath()));
 			}
-			FaceRecognizer rec = lbph.train(vec);
-			rec.setThreshold(50);
-			Mat grabbedImage = opencv_imgcodecs.imread(files.get(0).getAbsolutePath());
 			
-			Mat imgPro = lbph.processImage(grabbedImage, Utilitarios.detectFaces(cas, grabbedImage));
+			
+			FaceRecognizer rec = lbph.train(vec);
+			rec.save("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/model.xml");
+			//cas.detectMultiScale(opencv_imgcodecs.imread(files.get(0).getAbsolutePath()), new RectVector());
+			/*
+			rec.setThreshold(50);
+			Mat grabbedImage = opencv_imgcodecs.imread("C:/aaa.png");
+			RectVector faces = Utilitarios.detectFaces(cas, grabbedImage);
+			Mat imgPro = lbph.processImage(grabbedImage,faces);
 			double prec = lbph.identificarRosto(rec, imgPro);
-			System.out.println(prec);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			System.out.println(prec);*/
 	}
 	
 	@FXML

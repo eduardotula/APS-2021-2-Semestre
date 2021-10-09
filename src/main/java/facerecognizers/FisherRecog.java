@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bytedeco.opencv.global.opencv_core;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
-import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
-import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
@@ -21,10 +18,8 @@ public class FisherRecog extends FaceRecog{
 	
 	private CascadeClassifier cas;
 	private RectVector facesDetectadas;
-	private Mat imagemResized;
 	private MatVector rostosProcessados;
 	private Mat labels;
-	private Rect rostoPrimario;
 
 	public FisherRecog(CascadeClassifier cas) {
 		this.cas = cas;
@@ -45,17 +40,17 @@ public class FisherRecog extends FaceRecog{
 		if(src.get().length <= 0) { throw new Exception("Vetores de imagem não pode estar vazio");}
 		labels = new Mat();
 		facesDetectadas = new RectVector();
-		
 		List<Mat> rostosProcessadosList = new ArrayList<Mat>();
 		
 		
 		for(Mat image : src.get()) {
 			//Detecta os rostos de uma imagem
 			facesDetectadas = Utilitarios.detectFaces(cas, image);
-			imagemResized = processImage(image, facesDetectadas);
+			image = processImage(image, facesDetectadas);
 
-			rostosProcessadosList.add(imagemResized);
+			rostosProcessadosList.add(image);
 		}
+		
 		rostosProcessados = new MatVector(rostosProcessadosList.size());
 		labels = new Mat(rostosProcessadosList.size(), 1, opencv_core.CV_32SC1);
         //IntBuffer labelsBuf = labels.createBuffer();
@@ -74,38 +69,6 @@ public class FisherRecog extends FaceRecog{
 		releaseResources();
 		return recognizer;
 	}
-	/**
-	 * Processa a imagem de acordo com os padroes FisherFace
-	 * detectRostoPrincipal, recortarRosto, resize para 1000 pixels e converte para BGR2GRAY
-	 * @param imagem para ser processada
-	 * @param facesDetectadas lista de faces identificadas no frame
-	 * @return imagem processada*/
-	@Override
-	public Mat processImage(Mat imagem, RectVector facesDetectadas)throws Exception {
-		Mat image = imagem;
-		System.out.println(image.type() + "   tipo");
-		Mat imagemRes = new Mat();
-		Mat imgCinza = new Mat();
-		//Detecta o rosto com maior resolução
-		rostoPrimario = detectRostoPrincipal(facesDetectadas);
-
-		//Caso a imagem contenha um rosto realiza o processamento
-		if(rostoPrimario.width() > 0 && rostoPrimario.height() > 0) {
-			//Recorta o rosto
-			image = recortarRosto(rostoPrimario, image);
-			System.out.println(image.type() + "   tipo");
-			//Ajusta o tamanho 
-			opencv_imgproc.resize(image, imagemRes, new Size(150, 150),
-			      1.0, 1.0, opencv_imgproc.INTER_CUBIC);
-			if(image.type() > 0) {
-				opencv_imgproc.cvtColor(imagemRes, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
-				image = imgCinza;
-			}
-		}
-		
-		return image;
-	}
-	
 	/**Cria um novo modelo de FisherFaceRecognizer e realiza o treino para um conjunto de imagens src
 	 * @param src Vetor de imagens Mat para ser usado na criação do modelo
 	 * @return FaceRecognizer treinado
@@ -145,12 +108,9 @@ public class FisherRecog extends FaceRecog{
 	
 	private void releaseResources() {
 		try {
-			cas.close();
 			facesDetectadas.close();
-			imagemResized.close();
 			rostosProcessados.close();
 			labels.close();
-			rostoPrimario.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

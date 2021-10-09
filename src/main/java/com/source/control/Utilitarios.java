@@ -47,10 +47,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-/**
- *
- * @author Jones
- */
+
 public class Utilitarios {
 
 	private static JavaFXFrameConverter fxConverter = new JavaFXFrameConverter();
@@ -62,8 +59,8 @@ public class Utilitarios {
 	 * @return imagem javafx*/
 	public static Image convertMatToImage(org.bytedeco.opencv.opencv_core.Mat grabbedImage) {
 		Frame fram = converter.convert(grabbedImage);
+		System.out.println("Fram" + fram.imageWidth);
 		Image img = fxConverter.convert(fram);
-		fxConverter.close();
 		return img;
 	}
 
@@ -103,8 +100,8 @@ public class Utilitarios {
 					new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.RED, 1, opencv_imgproc.LINE_AA,
 					0);
 		}
-		Image imgRect = Utilitarios.convertMatToImage(grabbedImage);
-		return imgRect;
+		return Utilitarios.convertMatToImage(grabbedImage);
+
 	}
 	
 	/**Detecta a posição de rostos na imagem
@@ -112,14 +109,15 @@ public class Utilitarios {
 	 * @param grabbedImage imagem original
 	 * @return retorna um vetor de posição de todas as faces do frame*/
 	public static RectVector detectFaces(CascadeClassifier cas, Mat grabbedImage) {
-		Mat imgCinza = grabbedImage;
-		if(grabbedImage.type() != opencv_imgproc.COLOR_BGR2GRAY) {
-			opencv_imgproc.cvtColor(grabbedImage, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
+		Mat imgGray = new Mat();
+		if(grabbedImage.type() > 0) {
+			opencv_imgproc.cvtColor(grabbedImage, imgGray, opencv_imgproc.COLOR_BGR2GRAY);
 		}
 		RectVector facesDetect = new RectVector();
 		
-		System.out.println(grabbedImage.rows() + " rows");
-		cas.detectMultiScale(imgCinza, facesDetect);
+		System.out.println(imgGray.rows() + " rows");
+		System.out.println(imgGray.channels() + " channels");
+		cas.detectMultiScale(imgGray, facesDetect);
 		System.out.println(facesDetect.size() + "  size");
 		return facesDetect;
 	}

@@ -76,35 +76,7 @@ public class LBPHFaceReco extends FaceRecog{
 		releaseResources();
 		return recognizer;
 	}
-	/**
-	 * Processa a imagem de acordo com os padroes LBPH
-	 * detectRostoPrincipal, recortarRosto, resize para 1000 pixels e converte para BGR2GRAY
-	 * @param imagem para ser processada
-	 * @param facesDetectadas lista de faces identificadas no frame*/
-	@Override
-	public Mat processImage(Mat imagem, RectVector facesDetectadas)throws Exception {
-		Mat image = imagem;
-		System.out.println(image.type() + "   tipo");
-		Mat imagemRes = new Mat();
-		Mat imgCinza = new Mat();
-		//Detecta o rosto com maior resolução
-		rostoPrimario = detectRostoPrincipal(facesDetectadas);
 
-		//Caso a imagem contenha um rosto realiza o processamento
-		if(rostoPrimario.width() > 0 && rostoPrimario.height() > 0) {
-			//Recorta o rosto
-			image = recortarRosto(rostoPrimario, image);
-			System.out.println(image.type() + "   tipo");
-			//Ajusta o tamanho 
-			opencv_imgproc.resize(image, imagemRes, new Size(100, 100),
-			      1.0, 1.0, opencv_imgproc.INTER_CUBIC);
-			if(image.type() > 0) {
-				opencv_imgproc.cvtColor(imagemRes, imgCinza, opencv_imgproc.COLOR_BGR2GRAY);
-				image = imgCinza;
-			}
-		}
-		return image;
-	}
 	
 	/**Cria um novo modelo de FisherFaceRecognizer e realiza o treino para um conjunto de imagens src
 	 * @param src Vetor de imagens Mat para ser usado na criação do modelo

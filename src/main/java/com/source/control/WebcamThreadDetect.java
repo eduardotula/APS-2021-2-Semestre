@@ -8,6 +8,7 @@ import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
 import facerecognizers.FaceRecog;
 import javafx.concurrent.Task;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class WebcamThreadDetect extends Task<Void>{
@@ -30,14 +31,20 @@ public class WebcamThreadDetect extends Task<Void>{
 	@Override
 	protected Void call() throws Exception {
 		Mat frame = new Mat();
+		//recognizerModel.setThreshold(0);
 		while(cap != null && cap.isOpened() && view.isVisible()) {
-			cap.read(frame);
+			System.out.println(cap.read(frame));
 			
 			RectVector faces = Utilitarios.detectFaces(cas, frame);
-			Mat imgProc = recog.processImage(frame, faces);
-			double predict = recog.identificarRosto(recognizerModel, imgProc);
-			System.out.println(predict);
-			Thread.sleep(200);
+			if(faces.size() > 0) {
+				System.out.println(frame.rows());
+				double predict = recog.identificarRosto(recognizerModel, frame);
+				System.out.println("     ++++++   "+predict);
+			}
+			
+			Image imgView = Utilitarios.detectFaceRect(cas, frame);
+			view.setImage(imgView);
+			Thread.sleep(300);
 			System.out.println(cap.isOpened());
 		}
 		return null;

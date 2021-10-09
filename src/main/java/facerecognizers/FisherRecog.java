@@ -3,9 +3,11 @@ package facerecognizers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
+import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
@@ -41,14 +43,17 @@ public class FisherRecog extends FaceRecog{
 		labels = new Mat();
 		facesDetectadas = new RectVector();
 		List<Mat> rostosProcessadosList = new ArrayList<Mat>();
-		
+		Rect rostoPrincipal = new Rect();
+		System.out.println("quantidade de imagens para treinamento " + src.size());
 		
 		for(Mat image : src.get()) {
 			//Detecta os rostos de uma imagem
 			facesDetectadas = Utilitarios.detectFaces(cas, image);
-			image = processImage(image, facesDetectadas);
+			rostoPrincipal = detectRostoPrincipal(facesDetectadas);
+			image = processImage(image, rostoPrincipal);
 
 			rostosProcessadosList.add(image);
+			Thread.sleep(10);
 		}
 		
 		rostosProcessados = new MatVector(rostosProcessadosList.size());
@@ -66,7 +71,7 @@ public class FisherRecog extends FaceRecog{
 		throw new Exception("Não foi encontrado nenhum rosto no vetor de imagens");}
 
 		recognizer.train(rostosProcessados,labels);
-		releaseResources();
+		releaseResources(rostoPrincipal,labels,facesDetectadas);
 		return recognizer;
 	}
 	/**Cria um novo modelo de FisherFaceRecognizer e realiza o treino para um conjunto de imagens src
@@ -95,25 +100,28 @@ public class FisherRecog extends FaceRecog{
 	 * com o modelo FaceRecognizer
 	 * @param recog modelo treinado FisherFace
 	 * @param imagem para ser processada e testada
+	 * @param facePrinc posição da face principal
 	 * @return valor de precisão com a imagem*/
 	@Override
-	public double identificarRosto(FaceRecognizer recog, Mat imagem)throws Exception{
+	public double identificarRosto(FaceRecognizer recog, Mat imagem, Rect facePrinc)throws Exception{
 		int[] label = new int[] {1};
 		double[] predic = new double[] {1.1};
-		RectVector rostosPos = Utilitarios.detectFaces(cas, imagem);
-		Mat imgProc = processImage(imagem, rostosPos);
+		
+		Mat imgProc = processImage(imagem, facePrinc);
 		recog.predict(imgProc, label, predic);
-		return predic[0];
+		System.out.println(label[0] + "  prediction");
+		System.out.println(predic[0]+ " confianca");
+		return (int)label[0];
 	}
 	
-	private void releaseResources() {
-		try {
-			facesDetectadas.close();
-			rostosProcessados.close();
-			labels.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+	
+	private void releaseResources(Pointer... args) {
+			for(Pointer arg : args) {
+				try {
+					arg.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 	}
 }

@@ -3,6 +3,7 @@ package facerecognizers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -24,7 +25,6 @@ public class LBPHFaceReco extends FaceRecog{
 	private Mat imgProc;
 	private MatVector rostosProcessados;
 	private Mat labels;
-	private Rect rostoPrimario;
 
 	public LBPHFaceReco(CascadeClassifier cas) {
 		this.cas = cas;
@@ -47,13 +47,15 @@ public class LBPHFaceReco extends FaceRecog{
 		facesDetectadas = new RectVector();
 		
 		List<Mat> rostosProcessadosList = new ArrayList<Mat>();
-		
+		Rect rostoPrincipal = new Rect();
 		
 		for(Mat image : src.get()) {
 			//Detecta os rostos de uma imagem
 			facesDetectadas = Utilitarios.detectFaces(cas, image);
-			imgProc = processImage(image, facesDetectadas);
+			rostoPrincipal = detectRostoPrincipal(facesDetectadas);
+			imgProc = processImage(image, rostoPrincipal);
 			rostosProcessadosList.add(imgProc);
+			Thread.sleep(10);
 		}
 		rostosProcessados = new MatVector(rostosProcessadosList.size());
 		labels = new Mat(rostosProcessadosList.size(), 1, opencv_core.CV_32SC1);
@@ -73,7 +75,7 @@ public class LBPHFaceReco extends FaceRecog{
 		System.out.println(labels.depth());
 		System.out.println(labels.data().getInt(0));
 		recognizer.train(rostosProcessados,labels);
-		releaseResources();
+		releaseResources(rostoPrincipal,labels,facesDetectadas);
 		return recognizer;
 	}
 
@@ -100,32 +102,29 @@ public class LBPHFaceReco extends FaceRecog{
 	}
 	
 	/**
-	 * Processa imagem de acordo com o padrão FisherFace e retorna o valor de precisao da imagem
+	 * Processa imagem de acordo com o padrão LBPH e retorna o valor de precisao da imagem
 	 * com o modelo FaceRecognizer
 	 * @param recog modelo treinado FisherFace
 	 * @param imagem para ser processada e testada
+	 * @param facePrinc posição da face principal
 	 * @return valor de precisão com a imagem*/
 	@Override
-	public double identificarRosto(FaceRecognizer recog, Mat imagem)throws Exception{
+	public double identificarRosto(FaceRecognizer recog, Mat imagem, Rect facePrinc)throws Exception{
 		int[] label = new int[] {1};
 		double[] predic = new double[] {1.1};
-		RectVector rostosPos = Utilitarios.detectFaces(cas, imagem);
-		Mat imgProc = processImage(imagem, rostosPos);
+		
+		Mat imgProc = processImage(imagem, facePrinc);
 		recog.predict(imgProc, label, predic);
 		return predic[0];
 	}
 	
-	private void releaseResources() {
-		try {
-			cas.close();
-			facesDetectadas.close();
-			imgProc.close();
-			rostosProcessados.close();
-			labels.close();
-			rostoPrimario.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+	private void releaseResources(Pointer... args) {
+		for(Pointer arg : args) {
+			try {
+				arg.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-
-	}
+}
 }

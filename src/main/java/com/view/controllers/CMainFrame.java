@@ -3,13 +3,8 @@ package com.view.controllers;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.List;
-
 import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.MatVector;
-import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
@@ -18,8 +13,8 @@ import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
 import com.source.control.Utilitarios;
 import com.source.control.WebcamThreadDetect;
+import com.source.control.WebcamThreadTrain;
 
-import facerecognizers.FaceRecog;
 import facerecognizers.FisherRecog;
 import facerecognizers.LBPHFaceReco;
 import javafx.concurrent.Task;
@@ -71,7 +66,7 @@ public class CMainFrame {
 	@FXML
 	public void actStartCamera() {
 		FaceRecognizer rec = FisherFaceRecognizer.create();
-		rec.read("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/model.xml");	
+		rec.read("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/modelCam.xml");	
 		try {
 			if(!cameraStatus) {
 				if(capture == null) {
@@ -79,6 +74,7 @@ public class CMainFrame {
 				}
 				FisherRecog recog = new FisherRecog(cas);
 				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas,rec, recog);
+				//WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog);
 				new Thread(web).start();
 				
 				cameraStatus = true;
@@ -107,7 +103,7 @@ public class CMainFrame {
 		FisherRecog f = new FisherRecog(cas);
 		try {
 			Mat img = opencv_imgcodecs.imread("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/aaa.jpg");
-			f.identificarRosto(rec, img);
+			//f.identificarRosto(rec, img);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

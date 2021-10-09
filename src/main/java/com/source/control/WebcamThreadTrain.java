@@ -2,6 +2,7 @@ package com.source.control;
 
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
@@ -15,20 +16,20 @@ import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class WebcamThreadDetect extends Task<Void>{
+public class WebcamThreadTrain extends Task<Void>{
 
 	private ImageView view;
 	private VideoCapture cap;
 	private CascadeClassifier cas;
-	private FaceRecognizer recognizerModel;
 	private FaceRecog recog;
-	
-	public WebcamThreadDetect(ImageView view, VideoCapture cap, CascadeClassifier cas, FaceRecognizer recognizerModel,
+	private MatVector faceFrames = new MatVector();
+	private FaceRecognizer faceRecog;
+
+	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas,
 			FaceRecog recog) {
 		this.view = view;
 		this.cap = cap;
 		this.cas = cas;
-		this.recognizerModel = recognizerModel;
 		this.recog = recog;
 	}
 
@@ -39,9 +40,8 @@ public class WebcamThreadDetect extends Task<Void>{
 			RectVector faces = new RectVector();
 			Mat imgFace = new Mat();
 			Rect facePrinc = new Rect();
-			recognizerModel.setThreshold(0.0);
 			//recognizerModel.setThreshold(0);
-			while(cap != null && cap.isOpened() && view.isVisible()) {
+			while(!cap.isNull() && cap.isOpened() && view.isVisible()) {
 				System.out.println(cap.read(frame));
 				
 				faces = Utilitarios.detectFaces(cas, frame);
@@ -49,8 +49,7 @@ public class WebcamThreadDetect extends Task<Void>{
 					imgFace = new Mat(frame);
 					facePrinc = Utilitarios.detectFacePrincipal(faces);
 					if(facePrinc.width() >= 150 && facePrinc.height() >= 150 ) {
-						double pred = recog.identificarRosto(recognizerModel, frame, facePrinc);
-						
+						faceFrames.push_back(imgFace);
 						imgFace = drawBlueRec(frame, facePrinc);
 					}else {
 						imgFace = drawRedRec(frame, facePrinc);
@@ -66,10 +65,11 @@ public class WebcamThreadDetect extends Task<Void>{
 					System.out.println(frame.rows());
 					view.setImage(Utilitarios.convertMatToImage(frame));
 				}
-				Thread.sleep(300);
+				Thread.sleep(1);
 			}
+			faceRecog = recog.train(faceFrames);
+			faceRecog.save("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/modelCam.xml");
 			imgFace.close();facePrinc.close();frame.close();faces.close();
-			recognizerModel.close();
 			cap.close();
 			view.setImage(null);
 			return null;
@@ -80,7 +80,11 @@ public class WebcamThreadDetect extends Task<Void>{
 		}
 		return null;
 	}
-
+	
+	private void captureFrameFaceTrain(Mat frame, RectVector faces) throws Exception {
+		System.out.println("Treinar");
+		//recog.train(faceFrame);
+	}
 	
 	private Mat drawRedRec(Mat frame, Rect rect) throws Exception{
 		Mat img = new Mat(frame);
@@ -88,12 +92,10 @@ public class WebcamThreadDetect extends Task<Void>{
 				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.RED, 1, opencv_imgproc.LINE_AA, 0);
 		return img;
 	}
-
 	private Mat drawBlueRec(Mat frame, Rect rect) throws Exception{
 		Mat img = new Mat(frame);
 		opencv_imgproc.rectangle(img, new Point(rect.x(), rect.y()),
 				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.BLUE, 1, opencv_imgproc.LINE_AA, 0);
 		return img;
 	}
-	
 }

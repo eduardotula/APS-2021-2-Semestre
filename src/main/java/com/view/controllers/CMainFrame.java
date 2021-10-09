@@ -67,6 +67,7 @@ public class CMainFrame {
 	@FXML
 	public void actStartCamera() {
 		FaceRecognizer rec = FisherFaceRecognizer.create();
+		rec.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 		try {
 			if(!cameraStatus) {
 				if(capture == null) {

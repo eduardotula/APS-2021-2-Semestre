@@ -12,9 +12,11 @@ import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
 import facerecognizers.FaceRecog;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 
 public class WebcamThreadTrain extends Task<Void>{
 
@@ -40,7 +42,6 @@ public class WebcamThreadTrain extends Task<Void>{
 			RectVector faces = new RectVector();
 			Mat imgFace = new Mat();
 			Rect facePrinc = new Rect();
-			//recognizerModel.setThreshold(0);
 			while(!cap.isNull() && cap.isOpened() && view.isVisible()) {
 				System.out.println(cap.read(frame));
 				
@@ -68,7 +69,10 @@ public class WebcamThreadTrain extends Task<Void>{
 				Thread.sleep(1);
 			}
 			faceRecog = recog.train(faceFrames);
-			faceRecog.save("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/modelCam.xml");
+			Platform.runLater(()->{
+				faceRecog.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+			});
+			
 			imgFace.close();facePrinc.close();frame.close();faces.close();
 			cap.close();
 			view.setImage(null);

@@ -39,7 +39,7 @@ public class WebcamThreadDetect extends Task<Void>{
 			RectVector faces = new RectVector();
 			Mat imgFace = new Mat();
 			Rect facePrinc = new Rect();
-			recognizerModel.setThreshold(0.0);
+			recognizerModel.setThreshold(123.0);
 			//recognizerModel.setThreshold(0);
 			while(cap != null && cap.isOpened() && view.isVisible()) {
 				System.out.println(cap.read(frame));

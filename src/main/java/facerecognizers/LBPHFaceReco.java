@@ -56,7 +56,7 @@ public class LBPHFaceReco extends FaceRecog{
 			rostosProcessadosList.add(image);
 			Thread.sleep(5);
 		}
-		
+		if(rostosProcessadosList.size() % 2 != 0) { rostosProcessadosList.remove(rostosProcessadosList.size()-1);}
 		rostosProcessados = new MatVector(rostosProcessadosList.size());
 		labels = new Mat(rostosProcessadosList.size(), 1, opencv_core.CV_32SC1);
         //IntBuffer labelsBuf = labels.createBuffer();

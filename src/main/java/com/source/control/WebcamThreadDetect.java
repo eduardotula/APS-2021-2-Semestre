@@ -1,5 +1,8 @@
 package com.source.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
@@ -7,8 +10,11 @@ import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
+import org.bytedeco.opencv.opencv_face.Facemark;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
+
+import com.source.model.Imag;
 
 import facerecognizers.FaceRecog;
 import javafx.concurrent.Task;
@@ -21,6 +27,7 @@ public class WebcamThreadDetect extends Task<Void>{
 	private VideoCapture cap;
 	private CascadeClassifier cas;
 	private FaceRecognizer recognizerModel;
+	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private FaceRecog recog;
 	
 	public WebcamThreadDetect(ImageView view, VideoCapture cap, CascadeClassifier cas, FaceRecognizer recognizerModel,
@@ -35,40 +42,36 @@ public class WebcamThreadDetect extends Task<Void>{
 	@Override
 	protected Void call()  {
 		try {
-			Mat frame = new Mat();
-			RectVector faces = new RectVector();
-			Mat imgFace = new Mat();
-			Rect facePrinc = new Rect();
-			recognizerModel.setThreshold(123.0);
-			//recognizerModel.setThreshold(0);
-			while(cap != null && cap.isOpened() && view.isVisible()) {
-				System.out.println(cap.read(frame));
+			Imag imgFace = new Imag(1, null, new Mat(), false, new RectVector(), new Rect());
+			
+			while(!cap.isNull() && cap.isOpened() && view.isVisible()) {
+				System.out.println(cap.read(imgFace.getImagem()));
 				
-				faces = Utilitarios.detectFaces(cas, frame);
-				if (faces.size() > 0) {
-					imgFace = new Mat(frame);
-					facePrinc = Utilitarios.detectFacePrincipal(faces);
-					if(facePrinc.width() >= 150 && facePrinc.height() >= 150 ) {
-						double pred = recog.identificarRosto(recognizerModel, frame, facePrinc);
-						
-						imgFace = drawBlueRec(frame, facePrinc);
+				
+				imgFace.setRostos(Utilitarios.detectFaces(cas, imgFace.getImagem()));
+				if (imgFace.getRostos().size() > 0) {
+					imgFace.setRostoPrinc(Utilitarios.detectFacePrincipal(imgFace.getRostos()));
+					if(imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150 ) {
+						recog.identificarRosto(recognizerModel, imgFace);
+						imgFace.setImagem(drawBlueRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
+
 					}else {
-						imgFace = drawRedRec(frame, facePrinc);
+						imgFace.setImagem(drawRedRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
 						
 					}
-					System.out.println(imgFace.rows() + " teeeee");
-					System.out.println(imgFace.channels() + " teeeee ch");
 
-					view.setImage(Utilitarios.convertMatToImage(imgFace));
+
+					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
 					
 					
 				}else {
-					System.out.println(frame.rows());
-					view.setImage(Utilitarios.convertMatToImage(frame));
+					System.out.println(imgFace.getImagem().rows());
+					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
 				}
-				Thread.sleep(300);
+				Thread.sleep(1);
 			}
-			imgFace.close();facePrinc.close();frame.close();faces.close();
+			
+			imgFace.close();
 			recognizerModel.close();
 			cap.close();
 			view.setImage(null);

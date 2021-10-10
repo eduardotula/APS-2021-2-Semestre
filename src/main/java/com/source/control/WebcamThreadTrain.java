@@ -1,5 +1,8 @@
 package com.source.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
@@ -8,13 +11,15 @@ import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
+import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
+
+import com.source.model.Imag;
 
 import facerecognizers.FaceRecog;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
@@ -24,56 +29,69 @@ public class WebcamThreadTrain extends Task<Void>{
 	private VideoCapture cap;
 	private CascadeClassifier cas;
 	private FaceRecog recog;
-	private MatVector faceFrames = new MatVector();
-	private FaceRecognizer faceRecog;
+	private List<Imag> faceFrames = new ArrayList<Imag>();
+	private Integer label;
 
 	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas,
-			FaceRecog recog) {
+			FaceRecog recog,Integer label) {
 		this.view = view;
 		this.cap = cap;
 		this.cas = cas;
 		this.recog = recog;
+		this.label = label;
 	}
 
 	@Override
 	protected Void call()  {
 		try {
-			Mat frame = new Mat();
-			RectVector faces = new RectVector();
-			Mat imgFace = new Mat();
-			Rect facePrinc = new Rect();
+			Imag imgFace = new Imag(label, null, new Mat(), false, new RectVector(), new Rect());
+			
 			while(!cap.isNull() && cap.isOpened() && view.isVisible()) {
-				System.out.println(cap.read(frame));
+				System.out.println(cap.read(imgFace.getImagem()));
 				
-				faces = Utilitarios.detectFaces(cas, frame);
-				if (faces.size() > 0) {
-					imgFace = new Mat(frame);
-					facePrinc = Utilitarios.detectFacePrincipal(faces);
-					if(facePrinc.width() >= 150 && facePrinc.height() >= 150 ) {
-						faceFrames.push_back(imgFace);
-						imgFace = drawBlueRec(frame, facePrinc);
+				
+				imgFace.setRostos(Utilitarios.detectFaces(cas, imgFace.getImagem()));
+				if (imgFace.getRostos().size() > 0) {
+					
+					imgFace.setRostoPrinc(Utilitarios.detectFacePrincipal(imgFace.getRostos()));
+					if(imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150 ) {
+						System.out.println("Input image rows " + imgFace.getImagem().rows());
+						System.out.println("input channels " + imgFace.getImagem().channels());
+						faceFrames.add(imgFace);
+						imgFace.setImagem(drawBlueRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
 					}else {
-						imgFace = drawRedRec(frame, facePrinc);
+						imgFace.setImagem(drawRedRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
 						
 					}
-					System.out.println(imgFace.rows() + " teeeee");
-					System.out.println(imgFace.channels() + " teeeee ch");
+					System.out.println(imgFace.getImagem().rows() + " teeeee");
+					System.out.println(imgFace.getImagem().channels() + " teeeee ch");
 
-					view.setImage(Utilitarios.convertMatToImage(imgFace));
+					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
 					
 					
 				}else {
-					System.out.println(frame.rows());
-					view.setImage(Utilitarios.convertMatToImage(frame));
+					System.out.println(imgFace.getImagem().rows());
+					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
 				}
 				Thread.sleep(1);
 			}
-			faceRecog = recog.train(faceFrames);
+			
 			Platform.runLater(()->{
-				faceRecog.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+
+				try {
+					FaceRecognizer model = LBPHFaceRecognizer.create();
+					model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+					System.out.println("Input image size " + faceFrames.size());
+
+					FaceRecognizer model2 = recog.updateRaw(model,faceFrames);
+					model2.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 			});
 			
-			imgFace.close();facePrinc.close();frame.close();faces.close();
+			//imgFace.close();
 			cap.close();
 			view.setImage(null);
 			return null;
@@ -85,10 +103,6 @@ public class WebcamThreadTrain extends Task<Void>{
 		return null;
 	}
 	
-	private void captureFrameFaceTrain(Mat frame, RectVector faces) throws Exception {
-		System.out.println("Treinar");
-		//recog.train(faceFrame);
-	}
 	
 	private Mat drawRedRec(Mat frame, Rect rect) throws Exception{
 		Mat img = new Mat(frame);

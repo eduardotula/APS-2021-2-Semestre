@@ -82,7 +82,8 @@
       <FlowPane alignment="CENTER" columnHalignment="CENTER" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="btnCarregar" alignment="CENTER" mnemonicParsing="false" onAction="#actBtnCarregar" text="Carregar Imagem" />
-            <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#actStartCamera" text="Abrir camera" />
+            <Button fx:id="btnDetec" mnemonicParsing="false" onAction="#actBtnDetec" text="Detecção" />
+            <Button fx:id="btnTreina" mnemonicParsing="false" onAction="#actTreina" text="Treinamento" />
             <Button fx:id="btnDetectFace" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#actDetectFace" text="Detect Face" />
             <Button fx:id="btnTeste" mnemonicParsing="false" onAction="#actBtnTeste" text="Botao Teste" />
          </children>

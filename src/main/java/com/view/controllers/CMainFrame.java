@@ -45,9 +45,11 @@ public class CMainFrame {
 	@FXML
 	public Button btnDetectFace;
 	@FXML
-	public Button btnStartCamera;
+	public Button btnTreina;
 	@FXML
 	public Button btnTeste;
+	@FXML 
+	public Button btnDetec;
 	
 	
 	private Mat grabbedImage;
@@ -65,28 +67,25 @@ public class CMainFrame {
 	}
 
 	@FXML
-	public void actStartCamera() {
-		FaceRecognizer rec = FisherFaceRecognizer.create();
-		rec.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+	public void actTreina() {
 		try {
 			if(!cameraStatus) {
 				if(capture == null) {
 					capture = new VideoCapture(0);
 				}
-				FisherRecog recog = new FisherRecog(cas);
-				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas,rec, recog);
-				//WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog);
+				LBPHFaceReco recog = new LBPHFaceReco(cas);
+				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog, 2);
 				new Thread(web).start();
 				
 				cameraStatus = true;
 				btnCarregar.setDisable(true);
-				btnStartCamera.setText("Parar Camera");
+				btnTreina.setText("Parar Camera");
 
 			}else {
 				capture.close();
 				capture = null;
 				cameraStatus = false;
-				btnStartCamera.setText("Abrir Camera");
+				btnTreina.setText("Abrir Camera");
 				btnCarregar.setDisable(false);
 				img.setImage(null);
 			}
@@ -96,6 +95,38 @@ public class CMainFrame {
 			e.printStackTrace();
 		}
 
+	}
+	@FXML
+	public void actBtnDetec() {
+		FaceRecognizer rec = LBPHFaceRecognizer.create();
+		rec.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+		try {
+			if(!cameraStatus) {
+				if(capture == null) {
+					capture = new VideoCapture(0);
+				}
+				LBPHFaceReco recog = new LBPHFaceReco(cas);
+				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas,rec, recog);
+				
+				new Thread(web).start();
+				
+				cameraStatus = true;
+				btnCarregar.setDisable(true);
+				btnDetec.setText("Parar Camera");
+
+			}else {
+				capture.close();
+				capture = null;
+				cameraStatus = false;
+				btnDetec.setText("Abrir Camera");
+				btnCarregar.setDisable(false);
+				img.setImage(null);
+			}
+			img.fitWidthProperty().bind(stack1.widthProperty());
+			img.fitHeightProperty().bind(stack1.heightProperty());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	@FXML
 	public void actBtnTeste() {

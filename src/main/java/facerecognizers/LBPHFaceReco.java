@@ -1,22 +1,17 @@
 package facerecognizers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.opencv.global.opencv_core;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
-import org.bytedeco.opencv.opencv_core.Rect;
-import org.bytedeco.opencv.opencv_core.RectVector;
-import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
-import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
 import com.source.control.Utilitarios;
+import com.source.model.Imag;
 
 public class LBPHFaceReco extends FaceRecog{
 
@@ -28,61 +23,115 @@ public class LBPHFaceReco extends FaceRecog{
 
 
 	
-	/**Treina um modelo LBPH face dado um vetore de imagens Mat
+	/**Treina um modelo LBPH face dado um vetore de imagens Mat sem procesasmento
 	 * Este metodo irá utilizar somente o rosto com a maior resolução
 	 * 
-	 * @param src Vetor de imagens Mat para ser usado na criação do modelo
+	 * @param src Lista de imagens Mat para ser usado na criação do modelo
+	 * @param recognizer
 	 * @return Retorna FaceRecognizer treinado
 	 * @throws Exception 
 	 * */
 	@SuppressWarnings("resource")
 	@Override
-	public FaceRecognizer train(MatVector src, FaceRecognizer recognizer) throws Exception {
-		System.out.println(src.get().length + "  lengh1");
-		if(src.get().length <= 0) { throw new Exception("Vetores de imagem não pode estar vazio");}
-		Mat labels = new Mat();
-		RectVector facesDetectadas = new RectVector();
-		List<Mat> rostosProcessadosList = new ArrayList<Mat>();
-		MatVector rostosProcessados;
-		Rect rostoPrincipal = new Rect();
-		System.out.println("quantidade de imagens para treinamento " + src.size());
+	public FaceRecognizer trainRaw(FaceRecognizer recognizer,List<Imag> imagens) throws Exception {
+		System.out.println(imagens.size() + "  lengh1");
+		if(imagens.size() <= 0) { throw new Exception("Vetores de imagem não pode estar vazio");}
+		MatVector rostosProcessadosList = new MatVector();
+		System.out.println("quantidade de imagens para treinamento " + imagens.size());
+		Mat labels = new Mat(0, 1, opencv_core.CV_32SC1);
+		Mat label = new Mat(1,1,opencv_core.CV_32SC1);
 		
-		for(Mat image : src.get()) {
+		
+		for(Imag image : imagens) {
+			
 			//Detecta os rostos de uma imagem
-			facesDetectadas = Utilitarios.detectFaces(cas, image);
-			rostoPrincipal = detectRostoPrincipal(facesDetectadas);
-			image = processImage(image, rostoPrincipal);
+			image.setRostos(Utilitarios.detectFaces(cas, image.getImagem()));
+			//Detecta o rosto principal
+			image.setRostoPrinc(detectRostoPrincipal(image.getRostos()));
+			//Processa a imagem
+			image.setImagem(processImage(new Mat(image.getImagem()), image.getRostoPrinc()));
 
-			rostosProcessadosList.add(image);
-			Thread.sleep(5);
+			image.setProces(true);
+			label.data().put(0, Integer.valueOf(image.getIdLabel()).byteValue());
+			labels.push_back(label);
+			rostosProcessadosList.push_back(image.getImagem());
 		}
-		if(rostosProcessadosList.size() % 2 != 0) { rostosProcessadosList.remove(rostosProcessadosList.size()-1);}
-		rostosProcessados = new MatVector(rostosProcessadosList.size());
-		labels = new Mat(rostosProcessadosList.size(), 1, opencv_core.CV_32SC1);
-        //IntBuffer labelsBuf = labels.createBuffer();
-		for(int i = 0;i<rostosProcessadosList.size();i++) {
-			rostosProcessados.put(i,rostosProcessadosList.get(i));
-
-			//labelsBuf.put(i, label);
-			labels.data().put(i, Integer.valueOf(1).byteValue());
-			System.out.println(i + "  loop");
-		}
+		if(rostosProcessadosList.size() <= 0) {throw new Exception("Não foi encontrado nenhum rosto no vetor de imagens");}
 		
-		if(rostosProcessados.get().length <= 0) {		releaseResources(rostoPrincipal,labels,facesDetectadas,rostosProcessados);
-		throw new Exception("Não foi encontrado nenhum rosto no vetor de imagens");}
-
-		recognizer.train(rostosProcessados,labels);
-		releaseResources(rostoPrincipal,labels,facesDetectadas);
+		
+		
+		//if(rostosProcessadosList.size() % 2 != 0) { rostosProcessadosList.pop_back();}
+		recognizer.train(rostosProcessadosList,labels);
+		releaseResources(label,labels);
 		return recognizer;
 	}
+	
+	@Override
+	public FaceRecognizer train(FaceRecognizer recognizer ,List<Imag> imagens) throws Exception {
+		if(imagens.get(0).isProces()) {
+			//TODO criar metodo
+			//recognizer.train(rostosProcessadosList,labels);
+		}else {
+			throw new Exception("Metodo não aceita imagens não processadas");
+		}
+		return null;
+		
+	}
+	
+	/**
+	 * Atualiza um modelo ja treinado para reconhecer um rosto novo
+	 *@param recognizer modelo de FaceRecognizer
+	 * @param imagens Lista de imagens não processadas
+	 * @throws Exception 
+	 * */
+	@Override
+	public FaceRecognizer update(FaceRecognizer recog, List<Imag> imagens) throws Exception {
+		if(imagens.get(0).isProces()) {
+			
+		}else {
+			throw new Exception("Metodo não aceita imagens não processadas");
+		}
+		return null;
+	}
+	
+	/**
+	 * Atualiza um modelo ja treinado para reconhecer um rosto novo
+	 * @param recognizer modelo de FaceRecognizer
+	 * @param imagens Lista de imagens processadas
+	 * @return 
+	 * @throws Exception 
+	 * */
+	@Override
+	public FaceRecognizer updateRaw(FaceRecognizer recognizer, List<Imag> imagens) throws Exception{
+		MatVector vectorImagens = new MatVector();
+		Mat labels = new Mat(0, 1, opencv_core.CV_32SC1);
+		Mat label = new Mat(1,1,opencv_core.CV_32SC1);
+		Mat temp = new Mat();
+		System.out.println("Metodo updateRaw");
+		System.out.println("Input image rows " + imagens.get(0).getImagem().rows());
+		System.out.println("input channels " + imagens.get(0).getImagem().channels());
+		for(Imag imagem : imagens) {
+
+			temp = new Mat(processImage(imagem.getImagem(),imagem.getRostoPrinc()));
+			vectorImagens.push_back(temp);
+			label.data().put(0, Integer.valueOf(imagem.getIdLabel()).byteValue());
+			labels.push_back(label);
+		}
+		
+		recognizer.update(vectorImagens, labels);
+		releaseResources(label,labels,temp);
+		return recognizer;
+		
+	}
+	
 	/**Cria um novo modelo de LBPH e realiza o treino para um conjunto de imagens src
 	 * @param src Vetor de imagens Mat para ser usado na criação do modelo
 	 * @return FaceRecognizer treinado
 	 */
 	@Override
-	public FaceRecognizer train(MatVector src) throws Exception {
-		FaceRecognizer recognizer = FisherFaceRecognizer.create();
-		return train(src, recognizer);
+	public FaceRecognizer trainRaw(List<Imag> imagens) throws Exception {
+		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
+		return trainRaw(recognizer, imagens);
 	}
 	/**Carrega um modelo de LBPH e realiza o treino para um conjunto de imagens src
 	 * @param src Vetor de imagens Mat para ser usado na criação do modelo
@@ -90,10 +139,10 @@ public class LBPHFaceReco extends FaceRecog{
 	 * @return FaceRecognizer treinado
 	 */
 	@Override
-	public FaceRecognizer train(MatVector src, String modelPath) throws Exception{
-		FaceRecognizer recognizer = FisherFaceRecognizer.create();
+	public FaceRecognizer trainRaw(String modelPath, List<Imag> imagens) throws Exception{
+		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
 		recognizer.read(modelPath);
-		return train(src, recognizer);
+		return trainRaw(recognizer, imagens);
 	}
 	
 	/**
@@ -104,21 +153,21 @@ public class LBPHFaceReco extends FaceRecog{
 	 * @param facePrinc posição da face principal
 	 * @return valor de precisão com a imagem*/
 	@Override
-	public double identificarRosto(FaceRecognizer recog, Mat imagem, Rect facePrinc)throws Exception{
+	public double identificarRosto(FaceRecognizer recog, Imag imagem)throws Exception{
 		int[] label = new int[] {1};
 		double[] predic = new double[] {1.1};
 		
-		Mat imgProc = processImage(imagem, facePrinc);
-		recog.predict(imgProc, label, predic);
+
+		recog.predict(processImage(imagem.getImagem(), imagem.getRostoPrinc()),
+				label, predic);
 		System.out.println(label[0] + "  prediction");
 		System.out.println(predic[0]+ " confianca");
-		releaseResources(imgProc);
 		return (int)label[0];
 	}
 	
 	
-	private void releaseResources(Pointer... args) {
-			for(Pointer arg : args) {
+	private void releaseResources(Imag... args) {
+			for(Imag arg : args) {
 				try {
 					arg.close();
 				} catch (Exception e) {
@@ -126,4 +175,13 @@ public class LBPHFaceReco extends FaceRecog{
 				}
 			}
 	}
+	private void releaseResources(Pointer... args) {
+		for(Pointer arg : args) {
+			try {
+				arg.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+}
 }

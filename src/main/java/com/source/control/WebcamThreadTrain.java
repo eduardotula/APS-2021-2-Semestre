@@ -16,6 +16,7 @@ import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
 import com.source.model.Imag;
+import com.view.controllers.CMainFrame;
 
 import facerecognizers.FaceRecog;
 import javafx.application.Platform;
@@ -31,6 +32,7 @@ public class WebcamThreadTrain extends Task<Void>{
 	private FaceRecog recog;
 	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private Integer label;
+	private Integer reduceArray = 4;
 
 	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas,
 			FaceRecog recog,Integer label) {
@@ -57,7 +59,7 @@ public class WebcamThreadTrain extends Task<Void>{
 					if(imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150 ) {
 						System.out.println("Input image rows " + imgFace.getImagem().rows());
 						System.out.println("input channels " + imgFace.getImagem().channels());
-						faceFrames.add(imgFace);
+						//faceFrames.add(imgFace);
 						imgFace.setImagem(drawBlueRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
 					}else {
 						imgFace.setImagem(drawRedRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
@@ -65,7 +67,11 @@ public class WebcamThreadTrain extends Task<Void>{
 					}
 					System.out.println(imgFace.getImagem().rows() + " teeeee");
 					System.out.println(imgFace.getImagem().channels() + " teeeee ch");
-
+					
+	                opencv_imgproc.putText(imgFace.getImagem(), CMainFrame.txt, new Point(Math.max(imgFace.getRostoPrinc().tl().x() - 10, 0),
+	                		Math.max(imgFace.getRostoPrinc().tl().y() - 10, 0)),
+	                		opencv_imgproc.FONT_HERSHEY_PLAIN, 5.0, new Scalar(255, 0, 255, 2.0),3,
+	                		opencv_imgproc.LINE_4,false);
 					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
 					
 					
@@ -75,23 +81,27 @@ public class WebcamThreadTrain extends Task<Void>{
 				}
 				Thread.sleep(1);
 			}
+			reduceListSize(faceFrames);
 			
 			Platform.runLater(()->{
 
 				try {
 					FaceRecognizer model = LBPHFaceRecognizer.create();
-					model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+					recog.trainRaw(model, faceFrames).save(new FileChooser().showOpenDialog(null).getAbsolutePath());
+					
+					//model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 					System.out.println("Input image size " + faceFrames.size());
 
-					FaceRecognizer model2 = recog.updateRaw(model,faceFrames);
-					model2.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+					//FaceRecognizer model2 = recog.updateRaw(model,faceFrames);
+					//model2.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+					imgFace.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				
 			});
 			
-			//imgFace.close();
+			imgFace.close();
 			cap.close();
 			view.setImage(null);
 			return null;
@@ -115,5 +125,19 @@ public class WebcamThreadTrain extends Task<Void>{
 		opencv_imgproc.rectangle(img, new Point(rect.x(), rect.y()),
 				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.BLUE, 1, opencv_imgproc.LINE_AA, 0);
 		return img;
+	}
+	
+	private void reduceListSize(List<Imag> faceFrames){
+		int counter = 0;
+		for(int i = 0;i<faceFrames.size();i++) {
+			if(reduceArray == counter) {
+				faceFrames.remove(i);
+				counter = 0;
+			}else {
+				counter++;
+			}
+		}
+		
+		
 	}
 }

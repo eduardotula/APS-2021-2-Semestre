@@ -36,6 +36,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -81,6 +82,7 @@
    <bottom>
       <FlowPane alignment="CENTER" columnHalignment="CENTER" BorderPane.alignment="CENTER">
          <children>
+            <TextField fx:id="txtNome" promptText="." text="." />
             <Button fx:id="btnCarregar" alignment="CENTER" mnemonicParsing="false" onAction="#actBtnCarregar" text="Carregar Imagem" />
             <Button fx:id="btnDetec" mnemonicParsing="false" onAction="#actBtnDetec" text="Detecção" />
             <Button fx:id="btnTreina" mnemonicParsing="false" onAction="#actTreina" text="Treinamento" />

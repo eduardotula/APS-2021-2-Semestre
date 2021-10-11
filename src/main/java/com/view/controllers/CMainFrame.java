@@ -23,6 +23,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -50,6 +51,11 @@ public class CMainFrame {
 	public Button btnTeste;
 	@FXML 
 	public Button btnDetec;
+	@FXML
+	public TextField txtNome;
+	
+	public static String txt = "a";
+	
 	
 	
 	private Mat grabbedImage;
@@ -130,35 +136,7 @@ public class CMainFrame {
 	}
 	@FXML
 	public void actBtnTeste() {
-		FaceRecognizer rec = FisherFaceRecognizer.create();
-		rec.read("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/model.xml");	
-		FisherRecog f = new FisherRecog(cas);
-		try {
-			Mat img = opencv_imgcodecs.imread("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/aaa.jpg");
-			//f.identificarRosto(rec, img);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-			/*FisherRecog lbph = new FisherRecog(cas);
-			FileChooser c = new FileChooser();
-			c.initialFileNameProperty().set("C:\\Users\\loja 65\\git\\APS-2021-2-Semestre\\Rostos");
-			List<File> files = c.showOpenMultipleDialog(null);
-			MatVector vec = new MatVector();
-			for(File file : files) {
-				vec.push_back(opencv_imgcodecs.imread(file.getAbsolutePath()));
-			}
-			
-			
-			FaceRecognizer rec = lbph.train(vec);
-			rec.save("C:\\Users\\eduar\\git\\APS-2021-2-Semestre\\Rostos/model.xml");
-			//cas.detectMultiScale(opencv_imgcodecs.imread(files.get(0).getAbsolutePath()), new RectVector());
-			/*
-			rec.setThreshold(50);
-			Mat grabbedImage = opencv_imgcodecs.imread("C:/aaa.png");
-			RectVector faces = Utilitarios.detectFaces(cas, grabbedImage);
-			Mat imgPro = lbph.processImage(grabbedImage,faces);
-			double prec = lbph.identificarRosto(rec, imgPro);
-			System.out.println(prec);*/
+		txt = txtNome.getText();
 	}
 	
 	@FXML

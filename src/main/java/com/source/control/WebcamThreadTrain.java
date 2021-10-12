@@ -59,7 +59,7 @@ public class WebcamThreadTrain extends Task<Void>{
 					if(imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150 ) {
 						System.out.println("Input image rows " + imgFace.getImagem().rows());
 						System.out.println("input channels " + imgFace.getImagem().channels());
-						//faceFrames.add(imgFace);
+						faceFrames.add(imgFace);
 						imgFace.setImagem(drawBlueRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
 					}else {
 						imgFace.setImagem(drawRedRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
@@ -68,10 +68,10 @@ public class WebcamThreadTrain extends Task<Void>{
 					System.out.println(imgFace.getImagem().rows() + " teeeee");
 					System.out.println(imgFace.getImagem().channels() + " teeeee ch");
 					
-	                opencv_imgproc.putText(imgFace.getImagem(), CMainFrame.txt, new Point(Math.max(imgFace.getRostoPrinc().tl().x() - 10, 0),
+	                /*opencv_imgproc.putText(imgFace.getImagem(), CMainFrame.txt, new Point(Math.max(imgFace.getRostoPrinc().tl().x() - 10, 0),
 	                		Math.max(imgFace.getRostoPrinc().tl().y() - 10, 0)),
 	                		opencv_imgproc.FONT_HERSHEY_PLAIN, 5.0, new Scalar(255, 0, 255, 2.0),3,
-	                		opencv_imgproc.LINE_4,false);
+	                		opencv_imgproc.LINE_4,false);*/
 					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
 					
 					
@@ -87,22 +87,23 @@ public class WebcamThreadTrain extends Task<Void>{
 
 				try {
 					FaceRecognizer model = LBPHFaceRecognizer.create();
-					recog.trainRaw(model, faceFrames).save(new FileChooser().showOpenDialog(null).getAbsolutePath());
+					//recog.trainRaw(model, faceFrames).save(new FileChooser().showOpenDialog(null).getAbsolutePath());
 					
-					//model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+					model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 					System.out.println("Input image size " + faceFrames.size());
 
-					//FaceRecognizer model2 = recog.updateRaw(model,faceFrames);
-					//model2.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+					FaceRecognizer model2 = recog.updateRaw(model,faceFrames);
+					model2.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
 					imgFace.close();
+					imgFace.close();
+					cap.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				
 			});
 			
-			imgFace.close();
-			cap.close();
+
 			view.setImage(null);
 			return null;
 		} catch (InterruptedException e) {

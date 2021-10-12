@@ -18,14 +18,14 @@ public class Imag {
 		
 	}
 
-	public Imag(Integer idModel, Mat label,Mat imagem, boolean proces, RectVector rostos, Rect rostoPrinc) {
+	public Imag(Integer idModel, Mat label,Mat imagem, boolean proces, RectVector rostos, Rect rect) {
 		super();
 		this.idLabel = idModel;
 		this.label = label;
 		this.imagem = imagem;
 		this.proces = proces;
 		this.rostos = rostos;
-		this.rostoPrinc = rostoPrinc;
+		this.rostoPrinc = rect;
 	}
 
 	public Integer getIdLabel() {
@@ -40,7 +40,7 @@ public class Imag {
 		this.label = label;
 	}
 
-	public void setIdModel(Integer idModel) {
+	public void setIdLabel(Integer idModel) {
 		this.idLabel = idModel;
 	}
 
@@ -77,13 +77,21 @@ public class Imag {
 	}
 	
 	public void close() {
-		try {
-			if(!imagem.isNull()) imagem.close();
-			if(!rostoPrinc.isNull()) rostoPrinc.close();
-			if(!rostos.isNull()) rostos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			try {
+				if(!imagem.isNull()) imagem.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				if(!rostoPrinc.isNull()) rostoPrinc.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				if(!rostos.isNull()) rostos.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 	
 }

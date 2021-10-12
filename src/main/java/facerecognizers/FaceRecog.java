@@ -1,5 +1,6 @@
 package facerecognizers;
 
+import java.io.File;
 import java.util.List;
 
 import org.bytedeco.opencv.global.opencv_imgproc;
@@ -75,7 +76,7 @@ public abstract class FaceRecog {
 				opencv_imgproc.cvtColor(imgProc, imgProc, opencv_imgproc.COLOR_BGR2GRAY);
 			}
 		}else {
-			imgProc.close(); facePrincipal.close(); throw new Exception("Imagem não pode ter tamanho 0");
+			imgProc.close(); facePrincipal.close(); throw new Exception("Imagem não contem faces");
 		}
 
 		System.out.println("facesDetectadas " + facePrincipal.width());
@@ -121,6 +122,10 @@ public abstract class FaceRecog {
 	}
 
 	public FaceRecognizer update(FaceRecognizer recog, List<Imag> imagens) throws Exception {
+		return null;
+	}
+
+	public FaceRecognizer trainRawFiles(List<File> imagens) throws Exception {
 		return null;
 	}
 

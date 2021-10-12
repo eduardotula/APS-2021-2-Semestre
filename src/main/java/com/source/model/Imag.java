@@ -1,5 +1,6 @@
 package com.source.model;
 
+import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
@@ -15,7 +16,11 @@ public class Imag {
 	
 	
 	public Imag() {
-		
+		label = new Mat(0,1,opencv_core.CV_32SC1);
+		imagem = new Mat();
+		proces = false;
+		rostos = new RectVector();
+		rostoPrinc = new Rect();
 	}
 
 	public Imag(Integer idModel, Mat label,Mat imagem, boolean proces, RectVector rostos, Rect rect) {
@@ -78,19 +83,16 @@ public class Imag {
 	
 	public void close() {
 			try {
-				if(!imagem.isNull()) imagem.close();
+				if(imagem != null &&!imagem.isNull()) imagem.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			try {
-				if(!rostoPrinc.isNull()) rostoPrinc.close();
+				if(rostoPrinc != null&&!rostoPrinc.isNull()) rostoPrinc.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			try {
-				if(!rostos.isNull()) rostos.close();
+				if(rostos != null&&!rostos.isNull()) rostos.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 	}
 	

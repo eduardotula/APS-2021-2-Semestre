@@ -1,5 +1,6 @@
 package com.source.control;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import com.source.model.Imag;
 import com.view.controllers.CMainFrame;
 
 import facerecognizers.FaceRecog;
+import facerecognizers.LBPHFaceReco;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.image.ImageView;
@@ -87,13 +89,15 @@ public class WebcamThreadTrain extends Task<Void>{
 
 				try {
 					FaceRecognizer model = LBPHFaceRecognizer.create();
-					//recog.trainRaw(model, faceFrames).save(new FileChooser().showOpenDialog(null).getAbsolutePath());
+					File modelPath = new FileChooser().showOpenDialog(null);
+					if(modelPath != null) {
+						model.read(modelPath.getAbsolutePath());
+						recog.updateRaw(model, faceFrames).write(modelPath.getAbsolutePath());
+					}else {
+						recog.trainRaw(faceFrames).write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+					}
 					
-					model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
-					System.out.println("Input image size " + faceFrames.size());
-
-					FaceRecognizer model2 = recog.updateRaw(model,faceFrames);
-					model2.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+					
 					imgFace.close();
 					imgFace.close();
 					cap.close();

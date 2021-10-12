@@ -105,7 +105,7 @@ public class CMainFrame {
 					capture = new VideoCapture(0);
 				}
 				LBPHFaceReco recog = new LBPHFaceReco(cas);
-				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog, 1);
+				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog, Integer.parseInt(txtId.getText()));
 				new Thread(web).start();
 
 				cameraStatus = true;

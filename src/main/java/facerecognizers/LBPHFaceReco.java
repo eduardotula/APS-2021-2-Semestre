@@ -8,6 +8,7 @@ import java.util.List;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
+import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
@@ -216,14 +217,14 @@ public class LBPHFaceReco extends FaceRecog {
 	 * @return valor de precisão com a imagem
 	 */
 	@Override
-	public double identificarRosto(FaceRecognizer recog, Imag imagem) throws Exception {
+	public int[] identificarRosto(FaceRecognizer recog, Imag imagem) throws Exception {
 		int[] label = new int[] { 1 };
 		double[] predic = new double[] { 1.1 };
 
 		recog.predict(processImage(imagem.getImagem(), imagem.getRostoPrinc()), label, predic);
 		System.out.println(label[0] + "  prediction");
 		System.out.println(predic[0] + " confianca");
-		return (int) label[0];
+		return new int[] {label[0],(int) predic[0]};
 	}
 
 	private void releaseResources(Imag... args) {
@@ -231,7 +232,6 @@ public class LBPHFaceReco extends FaceRecog {
 			try {
 				arg.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -241,7 +241,6 @@ public class LBPHFaceReco extends FaceRecog {
 			try {
 				arg.close();
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}

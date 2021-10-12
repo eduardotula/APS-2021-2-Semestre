@@ -91,8 +91,8 @@ public abstract class FaceRecog {
 		return imagem;
 	}
 
-	public double identificarRosto(FaceRecognizer recog, Imag imagem) throws Exception {
-		return 0;
+	public int[] identificarRosto(FaceRecognizer recog, Imag imagem) throws Exception {
+		return new int[0];
 	}
 
 

@@ -98,7 +98,7 @@ public class FisherRecog extends FaceRecog{
 	 * @param facePrinc posição da face principal
 	 * @return valor de precisão com a imagem*/
 	@Override
-	public double identificarRosto(FaceRecognizer recog, Imag imagem)throws Exception{
+	public int[] identificarRosto(FaceRecognizer recog, Imag imagem)throws Exception{
 		int[] label = new int[] {1};
 		double[] predic = new double[] {1.1};
 		
@@ -107,7 +107,7 @@ public class FisherRecog extends FaceRecog{
 				label, predic);
 		System.out.println(label[0] + "  prediction");
 		System.out.println(predic[0]+ " confianca");
-		return (int)label[0];
+		return new int[] {label[0],(int) predic[0]};
 	}
 	
 	

@@ -34,22 +34,24 @@ public class WebcamThreadTrain extends Task<Void>{
 	private FaceRecog recog;
 	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private Integer label;
+	private String nome;
 	private Integer reduceArray = 4;
 
 	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas,
-			FaceRecog recog,Integer label) {
+			FaceRecog recog,Integer label, String nome) {
 		this.view = view;
 		this.cap = cap;
 		this.cas = cas;
 		this.recog = recog;
 		this.label = label;
+		this.nome = nome;
 	}
 
 	@Override
 	protected Void call()  {
 		try {
-			Imag imgFace = new Imag(label, null, new Mat(), false, new RectVector(), new Rect());
-			
+			Imag imgFace = new Imag(label,nome, null, new Mat(), false, new RectVector(), new Rect());
+			System.out.println(label);
 			while(!cap.isNull() && cap.isOpened() && view.isVisible()) {
 				System.out.println(cap.read(imgFace.getImagem()));
 				

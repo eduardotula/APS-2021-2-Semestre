@@ -30,6 +30,7 @@ public class WebcamThreadDetect extends Task<Void> {
 	private FaceRecognizer recognizerModel;
 	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private FaceRecog recog;
+	private double thres = 85;
 
 	public WebcamThreadDetect(ImageView view, VideoCapture cap, CascadeClassifier cas, FaceRecognizer recognizerModel,
 			FaceRecog recog) {
@@ -43,8 +44,8 @@ public class WebcamThreadDetect extends Task<Void> {
 	@Override
 	protected Void call() {
 		try {
-			recognizerModel.setThreshold(85.0);
-			Imag imgFace = new Imag(1, null, new Mat(), false, new RectVector(), new Rect());
+			recognizerModel.setThreshold(thres);
+			Imag imgFace = new Imag(1, null,null, new Mat(), false, new RectVector(), new Rect());
 
 			while (!cap.isNull() && cap.isOpened() && view.isVisible()) {
 				System.out.println(cap.read(imgFace.getImagem()));
@@ -67,7 +68,7 @@ public class WebcamThreadDetect extends Task<Void> {
 									opencv_imgproc.FONT_HERSHEY_PLAIN, 3, new Scalar(0, 255, 0, 2.0), 3,
 									opencv_imgproc.LINE_AA, false);
 							
-							opencv_imgproc.putText(imgFace.getImagem(), "% " + labelPrece[1],
+							opencv_imgproc.putText(imgFace.getImagem(), "% " + calcularPorcentagem(labelPrece[1]),
 									new Point(imgFace.getRostoPrinc().x(),
 											imgFace.getRostoPrinc().y() + imgFace.getRostoPrinc().height() + 10),
 									opencv_imgproc.FONT_HERSHEY_PLAIN, 3, new Scalar(0, 255, 0, 2.0), 3,
@@ -115,4 +116,8 @@ public class WebcamThreadDetect extends Task<Void> {
 		return img;
 	}
 
+	private int calcularPorcentagem(int result) {
+		result = (int) (((result * 100)/thres) - 100) * -1 ;
+		return result;
+	}
 }

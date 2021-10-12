@@ -8,6 +8,7 @@ import org.bytedeco.opencv.opencv_core.RectVector;
 public class Imag {
 
 	private Integer idLabel;
+	private String descri;
 	private Mat label;
 	private Mat imagem;
 	private boolean proces;
@@ -23,9 +24,10 @@ public class Imag {
 		rostoPrinc = new Rect();
 	}
 
-	public Imag(Integer idModel, Mat label,Mat imagem, boolean proces, RectVector rostos, Rect rect) {
+	public Imag(Integer idModel, String descri ,Mat label,Mat imagem, boolean proces, RectVector rostos, Rect rect) {
 		super();
 		this.idLabel = idModel;
+		this.descri = descri;
 		this.label = label;
 		this.imagem = imagem;
 		this.proces = proces;
@@ -39,6 +41,14 @@ public class Imag {
 
 	public Mat getLabel() {
 		return label;
+	}
+
+	public String getDescri() {
+		return descri;
+	}
+
+	public void setDescri(String descri) {
+		this.descri = descri;
 	}
 
 	public void setLabel(Mat label) {

@@ -86,7 +86,7 @@ public class CMainFrame {
 			model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 			for (File file : files) {
 				
-				imagens.add(new Imag(1, null, opencv_imgcodecs.imread(file.getAbsolutePath()), false, new RectVector(),
+				imagens.add(new Imag(1,txtDescri.getText() , null, opencv_imgcodecs.imread(file.getAbsolutePath()), false, new RectVector(),
 						new Rect()));
 			}
 			reco.updateRaw(model, imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
@@ -105,7 +105,7 @@ public class CMainFrame {
 					capture = new VideoCapture(0);
 				}
 				LBPHFaceReco recog = new LBPHFaceReco(cas);
-				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog, Integer.parseInt(txtId.getText()));
+				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog, Integer.parseInt(txtId.getText()), txtDescri.getText());
 				new Thread(web).start();
 
 				cameraStatus = true;

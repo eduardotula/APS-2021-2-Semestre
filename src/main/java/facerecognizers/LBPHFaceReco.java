@@ -155,7 +155,6 @@ public class LBPHFaceReco extends FaceRecog {
 				imagensProc.add(temp);
 			}
 		}
-
 		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
 		IntBuffer labelsBuf = labels.createBuffer();
 		int counter = 0;
@@ -163,9 +162,9 @@ public class LBPHFaceReco extends FaceRecog {
 
 			labelsBuf.put(counter,imagem.getIdLabel());
 			vectorImagens.push_back(imagem.getImagem());
+			
 			counter++;
 		}
-
 		recognizer.update(vectorImagens, labels);
 		releaseResources(labels);
 		releaseResources(temp);
@@ -187,9 +186,9 @@ public class LBPHFaceReco extends FaceRecog {
 	}
 
 	@Override
-	public FaceRecognizer trainRawFiles(List<File> imagens) throws Exception {
+	public FaceRecognizer trainRawFiles(List<File> imagens, int label, String descri) throws Exception {
 		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
-		return trainRaw(recognizer, convertFilesToImag(imagens, 1));
+		return trainRaw(recognizer, convertFilesToImag(imagens,label,descri));
 
 	}
 
@@ -245,10 +244,10 @@ public class LBPHFaceReco extends FaceRecog {
 		}
 	}
 
-	private List<Imag> convertFilesToImag(List<File> files, Integer label) {
+	private List<Imag> convertFilesToImag(List<File> files, Integer label, String descri) {
 		List<Imag> imagens = new ArrayList<Imag>();
 		for (File file : files) {
-			imagens.add(new Imag(label, null, opencv_imgcodecs.imread(file.getAbsolutePath()), false, new RectVector(),
+			imagens.add(new Imag(label,descri, null, opencv_imgcodecs.imread(file.getAbsolutePath()), false, new RectVector(),
 					new Rect()));
 		}
 		return imagens;

@@ -125,7 +125,7 @@ public abstract class FaceRecog {
 		return null;
 	}
 
-	public FaceRecognizer trainRawFiles(List<File> imagens) throws Exception {
+	public FaceRecognizer trainRawFiles(List<File> imagens, int label, String descri) throws Exception {
 		return null;
 	}
 

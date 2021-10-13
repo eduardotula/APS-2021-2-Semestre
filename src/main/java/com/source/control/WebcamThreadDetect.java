@@ -27,24 +27,24 @@ public class WebcamThreadDetect extends Task<Void> {
 	private ImageView view;
 	private VideoCapture cap;
 	private CascadeClassifier cas;
-	private FaceRecognizer recognizerModel;
+	private FaceRecognizer model;
 	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private FaceRecog recog;
 	private double thres = 85;
 
-	public WebcamThreadDetect(ImageView view, VideoCapture cap, CascadeClassifier cas, FaceRecognizer recognizerModel,
+	public WebcamThreadDetect(ImageView view, VideoCapture cap, CascadeClassifier cas, FaceRecognizer model,
 			FaceRecog recog) {
 		this.view = view;
 		this.cap = cap;
 		this.cas = cas;
-		this.recognizerModel = recognizerModel;
+		this.model = model;
 		this.recog = recog;
 	}
 
 	@Override
 	protected Void call() {
 		try {
-			recognizerModel.setThreshold(thres);
+			model.setThreshold(thres);
 			Imag imgFace = new Imag(1, null,null, new Mat(), false, new RectVector(), new Rect());
 
 			while (!cap.isNull() && cap.isOpened() && view.isVisible()) {
@@ -58,12 +58,12 @@ public class WebcamThreadDetect extends Task<Void> {
 					
 					if (imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150) {
 						
-						int[] labelPrece = recog.identificarRosto(recognizerModel, imgFace);
+						int[] labelPrece = recog.identificarRosto(model, imgFace);
 						imgFace.setImagem(drawBlueRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
 						
 						if (labelPrece[0] > -1) {
 
-							opencv_imgproc.putText(imgFace.getImagem(), "label" + labelPrece[0],
+							opencv_imgproc.putText(imgFace.getImagem(), model.getLabelInfo(labelPrece[0]),
 									new Point(imgFace.getRostoPrinc().x(), imgFace.getRostoPrinc().y()),
 									opencv_imgproc.FONT_HERSHEY_PLAIN, 3, new Scalar(0, 255, 0, 2.0), 3,
 									opencv_imgproc.LINE_AA, false);
@@ -89,7 +89,7 @@ public class WebcamThreadDetect extends Task<Void> {
 			}
 
 			imgFace.close();
-			recognizerModel.close();
+			model.close();
 			cap.close();
 			view.setImage(null);
 			return null;

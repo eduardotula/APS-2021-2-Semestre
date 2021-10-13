@@ -92,11 +92,14 @@ public class WebcamThreadTrain extends Task<Void>{
 				try {
 					FaceRecognizer model = LBPHFaceRecognizer.create();
 					File modelPath = new FileChooser().showOpenDialog(null);
+					
 					if(modelPath != null) {
 						model.read(modelPath.getAbsolutePath());
+						model.setLabelInfo(label, nome);
 						recog.updateRaw(model, faceFrames).write(modelPath.getAbsolutePath());
 					}else {
-						recog.trainRaw(faceFrames).write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+						model.setLabelInfo(label, nome);
+						recog.trainRaw(model,faceFrames).write(new FileChooser().showSaveDialog(null).getAbsolutePath());
 					}
 					
 					

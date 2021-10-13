@@ -109,13 +109,13 @@ public class CMainFrame {
 				new Thread(web).start();
 
 				cameraStatus = true;
-				btnTreina.setText("Parar Camera");
+				btnTreina.setText("Parar Treinamento");
 
 			} else {
 				capture.close();
 				capture = null;
 				cameraStatus = false;
-				btnTreina.setText("Abrir Camera");
+				btnTreina.setText("Treinamento");
 				img.setImage(null);
 			}
 			img.fitWidthProperty().bind(stack1.widthProperty());

@@ -44,6 +44,8 @@ public abstract class FaceRecog {
 		return imagemRec;
 	}
 	
+
+	
 	/**
 	 * Processa a imagem de acordo com os padroes LBPH
 	 * detectRostoPrincipal, recortarRosto, resize para 1000 pixels e converte para BGR2GRAY

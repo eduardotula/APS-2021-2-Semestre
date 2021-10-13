@@ -172,6 +172,7 @@ public class LBPHFaceReco extends FaceRecog {
 
 	}
 
+
 	/**
 	 * Cria um novo modelo de LBPH e realiza o treino para um conjunto de imagens
 	 * src

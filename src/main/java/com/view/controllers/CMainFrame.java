@@ -78,19 +78,20 @@ public class CMainFrame {
 	@FXML
 	public void actBtnTreinaImg() {
 		try {
-			LBPHFaceReco reco = new LBPHFaceReco(cas);
+			FisherRecog reco = new FisherRecog(cas);
 			FileChooser cho = new FileChooser();
 			List<File> files = cho.showOpenMultipleDialog(Aplicacao.stage);
 			List<Imag> imagens = new ArrayList<Imag>();
-			FaceRecognizer model = LBPHFaceRecognizer.create();
-			model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+			FaceRecognizer model = FisherFaceRecognizer.create();
+			///model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 			for (File file : files) {
-				
-				imagens.add(new Imag(1,txtDescri.getText() , null, opencv_imgcodecs.imread(file.getAbsolutePath()), false, new RectVector(),
-						new Rect()));
+
+				imagens.add(new Imag(1, txtDescri.getText(), null, opencv_imgcodecs.imread(file.getAbsolutePath()),
+						false, new RectVector(), new Rect()));
 			}
-			reco.updateRaw(model, imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
-			//reco.trainRawFiles(files).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
+			//reco.updateRaw(model, imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
+			reco.trainRaw(imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
+			// FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,8 +105,10 @@ public class CMainFrame {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
-				LBPHFaceReco recog = new LBPHFaceReco(cas);
-				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog, Integer.parseInt(txtId.getText()), txtDescri.getText());
+				// LBPHFaceReco recog = new LBPHFaceReco(cas);
+				FisherRecog recog = new FisherRecog(cas);
+				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog,
+						Integer.parseInt(txtId.getText()), txtDescri.getText());
 				new Thread(web).start();
 
 				cameraStatus = true;
@@ -159,7 +162,20 @@ public class CMainFrame {
 
 	@FXML
 	public void actBtnTeste() {
-
+		try {
+			FisherRecog recog = new FisherRecog(cas);
+			FisherFaceRecognizer model = FisherFaceRecognizer.create();
+			model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+			Imag img = new Imag(Integer.parseInt(txtId.getText()), txtDescri.getText(), null,
+					opencv_imgcodecs.imread(new FileChooser().showOpenDialog(null).getAbsolutePath()), false,
+					new RectVector(), new Rect());
+			
+			recog.identificarRosto(model, img);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private synchronized Thread loadClassifiers(String folderPath, CascadeClassifier cascas) {

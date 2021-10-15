@@ -12,6 +12,7 @@ import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
+import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
@@ -90,7 +91,7 @@ public class WebcamThreadTrain extends Task<Void>{
 			Platform.runLater(()->{
 
 				try {
-					FaceRecognizer model = LBPHFaceRecognizer.create();
+					FaceRecognizer model = FisherFaceRecognizer.create();
 					File modelPath = new FileChooser().showOpenDialog(null);
 					
 					if(modelPath != null) {

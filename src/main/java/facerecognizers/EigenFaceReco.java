@@ -10,6 +10,7 @@ import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
+import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
@@ -82,8 +83,12 @@ public class EigenFaceReco extends FaceRecog {
 
 			labelsBuf.put((int) counter, imagem.getIdLabel());
 			vectorImagens.put(counter, imagem.getImagem());
+			Mat cv2 = new Mat();
+			opencv_imgproc.cvtColor(imagem.getImagem(),cv2,opencv_imgproc.COLOR_GRAY2RGB);
+			Utilitarios.showImage(cv2);
 			counter++;
 		}
+		
 		System.out.println(vectorImagens.size() + " " +labels.rows());
 		recognizer.train(vectorImagens, labels);
 		releaseResources(labels);

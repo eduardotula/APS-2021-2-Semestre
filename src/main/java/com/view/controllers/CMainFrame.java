@@ -3,12 +3,17 @@ package com.view.controllers;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_face.EigenFaceRecognizer;
@@ -82,17 +87,42 @@ public class CMainFrame {
 			EigenFaceReco reco = new EigenFaceReco(cas);
 			FileChooser cho = new FileChooser();
 			List<File> files = cho.showOpenMultipleDialog(Aplicacao.stage);
-			List<Imag> imagens = new ArrayList<Imag>();
-			//FaceRecognizer model = FisherFaceRecognizer.create();
-			///model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+			// FaceRecognizer model = FisherFaceRecognizer.create();
+			/// model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+			MatVector images = new MatVector(files.size());
+
+			Mat labels = new Mat(files.size(), 1, opencv_core.CV_32SC1);
+			IntBuffer labelsBuf = labels.createBuffer();
+
+			int counter = 0;
+
 			for (File file : files) {
 
-				imagens.add(new Imag(1, txtDescri.getText(), null, opencv_imgcodecs.imread(file.getAbsolutePath()),
-						false, new RectVector(), new Rect()));
+				Imag img = new Imag(1, txtDescri.getText(), null,
+						opencv_imgcodecs.imread(file.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE), false,
+						new RectVector(), new Rect());
+
+				images.put(counter, img.getImagem());
+				labelsBuf.put(counter, img.getIdLabel());
+
+				counter++;
 			}
-			//reco.updateRaw(model, imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
-			reco.trainRaw(imagens).predict(processImage(imagem.getImagem(), imagem.getRostoPrinc()), label, confidence);
-			// FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
+
+			// FaceRecognizer faceRecognizer = FisherFaceRecognizer.create();
+			FaceRecognizer faceRecognizer = EigenFaceRecognizer.create();
+			// FaceRecognizer faceRecognizer = LBPHFaceRecognizer.create();
+
+			System.out.println(images.size());
+			System.out.println(labels.arrayHeight());
+			faceRecognizer.train(images, labels);
+			faceRecognizer.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+			IntPointer label = new IntPointer(1);
+			DoublePointer confidence = new DoublePointer(1);
+			faceRecognizer.predict(opencv_imgcodecs.imread("C:/imgs/2-aaa.png", opencv_imgcodecs.IMREAD_GRAYSCALE), label,
+					confidence);
+			int predictedLabel = label.get(0);
+			System.out.println(confidence.get());
+			System.out.println("Predicted label: " + predictedLabel);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -108,7 +138,7 @@ public class CMainFrame {
 				}
 				// LBPHFaceReco recog = new LBPHFaceReco(cas);
 				EigenFaceReco recog = new EigenFaceReco(cas);
-				
+
 				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog,
 						Integer.parseInt(txtId.getText()), txtDescri.getText());
 				new Thread(web).start();
@@ -171,7 +201,7 @@ public class CMainFrame {
 			Imag img = new Imag(Integer.parseInt(txtId.getText()), txtDescri.getText(), null,
 					opencv_imgcodecs.imread(new FileChooser().showOpenDialog(null).getAbsolutePath()), false,
 					new RectVector(), new Rect());
-			model.setThreshold(80.0);
+			// model.setThreshold(80.0);
 			img.setRostos(Utilitarios.detectFaces(cas, img.getImagem()));
 			img.setRostoPrinc(Utilitarios.detectFacePrincipal(img.getRostos()));
 			recog.identificarRosto(model, img);

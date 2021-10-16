@@ -11,6 +11,7 @@ import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_face.EigenFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
@@ -91,7 +92,7 @@ public class WebcamThreadTrain extends Task<Void>{
 			Platform.runLater(()->{
 
 				try {
-					FaceRecognizer model = FisherFaceRecognizer.create();
+					FaceRecognizer model = EigenFaceRecognizer.create();
 					File modelPath = new FileChooser().showOpenDialog(null);
 					
 					if(modelPath != null) {

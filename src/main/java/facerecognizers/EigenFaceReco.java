@@ -5,29 +5,32 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
+import org.bytedeco.opencv.opencv_face.EigenFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
+import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
 import com.source.control.Utilitarios;
 import com.source.model.Imag;
 
-public class LBPHFaceReco extends FaceRecog {
+public class EigenFaceReco extends FaceRecog {
+
 
 	private CascadeClassifier cas;
 
-	public LBPHFaceReco(CascadeClassifier cas) {
+	public EigenFaceReco(CascadeClassifier cas) {
 		this.cas = cas;
 	}
-
 	/**
 	 * Treina um modelo LBPH face dado um vetore de imagens Mat sem procesasmento
 	 * Este metodo irá utilizar somente o rosto com a maior resolução
@@ -40,17 +43,17 @@ public class LBPHFaceReco extends FaceRecog {
 	@Override
 	public FaceRecognizer trainRaw(FaceRecognizer recognizer, List<Imag> imagens) throws Exception {
 		System.out.println(imagens.size() + "  lengh1");
+		
 		if (imagens.size() <= 0) {
 			throw new Exception("Vetores de imagem não pode estar vazio");
 		}
-		MatVector vectorImagens = new MatVector();
+		
 		List<Imag> imagensProc = new ArrayList<Imag>();
 		Imag temp = new Imag();
 		System.out.println("Metodo trainRaw");
 		System.out.println("Input image rows " + imagens.get(0).getImagem().rows());
 		System.out.println("input channels " + imagens.get(0).getImagem().channels());
-		for (int i = 0; i < imagens.size(); i++) {
-			Imag imagem = imagens.get(i);
+		for (Imag imagem : imagens) {
 
 			if (imagem.getRostos().size() <= 0) {
 				// Detecta os rostos de uma imagem
@@ -71,17 +74,17 @@ public class LBPHFaceReco extends FaceRecog {
 				imagensProc.add(temp);
 			}
 		}
-
+		MatVector vectorImagens = new MatVector(imagensProc.size());
 		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
 		IntBuffer labelsBuf = labels.createBuffer();
-		int counter = 0;
+		long counter = 0;
 		for (Imag imagem : imagensProc) {
 
-			labelsBuf.put(counter,imagem.getIdLabel());
-			vectorImagens.push_back(imagem.getImagem());
+			labelsBuf.put((int) counter, imagem.getIdLabel());
+			vectorImagens.put(counter, imagem.getImagem());
 			counter++;
 		}
-
+		System.out.println(vectorImagens.size() + " " +labels.rows());
 		recognizer.train(vectorImagens, labels);
 		releaseResources(labels);
 		releaseResources(temp);
@@ -127,7 +130,7 @@ public class LBPHFaceReco extends FaceRecog {
 	 */
 	@Override
 	public FaceRecognizer updateRaw(FaceRecognizer recognizer, List<Imag> imagens) throws Exception {
-		MatVector vectorImagens = new MatVector();
+		
 		List<Imag> imagensProc = new ArrayList<Imag>();
 		Imag temp = new Imag();
 		System.out.println("Metodo updateRaw");
@@ -156,13 +159,15 @@ public class LBPHFaceReco extends FaceRecog {
 			}
 		}
 		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
+		MatVector vectorImagens = new MatVector(imagensProc.size());
 		IntBuffer labelsBuf = labels.createBuffer();
+		
 		int counter = 0;
 		for (Imag imagem : imagensProc) {
 
-			labelsBuf.put(counter,imagem.getIdLabel());
+			labelsBuf.put(counter, imagem.getIdLabel());
 			vectorImagens.put(counter,imagem.getImagem());
-			
+
 			counter++;
 		}
 		recognizer.update(vectorImagens, labels);
@@ -171,7 +176,6 @@ public class LBPHFaceReco extends FaceRecog {
 		return recognizer;
 
 	}
-
 
 	/**
 	 * Cria um novo modelo de LBPH e realiza o treino para um conjunto de imagens
@@ -182,14 +186,14 @@ public class LBPHFaceReco extends FaceRecog {
 	 */
 	@Override
 	public FaceRecognizer trainRaw(List<Imag> imagens) throws Exception {
-		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
+		FaceRecognizer recognizer = EigenFaceRecognizer.create();
 		return trainRaw(recognizer, imagens);
 	}
 
 	@Override
 	public FaceRecognizer trainRawFiles(List<File> imagens, int label, String descri) throws Exception {
-		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
-		return trainRaw(recognizer, convertFilesToImag(imagens,label,descri));
+		FaceRecognizer recognizer = EigenFaceRecognizer.create();
+		return trainRaw(recognizer, convertFilesToImag(imagens, label, descri));
 
 	}
 
@@ -202,7 +206,7 @@ public class LBPHFaceReco extends FaceRecog {
 	 */
 	@Override
 	public FaceRecognizer trainRaw(String modelPath, List<Imag> imagens) throws Exception {
-		FaceRecognizer recognizer = LBPHFaceRecognizer.create();
+		FaceRecognizer recognizer = EigenFaceRecognizer.create();
 		recognizer.read(modelPath);
 		return trainRaw(recognizer, imagens);
 	}
@@ -218,13 +222,13 @@ public class LBPHFaceReco extends FaceRecog {
 	 */
 	@Override
 	public int[] identificarRosto(FaceRecognizer recog, Imag imagem) throws Exception {
-		int[] label = new int[] { 1 };
-		double[] predic = new double[] { 1.1 };
-
-		recog.predict(processImage(imagem.getImagem(), imagem.getRostoPrinc()), label, predic);
-		System.out.println(label[0] + "  prediction");
-		System.out.println(predic[0] + " confianca");
-		return new int[] {label[0],(int) predic[0]};
+        IntPointer label = new IntPointer(1);
+        DoublePointer confidence = new DoublePointer(1);
+        
+		recog.predict(processImage(imagem.getImagem(), imagem.getRostoPrinc()), label, confidence);
+		System.out.println(label.get() + "  prediction");
+		System.out.println(confidence.get() + " confianca");
+		return new int[] { label.get(), (int) confidence.get() };
 	}
 
 	private void releaseResources(Imag... args) {
@@ -248,8 +252,8 @@ public class LBPHFaceReco extends FaceRecog {
 	private List<Imag> convertFilesToImag(List<File> files, Integer label, String descri) {
 		List<Imag> imagens = new ArrayList<Imag>();
 		for (File file : files) {
-			imagens.add(new Imag(label,descri, null, opencv_imgcodecs.imread(file.getAbsolutePath()), false, new RectVector(),
-					new Rect()));
+			imagens.add(new Imag(label, descri, null, opencv_imgcodecs.imread(file.getAbsolutePath()), false,
+					new RectVector(), new Rect()));
 		}
 		return imagens;
 	}

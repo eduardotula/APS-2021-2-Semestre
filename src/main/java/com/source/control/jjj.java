@@ -15,8 +15,6 @@ import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 
-import javafx.stage.FileChooser;
-
 public class jjj {
 
 	public static void main(String[] args) {
@@ -52,19 +50,16 @@ public class jjj {
             counter++;
         }
 
-        FaceRecognizer faceRecognizer = FisherFaceRecognizer.create();
-         //FaceRecognizer faceRecognizer = EigenFaceRecognizer.create();
+       // FaceRecognizer faceRecognizer = FisherFaceRecognizer.create();
+         FaceRecognizer faceRecognizer = EigenFaceRecognizer.create();
         //FaceRecognizer faceRecognizer = LBPHFaceRecognizer.create();
 
         System.out.println(images.size());
         System.out.println(labels.arrayHeight());
         faceRecognizer.train(images, labels);
-        faceRecognizer.write("C:/imgs/pepega.yml");
+
         IntPointer label = new IntPointer(1);
         DoublePointer confidence = new DoublePointer(1);
-        faceRecognizer = null;
-        faceRecognizer = EigenFaceRecognizer.create();
-        faceRecognizer.read("C:/imgs/pepega.yml");
         faceRecognizer.predict(testImage, label, confidence);
         int predictedLabel = label.get(0);
         System.out.println(confidence.get());

@@ -83,9 +83,7 @@ public class EigenFaceReco extends FaceRecog {
 
 			labelsBuf.put((int) counter, imagem.getIdLabel());
 			vectorImagens.put(counter, imagem.getImagem());
-			Mat cv2 = new Mat();
-			opencv_imgproc.cvtColor(imagem.getImagem(),cv2,opencv_imgproc.COLOR_GRAY2RGB);
-			Utilitarios.showImage(cv2);
+
 			counter++;
 		}
 		

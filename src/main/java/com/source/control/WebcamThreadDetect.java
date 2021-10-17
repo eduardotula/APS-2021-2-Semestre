@@ -15,7 +15,6 @@ import org.bytedeco.opencv.opencv_face.Facemark;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
-import com.source.model.Imag;
 
 import facerecognizers.FaceRecog;
 import javafx.concurrent.Task;
@@ -28,7 +27,6 @@ public class WebcamThreadDetect extends Task<Void> {
 	private VideoCapture cap;
 	private CascadeClassifier cas;
 	private FaceRecognizer model;
-	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private FaceRecog recog;
 	private double thres = 85;
 
@@ -45,50 +43,52 @@ public class WebcamThreadDetect extends Task<Void> {
 	protected Void call() {
 		try {
 			model.setThreshold(thres);
-			Imag imgFace = new Imag(1, null,null, new Mat(), false, new RectVector(), new Rect());
-
+			Rect facePrinc = new Rect();
+			RectVector faces = new RectVector();
+			Mat frame = new Mat();
+			
 			while (!cap.isNull() && cap.isOpened() && view.isVisible()) {
-				System.out.println(cap.read(imgFace.getImagem()));
+				System.out.println(cap.read(frame));
 
-				imgFace.setRostos(Utilitarios.detectFaces(cas, imgFace.getImagem()));
+				faces = Utilitarios.detectFaces(cas, frame);
 				
-				if (imgFace.getRostos().size() > 0) {
+				if (faces.size() > 0) {
 					
-					imgFace.setRostoPrinc(Utilitarios.detectFacePrincipal(imgFace.getRostos()));
+					facePrinc = Utilitarios.detectFacePrincipal(faces);
 					
-					if (imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150) {
+					if (facePrinc.width() >= 150 && facePrinc.height() >= 150) {
 						
-						int[] labelPrece = recog.identificarRosto(model, imgFace);
-						imgFace.setImagem(drawBlueRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
+						int[] labelPrece = recog.identificarRosto(model, frame);
+						frame = drawBlueRec(frame, facePrinc);
 						
 						if (labelPrece[0] > -1) {
 
-							opencv_imgproc.putText(imgFace.getImagem(), model.getLabelInfo(labelPrece[0]),
-									new Point(imgFace.getRostoPrinc().x(), imgFace.getRostoPrinc().y()),
+							opencv_imgproc.putText(frame, model.getLabelInfo(labelPrece[0]),
+									new Point(facePrinc.x(), facePrinc.y()),
 									opencv_imgproc.FONT_HERSHEY_PLAIN, 3, new Scalar(0, 255, 0, 2.0), 3,
 									opencv_imgproc.LINE_AA, false);
 							
-							opencv_imgproc.putText(imgFace.getImagem(), "% " + calcularPorcentagem(labelPrece[1]),
-									new Point(imgFace.getRostoPrinc().x(),
-											imgFace.getRostoPrinc().y() + imgFace.getRostoPrinc().height() + 10),
+							opencv_imgproc.putText(frame, "% " + calcularPorcentagem(labelPrece[1]),
+									new Point(facePrinc.x(),
+											facePrinc.y() + facePrinc.height() + 10),
 									opencv_imgproc.FONT_HERSHEY_PLAIN, 3, new Scalar(0, 255, 0, 2.0), 3,
 									opencv_imgproc.LINE_AA, false);
 						}
 					} else {
-						imgFace.setImagem(drawRedRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
+						frame = drawRedRec(frame, facePrinc);
 
 					}
 
-					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
+					view.setImage(Utilitarios.convertMatToImage(frame));
 
 				} else {
-					System.out.println(imgFace.getImagem().rows());
-					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
+					System.out.println(frame.rows());
+					view.setImage(Utilitarios.convertMatToImage(frame));
 				}
 				Thread.sleep(1);
 			}
 
-			imgFace.close();
+			frame.close();
 			model.close();
 			cap.close();
 			view.setImage(null);
@@ -102,14 +102,14 @@ public class WebcamThreadDetect extends Task<Void> {
 	}
 
 	private Mat drawRedRec(Mat frame, Rect rect) throws Exception {
-		Mat img = new Mat(frame);
+		Mat img = frame.clone();
 		opencv_imgproc.rectangle(img, new Point(rect.x(), rect.y()),
 				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.RED, 1, opencv_imgproc.LINE_AA, 0);
 		return img;
 	}
 
 	private Mat drawBlueRec(Mat frame, Rect rect) throws Exception {
-		Mat img = new Mat(frame);
+		Mat img = frame.clone();
 		opencv_imgproc.rectangle(img, new Point(rect.x(), rect.y()),
 				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.BLUE, 1, opencv_imgproc.LINE_AA,
 				0);

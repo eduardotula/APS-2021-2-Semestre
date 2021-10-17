@@ -29,7 +29,6 @@ import com.source.control.WebcamThreadDetect;
 import com.source.control.WebcamThreadTrain;
 import com.source.model.Imag;
 
-import facerecognizers.EigenFaceReco;
 import facerecognizers.FisherRecog;
 import facerecognizers.LBPHFaceReco;
 import javafx.concurrent.Task;
@@ -87,6 +86,7 @@ public class CMainFrame {
 			FisherRecog reco = new FisherRecog(cas);
 			FileChooser cho = new FileChooser();
 			List<File> files = cho.showOpenMultipleDialog(Aplicacao.stage);
+<<<<<<< master
 			// FaceRecognizer model = FisherFaceRecognizer.create();
 			/// model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 			MatVector images = new MatVector(files.size()+1);
@@ -97,6 +97,11 @@ public class CMainFrame {
 			int counter = 1;
 			images.put(0,new Mat(150,150,opencv_imgproc.COLOR_BGR2GRAY));
 			labelsBuf.put(0,0);
+=======
+			List<Imag> imagens = new ArrayList<Imag>();
+			FaceRecognizer model = FisherFaceRecognizer.create();
+			///model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
+>>>>>>> df93408 Commit
 			for (File file : files) {
 
 				Imag img = new Imag(1, txtDescri.getText(), null,
@@ -108,6 +113,7 @@ public class CMainFrame {
 
 				counter++;
 			}
+<<<<<<< master
 
 			
 			//FaceRecognizer faceRecognizer = FisherFaceRecognizer.create();
@@ -128,6 +134,11 @@ public class CMainFrame {
 			int predictedLabel = label.get(0);
 			System.out.println(confidence.get());
 			System.out.println("Predicted label: " + predictedLabel);*/
+=======
+			//reco.updateRaw(model, imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
+			reco.trainRaw(imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
+			// FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
+>>>>>>> df93408 Commit
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -143,7 +154,10 @@ public class CMainFrame {
 				}
 				// LBPHFaceReco recog = new LBPHFaceReco(cas);
 				FisherRecog recog = new FisherRecog(cas);
+<<<<<<< master
 
+=======
+>>>>>>> df93408 Commit
 				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog,
 						Integer.parseInt(txtId.getText()), txtDescri.getText());
 				new Thread(web).start();
@@ -168,14 +182,14 @@ public class CMainFrame {
 
 	@FXML
 	public void actBtnDetec() {
-		FaceRecognizer rec = EigenFaceRecognizer.create();
+		FaceRecognizer rec = LBPHFaceRecognizer.create();
 		rec.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 		try {
 			if (!cameraStatus) {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
-				EigenFaceReco recog = new EigenFaceReco(cas);
+				LBPHFaceReco recog = new LBPHFaceReco(cas);
 				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas, rec, recog);
 
 				new Thread(web).start();
@@ -206,11 +220,16 @@ public class CMainFrame {
 			Imag img = new Imag(Integer.parseInt(txtId.getText()), txtDescri.getText(), null,
 					opencv_imgcodecs.imread(new FileChooser().showOpenDialog(null).getAbsolutePath()), false,
 					new RectVector(), new Rect());
+<<<<<<< master
 			// model.setThreshold(80.0);
 			img.setRostos(Utilitarios.detectFaces(cas, img.getImagem()));
 			img.setRostoPrinc(Utilitarios.detectFacePrincipal(img.getRostos()));
 			
 			recog.identificarRosto(model, recog.processImage(img));
+=======
+			
+			recog.identificarRosto(model, img);
+>>>>>>> df93408 Commit
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

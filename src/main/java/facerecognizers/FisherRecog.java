@@ -44,14 +44,19 @@ public class FisherRecog extends FaceRecog {
 		if (imagens.size() <= 0) {
 			throw new Exception("Vetores de imagem não pode estar vazio");
 		}
+<<<<<<< master
 		
 
 		
+=======
+		MatVector vectorImagens = new MatVector();
+>>>>>>> df93408 Commit
 		List<Imag> imagensProc = new ArrayList<Imag>();
 		System.out.println("Metodo trainRaw");
 		System.out.println("Input image rows " + imagens.get(0).getImagem().rows());
 		System.out.println("input channels " + imagens.get(0).getImagem().channels());
-		for (Imag imagem : imagens) {
+		for (int i = 0; i < imagens.size(); i++) {
+			Imag imagem = imagens.get(i);
 
 			if (imagem.getRostos().size() <= 0) {
 				// Detecta os rostos de uma imagem
@@ -83,20 +88,29 @@ public class FisherRecog extends FaceRecog {
 
 			}
 		}
+<<<<<<< master
 		MatVector vectorImagens = new MatVector(imagensProc.size()+1);
 		vectorImagens.put(0,new Mat(resizeRows,resizeColumn,opencv_imgproc.COLOR_BGR2GRAY));
 		Mat labels = new Mat(imagensProc.size()+1, 1, opencv_core.CV_32SC1);
+=======
+
+		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
+>>>>>>> df93408 Commit
 		IntBuffer labelsBuf = labels.createBuffer();
+<<<<<<< master
 		labelsBuf.put(0,0);
 		
 		long counter = 1;
+=======
+		int counter = 0;
+>>>>>>> df93408 Commit
 		for (Imag imagem : imagensProc) {
 
-			labelsBuf.put((int) counter, imagem.getIdLabel());
-			vectorImagens.put(counter, imagem.getImagem());
+			labelsBuf.put(counter, imagem.getIdLabel());
+			vectorImagens.push_back(imagem.getImagem());
 			counter++;
 		}
-		System.out.println(vectorImagens.size() + " " +labels.rows());
+		System.out.println(vectorImagens.size() + " " +labels.size());
 		recognizer.train(vectorImagens, labels);
 		releaseResources(labels);
 		releaseResources(temp);

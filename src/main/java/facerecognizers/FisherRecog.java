@@ -8,7 +8,6 @@ import java.util.List;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
@@ -45,9 +44,8 @@ public class FisherRecog extends FaceRecog {
 			throw new Exception("Vetores de imagem não pode estar vazio");
 		}
 		
-
-		
 		List<Imag> imagensProc = new ArrayList<Imag>();
+		Imag temp = new Imag();
 		System.out.println("Metodo trainRaw");
 		System.out.println("Input image rows " + imagens.get(0).getImagem().rows());
 		System.out.println("input channels " + imagens.get(0).getImagem().channels());
@@ -59,37 +57,23 @@ public class FisherRecog extends FaceRecog {
 				if (imagem.getRostos().size() > 0) {
 					// Detecta o rosto principal
 					imagem.setRostoPrinc(detectRostoPrincipal(imagem.getRostos()));
-					System.out.println(imagem.getRostoPrinc().isNull());
 					if (!imagem.getRostoPrinc().isNull()) {
 						temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
 						temp.setIdLabel(imagem.getIdLabel());
 						imagensProc.add(temp);
-						Mat a = new Mat();
-						opencv_imgproc.cvtColor(temp.getImagem(), a, opencv_imgproc.COLOR_GRAY2RGB);
-						Utilitarios.showImage(a);
-						a.close();
 					}
 				}
 
 			} else {
-				System.out.println(imagem.getRostoPrinc().isNull());
 				temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
 				temp.setIdLabel(imagem.getIdLabel());
 				imagensProc.add(temp);
-				Mat a = new Mat();
-				opencv_imgproc.cvtColor(temp.getImagem(), a, opencv_imgproc.COLOR_GRAY2RGB);
-				Utilitarios.showImage(a);
-				a.close();
-
 			}
 		}
-		MatVector vectorImagens = new MatVector(imagensProc.size()+1);
-		vectorImagens.put(0,new Mat(resizeRows,resizeColumn,opencv_imgproc.COLOR_BGR2GRAY));
-		Mat labels = new Mat(imagensProc.size()+1, 1, opencv_core.CV_32SC1);
+		MatVector vectorImagens = new MatVector(imagensProc.size());
+		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
 		IntBuffer labelsBuf = labels.createBuffer();
-		labelsBuf.put(0,0);
-		
-		long counter = 1;
+		long counter = 0;
 		for (Imag imagem : imagensProc) {
 
 			labelsBuf.put((int) counter, imagem.getIdLabel());

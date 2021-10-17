@@ -18,6 +18,7 @@ import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
+import com.source.model.Imag;
 import com.view.controllers.CMainFrame;
 
 import facerecognizers.FaceRecog;
@@ -27,24 +28,19 @@ import javafx.concurrent.Task;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
-public class WebcamThreadTrain extends Task<Void> {
+public class WebcamThreadTrain extends Task<Void>{
 
 	private ImageView view;
 	private VideoCapture cap;
 	private CascadeClassifier cas;
 	private FaceRecog recog;
+	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private Integer label;
-	private List<Mat> frames = new ArrayList<Mat>();
-	private List<RectVector> listaFaces = new ArrayList<RectVector>();
-	private List<Rect> listaFacePrinc = new ArrayList<Rect>();
-	private Mat frame = new Mat();
-	private Rect facePrinc = new Rect();
-	private RectVector faces = new RectVector();
 	private String nome;
 	private Integer reduceArray = 4;
 
-	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas, FaceRecog recog, Integer label,
-			String nome) {
+	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas,
+			FaceRecog recog,Integer label, String nome) {
 		this.view = view;
 		this.cap = cap;
 		this.cas = cas;
@@ -54,75 +50,70 @@ public class WebcamThreadTrain extends Task<Void> {
 	}
 
 	@Override
-	protected Void call() {
+	protected Void call()  {
 		try {
-
+			Imag imgFace = new Imag(label,nome, null, new Mat(), false, new RectVector(), new Rect());
 			System.out.println(label);
-			while (!cap.isNull() && cap.isOpened() && view.isVisible()) {
-				System.out.println(cap.read(frame));
-
-				faces = Utilitarios.detectFaces(cas, frame);
-				if (faces.size() > 0) {
-
-					facePrinc = Utilitarios.detectFacePrincipal(faces);
-					if (facePrinc.width() >= 150 && facePrinc.height() >= 150) {
-						System.out.println("Input image rows " + frame.rows());
-						System.out.println("input channels " + frame.channels());
-						frames.add(frame.clone());
-						listaFaces.add(Utilitarios.cloneRectVector(faces));
-						listaFacePrinc.add(facePrinc);
-						frame = (drawBlueRec(frame, facePrinc));
-					} else {
-						frame = drawRedRec(frame, facePrinc);
-
+			while(!cap.isNull() && cap.isOpened() && view.isVisible()) {
+				System.out.println(cap.read(imgFace.getImagem()));
+				
+				
+				imgFace.setRostos(Utilitarios.detectFaces(cas, imgFace.getImagem()));
+				if (imgFace.getRostos().size() > 0) {
+					
+					imgFace.setRostoPrinc(Utilitarios.detectFacePrincipal(imgFace.getRostos()));
+					if(imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150 ) {
+						System.out.println("Input image rows " + imgFace.getImagem().rows());
+						System.out.println("input channels " + imgFace.getImagem().channels());
+						faceFrames.add(imgFace);
+						imgFace.setImagem(drawBlueRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
+					}else {
+						imgFace.setImagem(drawRedRec(imgFace.getImagem(), imgFace.getRostoPrinc()));
+						
 					}
-					System.out.println(frame.rows() + " teeeee");
-					System.out.println(frame.channels() + " teeeee ch");
-
-					/*
-					 * opencv_imgproc.putText(imgFace.getImagem(), CMainFrame.txt, new
-					 * Point(Math.max(imgFace.getRostoPrinc().tl().x() - 10, 0),
-					 * Math.max(imgFace.getRostoPrinc().tl().y() - 10, 0)),
-					 * opencv_imgproc.FONT_HERSHEY_PLAIN, 5.0, new Scalar(255, 0, 255, 2.0),3,
-					 * opencv_imgproc.LINE_4,false);
-					 */
-					view.setImage(Utilitarios.convertMatToImage(frame));
-
-				} else {
-					System.out.println(frame.rows());
-					view.setImage(Utilitarios.convertMatToImage(frame));
+					System.out.println(imgFace.getImagem().rows() + " teeeee");
+					System.out.println(imgFace.getImagem().channels() + " teeeee ch");
+					
+	                /*opencv_imgproc.putText(imgFace.getImagem(), CMainFrame.txt, new Point(Math.max(imgFace.getRostoPrinc().tl().x() - 10, 0),
+	                		Math.max(imgFace.getRostoPrinc().tl().y() - 10, 0)),
+	                		opencv_imgproc.FONT_HERSHEY_PLAIN, 5.0, new Scalar(255, 0, 255, 2.0),3,
+	                		opencv_imgproc.LINE_4,false);*/
+					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
+					
+					
+				}else {
+					System.out.println(imgFace.getImagem().rows());
+					view.setImage(Utilitarios.convertMatToImage(imgFace.getImagem()));
 				}
 				Thread.sleep(1);
 			}
-			reduceListSize(frames);
-
-			Platform.runLater(() -> {
+			reduceListSize(faceFrames);
+			
+			Platform.runLater(()->{
 
 				try {
-					FaceRecognizer model = FisherFaceRecognizer.create();
+					FaceRecognizer model = EigenFaceRecognizer.create();
 					File modelPath = new FileChooser().showOpenDialog(null);
-
-					if (modelPath != null) {
+					
+					if(modelPath != null) {
 						model.read(modelPath.getAbsolutePath());
 						model.setLabelInfo(label, nome);
-						recog.updateRaw(model, frames).write(modelPath.getAbsolutePath());
-					} else {
+						recog.updateRaw(model, faceFrames).write(modelPath.getAbsolutePath());
+					}else {
 						model.setLabelInfo(label, nome);
-						for (int i = 0; i < frames.size(); i++) {
-							System.out.println(listaFacePrinc.get(i).width());
-							System.out.println(listaFacePrinc.get(i).x());
-						}
-						recog.trainRaw(model, frames, listaFacePrinc, listaFaces)
-								.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+						recog.trainRaw(model,faceFrames).write(new FileChooser().showSaveDialog(null).getAbsolutePath());
 					}
-
-					frame.close();
+					
+					
+					imgFace.close();
+					imgFace.close();
 					cap.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-
+				
 			});
+			
 
 			view.setImage(null);
 			return null;
@@ -133,34 +124,32 @@ public class WebcamThreadTrain extends Task<Void> {
 		}
 		return null;
 	}
-
-	private Mat drawRedRec(Mat frame, Rect rect) throws Exception {
-		Mat img = frame.clone();
+	
+	
+	private Mat drawRedRec(Mat frame, Rect rect) throws Exception{
+		Mat img = new Mat(frame);
 		opencv_imgproc.rectangle(img, new Point(rect.x(), rect.y()),
 				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.RED, 1, opencv_imgproc.LINE_AA, 0);
 		return img;
 	}
-
-	private Mat drawBlueRec(Mat frame, Rect rect) throws Exception {
-		Mat img = frame.clone();
+	private Mat drawBlueRec(Mat frame, Rect rect) throws Exception{
+		Mat img = new Mat(frame);
 		opencv_imgproc.rectangle(img, new Point(rect.x(), rect.y()),
-				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.BLUE, 1, opencv_imgproc.LINE_AA,
-				0);
+				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.BLUE, 1, opencv_imgproc.LINE_AA, 0);
 		return img;
 	}
-
-	private void reduceListSize(List<Mat> faceFrames) {
+	
+	private void reduceListSize(List<Imag> faceFrames){
 		int counter = 0;
-		for (int i = 0; i < faceFrames.size(); i++) {
-			if (reduceArray == counter) {
+		for(int i = 0;i<faceFrames.size();i++) {
+			if(reduceArray == counter) {
 				faceFrames.remove(i);
 				counter = 0;
-			} else {
-
+			}else {
 				counter++;
-
 			}
 		}
-
+		
+		
 	}
 }

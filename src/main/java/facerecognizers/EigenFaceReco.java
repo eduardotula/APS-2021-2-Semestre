@@ -82,6 +82,10 @@ public class EigenFaceReco extends FaceRecog {
 
 			labelsBuf.put((int) counter, imagem.getIdLabel());
 			vectorImagens.put(counter, imagem.getImagem());
+<<<<<<< master
+=======
+
+>>>>>>> d2cf988 Revert "Remover Imag"
 			counter++;
 		}
 		System.out.println(vectorImagens.size() + " " +labels.rows());

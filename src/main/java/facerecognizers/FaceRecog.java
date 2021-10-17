@@ -11,13 +11,14 @@ import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 
+import com.source.control.Utilitarios;
 import com.source.model.Imag;
 
 
 public abstract class FaceRecog {
 	
-	private int resizeRows = 150;
-	private int resizeColumn = 150;
+	public static int resizeRows = 150;
+	public static int resizeColumn = 150;
 	/**
 	 * Detecta o rosto com maior resolução
 	 * @param facesDetectadas vetor contendo faces identificadas
@@ -40,7 +41,7 @@ public abstract class FaceRecog {
 	public Mat recortarRosto(Rect posicaoRosto, Mat imagem) {
 		
 		Rect imgCrop = new Rect(posicaoRosto.x(), posicaoRosto.y(), posicaoRosto.width(), posicaoRosto.height());
-		Mat imagemRec = new Mat(imagem, imgCrop);
+		Mat imagemRec = new Mat(imagem.clone(), imgCrop);
 		return imagemRec;
 	}
 	
@@ -58,7 +59,7 @@ public abstract class FaceRecog {
 		System.out.println("Input image rows " + imagem.rows());
 		System.out.println("input channels " + imagem.channels());
 		System.out.println("input type " + imagem.type());
-		Mat imgProc = new Mat(imagem);
+		Mat imgProc = imagem.clone();
 		
 		
 
@@ -80,7 +81,6 @@ public abstract class FaceRecog {
 		}else {
 			imgProc.close(); facePrincipal.close(); throw new Exception("Imagem não contem faces");
 		}
-
 		System.out.println("facesDetectadas " + facePrincipal.width());
 		System.out.println("output image rows " + imgProc.rows());
 		System.out.println("output channels " + imgProc.channels());
@@ -92,43 +92,6 @@ public abstract class FaceRecog {
 		imagem.setProces(true);
 		return imagem;
 	}
-
-	public int[] identificarRosto(FaceRecognizer recog, Imag imagem) throws Exception {
-		return new int[0];
-	}
-
-
-	public FaceRecognizer trainRaw(String modelPath, List<Imag> imagens) throws Exception {
-		return null;
-	}
-
-	public FaceRecognizer trainRaw(MatVector src, List<Imag> imagens) throws Exception {
-		return null;
-	}
-
-	public FaceRecognizer trainRaw(List<Imag> imagens) throws Exception {
-		return null;
-	}
-
-	public FaceRecognizer trainRaw(FaceRecognizer recognizer, List<Imag> imagens) throws Exception {
-		return null;
-	}
-
-	public FaceRecognizer train(FaceRecognizer recognizer, List<Imag> imagens) throws Exception {
-		return null;
-	}
-
-	public FaceRecognizer updateRaw(FaceRecognizer recognizer, List<Imag> imagens) throws Exception {
-		return null;
-		
-	}
-
-	public FaceRecognizer update(FaceRecognizer recog, List<Imag> imagens) throws Exception {
-		return null;
-	}
-
-	public FaceRecognizer trainRawFiles(List<File> imagens, int label, String descri) throws Exception {
-		return null;
-	}
+}
 
 }

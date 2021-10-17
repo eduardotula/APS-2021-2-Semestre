@@ -68,7 +68,7 @@ public abstract class FaceRecog {
 			//Recorta o rosto
 			
 			
-			if(imgProc.rows() > resizeRows && imgProc.cols() > resizeColumn) {
+			if(imgProc.rows() >= resizeRows && imgProc.cols() >= resizeColumn) {
 				//Ajusta o tamanho 
 				imgProc = recortarRosto(facePrincipal, imgProc);
 				opencv_imgproc.resize(imgProc, imgProc, new Size(150, 150),

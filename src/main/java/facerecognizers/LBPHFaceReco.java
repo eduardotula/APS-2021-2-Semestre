@@ -161,7 +161,7 @@ public class LBPHFaceReco extends FaceRecog {
 		for (Imag imagem : imagensProc) {
 
 			labelsBuf.put(counter,imagem.getIdLabel());
-			vectorImagens.push_back(imagem.getImagem());
+			vectorImagens.put(counter,imagem.getImagem());
 			
 			counter++;
 		}

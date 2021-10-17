@@ -168,14 +168,14 @@ public class CMainFrame {
 
 	@FXML
 	public void actBtnDetec() {
-		FaceRecognizer rec = EigenFaceRecognizer.create();
+		FaceRecognizer rec = FisherFaceRecognizer.create();
 		rec.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 		try {
 			if (!cameraStatus) {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
-				EigenFaceReco recog = new EigenFaceReco(cas);
+				FisherRecog recog = new FisherRecog(cas);
 				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas, rec, recog);
 
 				new Thread(web).start();
@@ -210,7 +210,7 @@ public class CMainFrame {
 			img.setRostos(Utilitarios.detectFaces(cas, img.getImagem()));
 			img.setRostoPrinc(Utilitarios.detectFacePrincipal(img.getRostos()));
 			
-			recog.identificarRosto(model, recog.processImage(img));
+			recog.identificarRosto(model, img);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

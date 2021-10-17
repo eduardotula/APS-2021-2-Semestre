@@ -155,7 +155,7 @@ public class Utilitarios {
 			if (f.width() > rostoPrimario.width() && f.height() > rostoPrimario.height()) {
 				rostoPrimario = new Rect(f);
 			}
-			f.close();
+			
 		}
 		System.out.println("RostoPrimaro " + rostoPrimario.width());
 		return rostoPrimario;

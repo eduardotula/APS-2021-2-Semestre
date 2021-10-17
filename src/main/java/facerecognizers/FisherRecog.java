@@ -23,12 +23,12 @@ import com.source.model.Imag;
 
 public class FisherRecog extends FaceRecog {
 
-
 	private CascadeClassifier cas;
 
 	public FisherRecog(CascadeClassifier cas) {
 		this.cas = cas;
 	}
+
 	/**
 	 * Treina um modelo LBPH face dado um vetore de imagens Mat sem procesasmento
 	 * Este metodo irá utilizar somente o rosto com a maior resolução
@@ -44,9 +44,9 @@ public class FisherRecog extends FaceRecog {
 		if (imagens.size() <= 0) {
 			throw new Exception("Vetores de imagem não pode estar vazio");
 		}
-		
 
-		
+		int labelCount = 0;
+
 		List<Imag> imagensProc = new ArrayList<Imag>();
 		System.out.println("Metodo trainRaw");
 		System.out.println("Input image rows " + imagens.get(0).getImagem().rows());
@@ -61,45 +61,41 @@ public class FisherRecog extends FaceRecog {
 					imagem.setRostoPrinc(detectRostoPrincipal(imagem.getRostos()));
 					System.out.println(imagem.getRostoPrinc().isNull());
 					if (!imagem.getRostoPrinc().isNull()) {
-						temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
-						temp.setIdLabel(imagem.getIdLabel());
-						imagensProc.add(temp);
-						Mat a = new Mat();
-						opencv_imgproc.cvtColor(temp.getImagem(), a, opencv_imgproc.COLOR_GRAY2RGB);
-						Utilitarios.showImage(a);
-						a.close();
+						imagem.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
+						imagensProc.add(imagem);
+
 					}
 				}
 
 			} else {
 				System.out.println(imagem.getRostoPrinc().isNull());
-				temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
-				temp.setIdLabel(imagem.getIdLabel());
-				imagensProc.add(temp);
-				Mat a = new Mat();
-				opencv_imgproc.cvtColor(temp.getImagem(), a, opencv_imgproc.COLOR_GRAY2RGB);
-				Utilitarios.showImage(a);
-				a.close();
+				imagem.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
+				imagensProc.add(imagem);
 
 			}
 		}
-		MatVector vectorImagens = new MatVector(imagensProc.size()+1);
-		vectorImagens.put(0,new Mat(resizeRows,resizeColumn,opencv_imgproc.COLOR_BGR2GRAY));
-		Mat labels = new Mat(imagensProc.size()+1, 1, opencv_core.CV_32SC1);
+		MatVector vectorImagens = new MatVector(imagensProc.size());
+		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
 		IntBuffer labelsBuf = labels.createBuffer();
-		labelsBuf.put(0,0);
-		
-		long counter = 1;
+
+		long counter = 0;
 		for (Imag imagem : imagensProc) {
 
 			labelsBuf.put((int) counter, imagem.getIdLabel());
 			vectorImagens.put(counter, imagem.getImagem());
+
 			counter++;
 		}
-		System.out.println(vectorImagens.size() + " " +labels.rows());
+
+		if (imagensProc.get(0).getIdLabel().equals(imagensProc.get(imagensProc.size() - 1).getIdLabel())) {
+			labelsBuf.put((int) counter - 1, imagensProc.get(0).getIdLabel()+1);
+		}
+
+
+		System.out.println(vectorImagens.size() + " " + labels.rows());
 		recognizer.train(vectorImagens, labels);
 		releaseResources(labels);
-		releaseResources(temp);
+		releaseResources(vectorImagens);
 		return recognizer;
 	}
 

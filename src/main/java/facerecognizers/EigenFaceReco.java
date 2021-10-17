@@ -44,13 +44,13 @@ public class EigenFaceReco extends FaceRecog {
 	@Override
 	public FaceRecognizer trainRaw(FaceRecognizer recognizer, List<Imag> imagens) throws Exception {
 		System.out.println(imagens.size() + "  lengh1");
-		
 		if (imagens.size() <= 0) {
 			throw new Exception("Vetores de imagem não pode estar vazio");
 		}
 		
+
+		
 		List<Imag> imagensProc = new ArrayList<Imag>();
-		Imag temp = new Imag();
 		System.out.println("Metodo trainRaw");
 		System.out.println("Input image rows " + imagens.get(0).getImagem().rows());
 		System.out.println("input channels " + imagens.get(0).getImagem().channels());
@@ -62,23 +62,29 @@ public class EigenFaceReco extends FaceRecog {
 				if (imagem.getRostos().size() > 0) {
 					// Detecta o rosto principal
 					imagem.setRostoPrinc(detectRostoPrincipal(imagem.getRostos()));
+					System.out.println(imagem.getRostoPrinc().isNull());
 					if (!imagem.getRostoPrinc().isNull()) {
-						temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
-						temp.setIdLabel(imagem.getIdLabel());
-						imagensProc.add(temp);
+						imagem.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
+						imagensProc.add(imagem);
+
 					}
 				}
 
 			} else {
-				temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
-				temp.setIdLabel(imagem.getIdLabel());
-				imagensProc.add(temp);
+				System.out.println(imagem.getRostoPrinc().isNull());
+				imagem.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
+				imagensProc.add(imagem);
+
+
 			}
 		}
 		MatVector vectorImagens = new MatVector(imagensProc.size());
+		
 		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
 		IntBuffer labelsBuf = labels.createBuffer();
-		long counter = 0;
+		
+		
+		int counter = 0;
 		for (Imag imagem : imagensProc) {
 
 			labelsBuf.put((int) counter, imagem.getIdLabel());
@@ -86,11 +92,11 @@ public class EigenFaceReco extends FaceRecog {
 
 			counter++;
 		}
-		
+
 		System.out.println(vectorImagens.size() + " " +labels.rows());
 		recognizer.train(vectorImagens, labels);
 		releaseResources(labels);
-		releaseResources(temp);
+		releaseResources(vectorImagens);
 		return recognizer;
 	}
 

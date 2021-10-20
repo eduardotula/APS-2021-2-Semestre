@@ -1,6 +1,7 @@
 package facerecognizers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bytedeco.opencv.global.opencv_imgproc;
@@ -18,6 +19,7 @@ public abstract class FaceRecog {
 	
 	public static int resizeRows = 150;
 	public static int resizeColumn = 150;
+	private List<Imag> imagensTrain = new ArrayList<Imag>();
 	/**
 	 * Detecta o rosto com maior resolução
 	 * @param facesDetectadas vetor contendo faces identificadas
@@ -36,7 +38,9 @@ public abstract class FaceRecog {
 		return rostoPrimario;
 	}
 	
-	/**Recorta o rosto detectado*/
+	/**Recorta o rosto detecta@Override
+	@Override
+	do*/
 	public Mat recortarRosto(Rect posicaoRosto, Mat imagem) {
 		
 		Rect imgCrop = new Rect(posicaoRosto.x(), posicaoRosto.y(), posicaoRosto.width(), posicaoRosto.height());
@@ -130,5 +134,10 @@ public abstract class FaceRecog {
 	public FaceRecognizer trainRawFiles(List<File> imagens, int label, String descri) throws Exception {
 		return null;
 	}
+
+	public FaceRecognizer trainRaw() throws Exception {
+		return null;
+	}
+
 
 }

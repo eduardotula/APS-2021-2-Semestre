@@ -22,6 +22,7 @@ import com.source.model.Imag;
 import com.view.controllers.CMainFrame;
 
 import facerecognizers.FaceRecog;
+import facerecognizers.FisherRecog;
 import facerecognizers.LBPHFaceReco;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -33,14 +34,14 @@ public class WebcamThreadTrain extends Task<Void>{
 	private ImageView view;
 	private VideoCapture cap;
 	private CascadeClassifier cas;
-	private FaceRecog recog;
+	private FisherRecog recog;
 	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private Integer label;
 	private String nome;
 	private Integer reduceArray = 4;
 
 	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas,
-			FaceRecog recog,Integer label, String nome) {
+			FisherRecog recog,Integer label, String nome) {
 		this.view = view;
 		this.cap = cap;
 		this.cas = cas;
@@ -92,7 +93,7 @@ public class WebcamThreadTrain extends Task<Void>{
 			Platform.runLater(()->{
 
 				try {
-					FaceRecognizer model = FisherFaceRecognizer.create();
+					FaceRecognizer model = LBPHFaceRecognizer.create();
 					File modelPath = new FileChooser().showOpenDialog(null);
 					
 					if(modelPath != null) {
@@ -100,8 +101,10 @@ public class WebcamThreadTrain extends Task<Void>{
 						model.setLabelInfo(label, nome);
 						recog.updateRaw(model, faceFrames).write(modelPath.getAbsolutePath());
 					}else {
-						model.setLabelInfo(label, nome);
-						recog.trainRaw(model,faceFrames).write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+						recog.setLabel(label, nome);
+						//recog.trainRaw(model,faceFrames).write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+						//recog.trainRaw().write(new FileChooser().showSaveDialog(null).getAbsolutePath());
+						recog.addImagensTrain(faceFrames);
 					}
 					
 					

@@ -29,7 +29,7 @@ public class WebcamThreadDetect extends Task<Void> {
 	private CascadeClassifier cas;
 	private FaceRecognizer model;
 	private FaceRecog recog;
-	private double thres = 85;
+	private double thres = 300;
 
 	public WebcamThreadDetect(ImageView view, VideoCapture cap, CascadeClassifier cas, FaceRecognizer model,
 			FaceRecog recog) {
@@ -43,7 +43,7 @@ public class WebcamThreadDetect extends Task<Void> {
 	@Override
 	protected Void call() {
 		try {
-			//model.setThreshold(thres);
+			model.setThreshold(thres);
 			Imag imgFace = new Imag(1, null,null, new Mat(), false, new RectVector(), new Rect());
 
 			while (!cap.isNull() && cap.isOpened() && view.isVisible()) {

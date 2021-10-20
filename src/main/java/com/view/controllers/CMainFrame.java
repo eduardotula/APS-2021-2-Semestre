@@ -72,19 +72,19 @@ public class CMainFrame {
 
 	private Mat grabbedImage;
 	private CascadeClassifier cas;
-
 	private boolean cameraStatus = false;
 	private VideoCapture capture;
+	private FisherRecog recog;
 
 	public CMainFrame() {
 		cas = new CascadeClassifier();
 		loadClassifiers("com/classifiers/haar", cas).start();
+		recog = new FisherRecog(cas);
 	}
 
 	@FXML
 	public void actBtnTreinaImg() {
 		try {
-			FisherRecog reco = new FisherRecog(cas);
 			FileChooser cho = new FileChooser();
 			List<File> files = cho.showOpenMultipleDialog(Aplicacao.stage);
 			// FaceRecognizer model = FisherFaceRecognizer.create();
@@ -141,9 +141,9 @@ public class CMainFrame {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
-				// LBPHFaceReco recog = new LBPHFaceReco(cas);
-				FisherRecog recog = new FisherRecog(cas);
-
+				 //LBPHFaceReco recog = new LBPHFaceReco(cas);
+				//recog = new FisherRecog(cas);
+			
 				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog,
 						Integer.parseInt(txtId.getText()), txtDescri.getText());
 				new Thread(web).start();
@@ -175,7 +175,6 @@ public class CMainFrame {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
-				FisherRecog recog = new FisherRecog(cas);
 				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas, rec, recog);
 
 				new Thread(web).start();
@@ -200,24 +199,13 @@ public class CMainFrame {
 	@FXML
 	public void actBtnTeste() {
 		try {
-			FisherRecog recog = new FisherRecog(cas);
-			FisherFaceRecognizer model = FisherFaceRecognizer.create();
-			model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
-			Imag img = new Imag(Integer.parseInt(txtId.getText()), txtDescri.getText(), null,
-					opencv_imgcodecs.imread(new FileChooser().showOpenDialog(null).getAbsolutePath()), false,
-					new RectVector(), new Rect());
-			// model.setThreshold(80.0);
-			img.setRostos(Utilitarios.detectFaces(cas, img.getImagem()));
-			img.setRostoPrinc(Utilitarios.detectFacePrincipal(img.getRostos()));
-			
-			recog.identificarRosto(model, img);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			recog.trainRaw().write(new FileChooser().showSaveDialog(null).getAbsolutePath());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	
 	private synchronized Thread loadClassifiers(String folderPath, CascadeClassifier cascas) {
 
 		Task<Integer> loadClassifiers = new Task<Integer>() {

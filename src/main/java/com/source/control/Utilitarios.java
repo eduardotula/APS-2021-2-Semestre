@@ -118,7 +118,7 @@ public class Utilitarios {
 	 */
 	public static RectVector detectFaces(CascadeClassifier cas, Mat grabbedImage) {
 		System.out.println("Metodo detectFaces");
-		Mat imgGray = new Mat();
+		Mat imgGray = grabbedImage.clone();
 
 		System.out.println(grabbedImage.rows() + " rows");
 		System.out.println(grabbedImage.channels() + " channels");

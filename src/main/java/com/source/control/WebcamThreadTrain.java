@@ -21,7 +21,6 @@ import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import com.source.model.Imag;
 import com.view.controllers.CMainFrame;
 
-import facerecognizers.FaceRecog;
 import facerecognizers.FisherRecog;
 import facerecognizers.LBPHFaceReco;
 import javafx.application.Platform;
@@ -33,18 +32,16 @@ public class WebcamThreadTrain extends Task<Void>{
 
 	private ImageView view;
 	private VideoCapture cap;
-	private CascadeClassifier cas;
 	private FisherRecog recog;
 	private List<Imag> faceFrames = new ArrayList<Imag>();
 	private Integer label;
 	private String nome;
 	private Integer reduceArray = 4;
 
-	public WebcamThreadTrain(ImageView view, VideoCapture cap, CascadeClassifier cas,
+	public WebcamThreadTrain(ImageView view, VideoCapture cap,
 			FisherRecog recog,Integer label, String nome) {
 		this.view = view;
 		this.cap = cap;
-		this.cas = cas;
 		this.recog = recog;
 		this.label = label;
 		this.nome = nome;
@@ -59,11 +56,11 @@ public class WebcamThreadTrain extends Task<Void>{
 				System.out.println(cap.read(imgFace.getImagem()));
 				
 				
-				imgFace.setRostos(Utilitarios.detectFaces(cas, imgFace.getImagem()));
+				imgFace.setRostos(Utilitarios.detectFaces(recog.getCascadeClassifier(), imgFace.getImagem()));
 				if (imgFace.getRostos().size() > 0) {
 					
 					imgFace.setRostoPrinc(Utilitarios.detectFacePrincipal(imgFace.getRostos()));
-					if(imgFace.getRostoPrinc().width() >= 150 && imgFace.getRostoPrinc().height() >= 150 ) {
+					if(imgFace.getRostoPrinc().width() >= FisherRecog.resizeRows && imgFace.getRostoPrinc().height() >= FisherRecog.resizeColumn ) {
 						System.out.println("Input image rows " + imgFace.getImagem().rows());
 						System.out.println("input channels " + imgFace.getImagem().channels());
 						faceFrames.add(new Imag(label, nome, null, imgFace.getImagem(), false, imgFace.getRostos(), imgFace.getRostoPrinc()));
@@ -93,21 +90,7 @@ public class WebcamThreadTrain extends Task<Void>{
 			Platform.runLater(()->{
 
 				try {
-					FaceRecognizer model = LBPHFaceRecognizer.create();
-					File modelPath = new FileChooser().showOpenDialog(null);
-					
-					if(modelPath != null) {
-						model.read(modelPath.getAbsolutePath());
-						model.setLabelInfo(label, nome);
-						recog.updateRaw(model, faceFrames).write(modelPath.getAbsolutePath());
-					}else {
-						recog.setLabel(label, nome);
-						//recog.trainRaw(model,faceFrames).write(new FileChooser().showSaveDialog(null).getAbsolutePath());
-						//recog.trainRaw().write(new FileChooser().showSaveDialog(null).getAbsolutePath());
-						recog.addImagensTrain(faceFrames);
-					}
-					
-					
+					recog.addImagensTrain(faceFrames);
 					imgFace.close();
 					imgFace.close();
 					cap.close();

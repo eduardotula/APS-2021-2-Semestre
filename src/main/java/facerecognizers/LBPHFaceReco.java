@@ -57,7 +57,7 @@ public class LBPHFaceReco extends FaceRecog {
 				imagem.setRostos(Utilitarios.detectFaces(cas, imagem.getImagem()));
 				if (imagem.getRostos().size() > 0) {
 					// Detecta o rosto principal
-					imagem.setRostoPrinc(detectRostoPrincipal(imagem.getRostos()));
+					imagem.setRostoPrinc(Utilitarios.detectFacePrincipal(imagem.getRostos()));
 					if (!imagem.getRostoPrinc().isNull()) {
 						temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
 						temp.setIdLabel(imagem.getIdLabel());
@@ -145,7 +145,7 @@ public class LBPHFaceReco extends FaceRecog {
 				imagem.setRostos(Utilitarios.detectFaces(cas, imagem.getImagem()));
 				if (imagem.getRostos().size() > 0) {
 					// Detecta o rosto principal
-					imagem.setRostoPrinc(detectRostoPrincipal(imagem.getRostos()));
+					imagem.setRostoPrinc(Utilitarios.detectFacePrincipal(imagem.getRostos()));
 					if (!imagem.getRostoPrinc().isNull()) {
 						temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
 						temp.setIdLabel(imagem.getIdLabel());

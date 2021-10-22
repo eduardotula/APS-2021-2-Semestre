@@ -11,7 +11,7 @@ public class Imag {
 	private String descri;
 	private Mat label;
 	private Mat imagem;
-	private boolean proces;
+	private boolean proces = false;
 	private RectVector rostos;
 	private Rect rostoPrinc;
 	

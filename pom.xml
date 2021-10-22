@@ -32,20 +32,6 @@
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacv-platform</artifactId>
 			<version>1.5.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.bytedeco</groupId>
-					<artifactId>artoolkitplus</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.bytedeco</groupId>
-					<artifactId>artoolkitplus-platform</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.bytedeco</groupId>
-					<artifactId>ffmpeg</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
 		<dependency>
@@ -64,12 +50,6 @@
 					<artifactId>accessors-smart</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-graphics -->
-		<dependency>
-			<groupId>org.openjfx</groupId>
-			<artifactId>javafx-graphics</artifactId>
-			<version>13.0.1</version>
 		</dependency>
 
 	</dependencies>

@@ -1,4 +1,4 @@
-package facerecognizers;
+package com.source.control;
 
 import java.io.File;
 import java.nio.IntBuffer;
@@ -19,7 +19,6 @@ import org.bytedeco.opencv.opencv_face.FaceRecognizer;
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
-import com.source.control.Utilitarios;
 import com.source.model.Imag;
 
 import javafx.concurrent.Task;

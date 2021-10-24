@@ -21,7 +21,6 @@ import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import com.source.model.Imag;
 import com.view.controllers.CMainFrame;
 
-import facerecognizers.FisherRecog;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.image.ImageView;

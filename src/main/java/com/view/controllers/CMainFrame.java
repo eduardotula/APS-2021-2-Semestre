@@ -24,12 +24,12 @@ import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 
 import com.source.Aplicacao;
+import com.source.control.FisherRecog;
 import com.source.control.Utilitarios;
 import com.source.control.WebcamThreadDetect;
 import com.source.control.WebcamThreadTrain;
 import com.source.model.Imag;
 
-import facerecognizers.FisherRecog;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

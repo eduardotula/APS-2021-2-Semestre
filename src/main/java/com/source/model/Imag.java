@@ -70,9 +70,30 @@ public class Imag {
 	public void setImagem(Mat imagem) {
 		this.imagem = imagem;
 	}
+	/**
+	 * Resconstroi a imagem a partir de um array de bytes
+	 * @param rows quantidade de linhas contida na imagem original
+	 * @param cols quantidade de colunas contida na imagem original
+	 * @param type tipo da imagem original
+	 * @param arr array de bytes*/
+	public void setImagemByByteArr(int rows, int cols, int type,byte[] arr) {
+		imagem = new Mat(rows,cols,type);
+		this.imagem.data().put(arr);
+	}
 	
 	public void cloneImagem(Mat imagem) {
 		if(imagem instanceof Mat) this.imagem = imagem.clone(); else this.imagem = new Mat();
+	}
+	
+	/**
+	 * Obtem um array de bytes contendo todos os pixels contidos na imagem, para a imagem ser reconstruida é necessario
+	 * armazenar a quantidade rows, columns e tipo da imagem
+	 * @return byte[] contendo a imagem menos header */
+	public byte[] getImagemAsByteArr() {
+		//Aloca um array de bytes de acordo com o tamanho da imagem
+		byte[] bytes = new byte[((int) (imagem.total() * imagem.elemSize()) ) ];
+		this.imagem.data().get(bytes);
+		return bytes;
 	}
 	
 	public boolean isProces() {

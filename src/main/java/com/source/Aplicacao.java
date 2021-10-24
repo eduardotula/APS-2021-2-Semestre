@@ -29,7 +29,7 @@ public class Aplicacao extends Application {
 		try {
 			applicationContext.publishEvent(new StageReadyEvent(stage));
 			
-			Parent root = FXMLLoader.load(Thread.currentThread().getContextClassLoader().getResource("com/view/models/MainFrame.fxml"));
+			Parent root = FXMLLoader.load(Thread.currentThread().getContextClassLoader().getResource("com/view/models/login.fxml"));
 			Aplicacao.stage = stage;
 			stage.setTitle("pepega");
 			stage.setScene(new Scene(root,600,500));

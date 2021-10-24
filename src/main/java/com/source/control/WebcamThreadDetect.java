@@ -13,7 +13,6 @@ import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import com.source.model.Imag;
 import com.sun.glass.ui.View;
 
-import facerecognizers.FisherRecog;
 import javafx.concurrent.Task;
 import javafx.scene.image.ImageView;
 

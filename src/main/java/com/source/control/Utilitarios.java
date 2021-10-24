@@ -118,7 +118,7 @@ public class Utilitarios {
 	 */
 	public static RectVector detectFaces(CascadeClassifier cas, Mat grabbedImage) {
 		System.out.println("Metodo detectFaces");
-		Mat imgGray = new Mat();
+		Mat imgGray = grabbedImage.clone();
 
 		System.out.println(grabbedImage.rows() + " rows");
 		System.out.println(grabbedImage.channels() + " channels");
@@ -155,7 +155,7 @@ public class Utilitarios {
 			if (f.width() > rostoPrimario.width() && f.height() > rostoPrimario.height()) {
 				rostoPrimario = new Rect(f);
 			}
-			f.close();
+			
 		}
 		System.out.println("RostoPrimaro " + rostoPrimario.width());
 		return rostoPrimario;

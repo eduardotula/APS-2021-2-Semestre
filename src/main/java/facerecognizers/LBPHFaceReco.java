@@ -57,7 +57,7 @@ public class LBPHFaceReco extends FaceRecog {
 				imagem.setRostos(Utilitarios.detectFaces(cas, imagem.getImagem()));
 				if (imagem.getRostos().size() > 0) {
 					// Detecta o rosto principal
-					imagem.setRostoPrinc(detectRostoPrincipal(imagem.getRostos()));
+					imagem.setRostoPrinc(Utilitarios.detectFacePrincipal(imagem.getRostos()));
 					if (!imagem.getRostoPrinc().isNull()) {
 						temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
 						temp.setIdLabel(imagem.getIdLabel());
@@ -127,10 +127,14 @@ public class LBPHFaceReco extends FaceRecog {
 	 */
 	@Override
 	public FaceRecognizer updateRaw(FaceRecognizer recognizer, List<Imag> imagens) throws Exception {
+		System.out.println(imagens.size() + "  lengh1");
+		if (imagens.size() <= 0) {
+			throw new Exception("Vetores de imagem não pode estar vazio");
+		}
 		MatVector vectorImagens = new MatVector();
 		List<Imag> imagensProc = new ArrayList<Imag>();
 		Imag temp = new Imag();
-		System.out.println("Metodo updateRaw");
+		System.out.println("Metodo trainRaw");
 		System.out.println("Input image rows " + imagens.get(0).getImagem().rows());
 		System.out.println("input channels " + imagens.get(0).getImagem().channels());
 		for (int i = 0; i < imagens.size(); i++) {
@@ -141,7 +145,7 @@ public class LBPHFaceReco extends FaceRecog {
 				imagem.setRostos(Utilitarios.detectFaces(cas, imagem.getImagem()));
 				if (imagem.getRostos().size() > 0) {
 					// Detecta o rosto principal
-					imagem.setRostoPrinc(detectRostoPrincipal(imagem.getRostos()));
+					imagem.setRostoPrinc(Utilitarios.detectFacePrincipal(imagem.getRostos()));
 					if (!imagem.getRostoPrinc().isNull()) {
 						temp.setImagem(processImage(imagem.getImagem(), imagem.getRostoPrinc()));
 						temp.setIdLabel(imagem.getIdLabel());
@@ -155,21 +159,21 @@ public class LBPHFaceReco extends FaceRecog {
 				imagensProc.add(temp);
 			}
 		}
+
 		Mat labels = new Mat(imagensProc.size(), 1, opencv_core.CV_32SC1);
 		IntBuffer labelsBuf = labels.createBuffer();
 		int counter = 0;
 		for (Imag imagem : imagensProc) {
 
 			labelsBuf.put(counter,imagem.getIdLabel());
-			vectorImagens.put(counter,imagem.getImagem());
-			
+			vectorImagens.push_back(imagem.getImagem());
 			counter++;
 		}
+
 		recognizer.update(vectorImagens, labels);
 		releaseResources(labels);
 		releaseResources(temp);
 		return recognizer;
-
 	}
 
 

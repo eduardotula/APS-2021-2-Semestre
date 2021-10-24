@@ -24,7 +24,6 @@ import com.source.control.WebcamThreadDetect;
 import com.source.control.WebcamThreadTrain;
 import com.source.model.Imag;
 
-import facerecognizers.EigenFaceReco;
 import facerecognizers.FisherRecog;
 import facerecognizers.LBPHFaceReco;
 import javafx.concurrent.Task;
@@ -67,19 +66,18 @@ public class CMainFrame {
 
 	private Mat grabbedImage;
 	private CascadeClassifier cas;
-
 	private boolean cameraStatus = false;
 	private VideoCapture capture;
+	private FisherRecog recog;
 
 	public CMainFrame() {
-		cas = new CascadeClassifier();
-		loadClassifiers("com/classifiers/haar", cas).start();
+
+		recog = new FisherRecog();
 	}
 
 	@FXML
 	public void actBtnTreinaImg() {
 		try {
-			FisherRecog reco = new FisherRecog(cas);
 			FileChooser cho = new FileChooser();
 			List<File> files = cho.showOpenMultipleDialog(Aplicacao.stage);
 <<<<<<< master
@@ -116,11 +114,8 @@ public class CMainFrame {
 
 			System.out.println(images.size());
 			System.out.println(labels.arrayHeight());
-			FisherRecog recog = new FisherRecog(cas);
-			FaceRecognizer model = recog.trainRawFiles(files, 1, "yep");
 			
 			//faceRecognizer.train(images, labels);
-			model.write(new FileChooser().showSaveDialog(null).getAbsolutePath());
 			/*IntPointer label = new IntPointer(1);
 			DoublePointer confidence = new DoublePointer(1);
 			//faceRecognizer.predict(opencv_imgcodecs.imread("C:/imgs/aaa.jpg", opencv_imgcodecs.IMREAD_GRAYSCALE), label,
@@ -142,6 +137,7 @@ public class CMainFrame {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
+<<<<<<< HEAD
 				// LBPHFaceReco recog = new LBPHFaceReco(cas);
 <<<<<<< master
 				EigenFaceReco recog = new EigenFaceReco(cas);
@@ -151,6 +147,10 @@ public class CMainFrame {
 
 >>>>>>> d2cf988 Revert "Remover Imag"
 				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog,
+=======
+				
+				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, recog,
+>>>>>>> refs/heads/Ima
 						Integer.parseInt(txtId.getText()), txtDescri.getText());
 				new Thread(web).start();
 
@@ -174,15 +174,12 @@ public class CMainFrame {
 
 	@FXML
 	public void actBtnDetec() {
-		FaceRecognizer rec = EigenFaceRecognizer.create();
-		rec.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 		try {
 			if (!cameraStatus) {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
-				EigenFaceReco recog = new EigenFaceReco(cas);
-				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas, rec, recog);
+				WebcamThreadDetect web = new WebcamThreadDetect(img, capture, cas, recog);
 
 				new Thread(web).start();
 
@@ -206,6 +203,7 @@ public class CMainFrame {
 	@FXML
 	public void actBtnTeste() {
 		try {
+<<<<<<< HEAD
 			FisherRecog recog = new FisherRecog(cas);
 			FisherFaceRecognizer model = FisherFaceRecognizer.create();
 			model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
@@ -219,35 +217,15 @@ public class CMainFrame {
 			recog.identificarRosto(model, recog.processImage(img));
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
+=======
+			recog.startTrain();
+>>>>>>> refs/heads/Ima
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private synchronized Thread loadClassifiers(String folderPath, CascadeClassifier cascas) {
-
-		Task<Integer> loadClassifiers = new Task<Integer>() {
-
-			@Override
-			protected Integer call() throws Exception {
-				File file;
-				try {
-					file = new File(getClass().getClassLoader().getResource(folderPath).toURI());
-					File[] files = file.listFiles();
-					for (File fier : files) {
-						System.out.println(fier.getPath());
-						cascas.load(fier.getPath().toString());
-					}
-				} catch (Exception e) {
-
-					new Alert(AlertType.ERROR, "Falha ao carregar Classificadores").showAndWait();
-					e.printStackTrace();
-					System.exit(0);
-				}
-				return null;
-			}
-		};
-		return new Thread(loadClassifiers);
-	}
+	
+	
 
 }

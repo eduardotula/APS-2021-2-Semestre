@@ -3,12 +3,17 @@ package com.view.controllers;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.MatVector;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_face.EigenFaceRecognizer;
@@ -25,7 +30,6 @@ import com.source.control.WebcamThreadTrain;
 import com.source.model.Imag;
 
 import facerecognizers.FisherRecog;
-import facerecognizers.LBPHFaceReco;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -80,11 +84,6 @@ public class CMainFrame {
 		try {
 			FileChooser cho = new FileChooser();
 			List<File> files = cho.showOpenMultipleDialog(Aplicacao.stage);
-<<<<<<< master
-			List<Imag> imagens = new ArrayList<Imag>();
-			//FaceRecognizer model = FisherFaceRecognizer.create();
-			///model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
-=======
 			// FaceRecognizer model = FisherFaceRecognizer.create();
 			/// model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
 			MatVector images = new MatVector(files.size()+1);
@@ -95,17 +94,17 @@ public class CMainFrame {
 			int counter = 1;
 			images.put(0,new Mat(150,150,opencv_imgproc.COLOR_BGR2GRAY));
 			labelsBuf.put(0,0);
->>>>>>> d2cf988 Revert "Remover Imag"
 			for (File file : files) {
 
-				imagens.add(new Imag(1, txtDescri.getText(), null, opencv_imgcodecs.imread(file.getAbsolutePath()),
-						false, new RectVector(), new Rect()));
+				Imag img = new Imag(1, txtDescri.getText(), null,
+						opencv_imgcodecs.imread(file.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE), false,
+						new RectVector(), new Rect());
+
+				images.put(counter, img.getImagem());
+				labelsBuf.put(counter, img.getIdLabel());
+
+				counter++;
 			}
-<<<<<<< master
-			//reco.updateRaw(model, imagens).write(new FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
-			reco.trainRaw(imagens).predict(processImage(imagem.getImagem(), imagem.getRostoPrinc()), label, confidence);
-			// FileChooser().showSaveDialog(Aplicacao.stage).getAbsolutePath());
-=======
 
 			
 			//FaceRecognizer faceRecognizer = FisherFaceRecognizer.create();
@@ -123,7 +122,6 @@ public class CMainFrame {
 			int predictedLabel = label.get(0);
 			System.out.println(confidence.get());
 			System.out.println("Predicted label: " + predictedLabel);*/
->>>>>>> d2cf988 Revert "Remover Imag"
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -137,20 +135,8 @@ public class CMainFrame {
 				if (capture == null) {
 					capture = new VideoCapture(0);
 				}
-<<<<<<< HEAD
-				// LBPHFaceReco recog = new LBPHFaceReco(cas);
-<<<<<<< master
-				EigenFaceReco recog = new EigenFaceReco(cas);
-				
-=======
-				FisherRecog recog = new FisherRecog(cas);
-
->>>>>>> d2cf988 Revert "Remover Imag"
-				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, cas, recog,
-=======
 				
 				WebcamThreadTrain web = new WebcamThreadTrain(img, capture, recog,
->>>>>>> refs/heads/Ima
 						Integer.parseInt(txtId.getText()), txtDescri.getText());
 				new Thread(web).start();
 
@@ -203,23 +189,7 @@ public class CMainFrame {
 	@FXML
 	public void actBtnTeste() {
 		try {
-<<<<<<< HEAD
-			FisherRecog recog = new FisherRecog(cas);
-			FisherFaceRecognizer model = FisherFaceRecognizer.create();
-			model.read(new FileChooser().showOpenDialog(null).getAbsolutePath());
-			Imag img = new Imag(Integer.parseInt(txtId.getText()), txtDescri.getText(), null,
-					opencv_imgcodecs.imread(new FileChooser().showOpenDialog(null).getAbsolutePath()), false,
-					new RectVector(), new Rect());
-			model.setThreshold(80.0);
-			img.setRostos(Utilitarios.detectFaces(cas, img.getImagem()));
-			img.setRostoPrinc(Utilitarios.detectFacePrincipal(img.getRostos()));
-			
-			recog.identificarRosto(model, recog.processImage(img));
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-=======
 			recog.startTrain();
->>>>>>> refs/heads/Ima
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

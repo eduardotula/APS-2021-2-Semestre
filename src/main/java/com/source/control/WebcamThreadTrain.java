@@ -22,7 +22,6 @@ import com.source.model.Imag;
 import com.view.controllers.CMainFrame;
 
 import facerecognizers.FisherRecog;
-import facerecognizers.LBPHFaceReco;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.image.ImageView;

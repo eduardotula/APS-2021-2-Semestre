@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="gridPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="129.0" minHeight="0.0" percentHeight="7.0" prefHeight="0.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="267.0" minHeight="10.0" percentHeight="8.0" prefHeight="267.0" vgrow="ALWAYS" />
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+  </rowConstraints>
+   <children>
+      <MenuBar GridPane.columnSpan="2147483647" GridPane.valignment="TOP">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem fx:id="menuAdicionar" mnemonicParsing="false" onAction="#actMenuAdicionar" text="Adicionar" />
+              <MenuItem fx:id="menuItem" mnemonicParsing="false" onAction="#actMenuItem" text="Exibir" />
+                  <MenuItem fx:id="menuEditar" mnemonicParsing="false" onAction="#actMenuEditar" text="Editar" />
+                  <MenuItem fx:id="menuApagar" mnemonicParsing="false" onAction="#actMenuApagar" text="Apagar" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <TabPane tabClosingPolicy="UNAVAILABLE" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+        <tabs>
+          <Tab text="Propriedades">
+               <content>
+                  <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab text="Untitled Tab 1">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </Tab>
+                      <Tab text="Untitled Tab 2">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+               </content>
+               <content>
+                  <TableView fx:id="tablePro" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+          </Tab>
+          <Tab fx:id="tableAce" text="Acessos">
+               <content>
+                  <TableView />
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <FlowPane GridPane.rowIndex="1">
+         <children>
+            <Label text="Usuario Atual" />
+            <TextField fx:id="txtUsuario" editable="false" />
+            <Separator prefHeight="3.0" prefWidth="20.0" visible="false" />
+            <Label text="Nível de Acesso" />
+            <TextField fx:id="txtNivel" editable="false" />
+         </children>
+      </FlowPane>
+   </children>
+</GridPane>

@@ -1,11 +1,6 @@
 package com.view.controllers;
 
-import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.global.opencv_imgproc;
-import org.bytedeco.opencv.opencv_core.Mat;
-
-import com.source.control.Utilitarios;
-import com.source.model.Imag;
+import com.source.control.WebcamThreadDetect;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,7 +8,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.FileChooser;
 
 public class CLogin {
 
@@ -31,8 +25,10 @@ public class CLogin {
 	private Button btnIniciarDetec;
 	@FXML
 	private Button btnPararDetec;
+	private WebcamThreadDetect detec;
 	
 	public CLogin() {
+		detec = new WebcamThreadDetect(imgView, null);
 	}
 	
 	@FXML

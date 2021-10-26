@@ -1,12 +1,11 @@
 package com.source;
 
 
-import java.io.File;
-import java.net.URL;
-
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import com.source.control.FisherRecog;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +16,8 @@ import javafx.stage.Stage;
 public class Aplicacao extends Application {
 	public static ConfigurableApplicationContext applicationContext;
 	public static Stage stage;
+	public static FisherRecog fisherRecog = new FisherRecog();
+	
 	@Override
 	public void init() throws Exception {
 		super.init();
@@ -29,7 +30,7 @@ public class Aplicacao extends Application {
 		try {
 			applicationContext.publishEvent(new StageReadyEvent(stage));
 			
-			Parent root = FXMLLoader.load(Thread.currentThread().getContextClassLoader().getResource("com/view/models/login.fxml"));
+			Parent root = FXMLLoader.load(Thread.currentThread().getContextClassLoader().getResource("com/view/models/MainFrame.fxml"));
 			Aplicacao.stage = stage;
 			stage.setTitle("pepega");
 			stage.setScene(new Scene(root,600,500));

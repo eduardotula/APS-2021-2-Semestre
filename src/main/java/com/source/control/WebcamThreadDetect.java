@@ -24,10 +24,10 @@ public class WebcamThreadDetect extends Task<Void> {
 	private FisherRecog recog;
 	private double thres = 300;
 
-	public WebcamThreadDetect(ImageView view, VideoCapture cap, CascadeClassifier cas, FisherRecog recog) {
+	public WebcamThreadDetect(ImageView view, FisherRecog recog) {
 		this.view = view;
-		this.cap = cap;
 		this.cas = recog.getCascadeClassifier();
+		this.cap = new VideoCapture(0);
 		this.recog = recog;
 	}
 
@@ -77,6 +77,7 @@ public class WebcamThreadDetect extends Task<Void> {
 
 			imgFace.close();
 			cap.close();
+			frame.close();
 			view.setImage(null);
 			return null;
 		} catch (InterruptedException e) {

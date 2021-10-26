@@ -29,14 +29,14 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem fx:id="menuAdicionar" mnemonicParsing="false" onAction="#actMenuAdicionar" text="Adicionar" />
-              <MenuItem fx:id="menuItem" mnemonicParsing="false" onAction="#actMenuItem" text="Exibir" />
+              <MenuItem fx:id="menuExibir" mnemonicParsing="false" onAction="#actMenuExibir" text="Exibir" />
                   <MenuItem fx:id="menuEditar" mnemonicParsing="false" onAction="#actMenuEditar" text="Editar" />
                   <MenuItem fx:id="menuApagar" mnemonicParsing="false" onAction="#actMenuApagar" text="Apagar" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
-      <TabPane tabClosingPolicy="UNAVAILABLE" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
         <tabs>
           <Tab text="Propriedades">
                <content>

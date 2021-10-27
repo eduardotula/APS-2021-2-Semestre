@@ -1,5 +1,8 @@
 package com.view.controllers;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import com.source.model.AcessosModel;
 import com.source.model.PropriedadesModel;
 import com.source.model.TableHelpers;
@@ -8,13 +11,14 @@ import com.source.model.TableHelpers.TableProHelper;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
-public class CRegistro {
+public class CRegistro implements Initializable{
 
 	@FXML
 	public TabPane tabPane;
@@ -41,17 +45,20 @@ public class CRegistro {
 	private ObservableList<AcessosModel> modelAcessos;
 
 	public CRegistro() {
-		refreshTableAce();
-		refreshTablePro();
-		setTables();
-		tablePro.setItems(modelPropriedades);
-		tableAce.setItems(modelAcessos);
+
 	}
 
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		setTables();
+		refreshTableAce();
+		refreshTablePro();
+		
+	}
 	@FXML
 	public void actMenuAdicionar() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-			
+			//TODO tela de cadastro
 		} else {
 
 		}
@@ -61,7 +68,7 @@ public class CRegistro {
 	@FXML
 	public void actMenuExibir() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-
+			//TODO Exibir tela de cadastro não editavel
 		} else {
 
 		}
@@ -71,7 +78,7 @@ public class CRegistro {
 	@FXML
 	public void actMenuEditar() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-
+			//TODO Exibir tela de cadastro editavel
 		} else {
 
 		}
@@ -80,7 +87,7 @@ public class CRegistro {
 	@FXML
 	public void actMenuApagar() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-
+			//TODO apagar registro selecionado
 		} else {
 
 		}
@@ -102,5 +109,9 @@ public class CRegistro {
 		tablePro.getColumns().addAll(proH.getIdColumn(), proH.getRazaoColumn(), proH.getEstadoColumn(),
 				proH.getNivelColumn(), proH.getRamoColumn());
 	}
+
+
+
+
 
 }

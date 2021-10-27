@@ -1,6 +1,5 @@
 package com.source.model;
 
-import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.RectVector;
@@ -17,7 +16,7 @@ public class Imag {
 	
 	
 	public Imag() {
-		label = new Mat(0,1,opencv_core.CV_32SC1);
+		label = new Mat();
 		imagem = new Mat();
 		proces = false;
 		rostos = new RectVector();
@@ -28,7 +27,7 @@ public class Imag {
 		super();
 		this.idLabel = idModel;
 		this.descri = descri;
-		if(label instanceof Mat) this.label = label.clone();  else this.label = new Mat();
+		if(label instanceof Mat) this.label = label.clone(); else this.label = new Mat();
 		if(imagem instanceof Mat) this.imagem = imagem.clone(); else this.imagem = new Mat();
 		this.proces = proces;
 		if(rostos instanceof RectVector) this.rostos = cloneRectVector(rostos); else this.rostos = new RectVector();
@@ -39,10 +38,6 @@ public class Imag {
 		return idLabel;
 	}
 
-	public Mat getLabel() {
-		return label;
-	}
-
 	public String getDescri() {
 		return descri;
 	}
@@ -51,14 +46,15 @@ public class Imag {
 		this.descri = descri;
 	}
 
+	
+	public Mat getLabel() {
+		return label;
+	}
+
 	public void setLabel(Mat label) {
 		this.label = label;
 	}
 
-	public void cloneLabel(Mat label) {
-		if(label instanceof Mat) this.label = label.clone();  else this.label = new Mat();
-	}
-	
 	public void setIdLabel(Integer idModel) {
 		this.idLabel = idModel;
 	}

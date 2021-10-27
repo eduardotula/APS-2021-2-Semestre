@@ -43,7 +43,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.controllers.CLogin">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.controllers.CLogin">
    <bottom>
       <FlowPane BorderPane.alignment="CENTER">
          <children>
@@ -64,13 +64,18 @@
           <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <StackPane fx:id="stackPanel" prefHeight="198.0" prefWidth="600.0" GridPane.columnSpan="2147483647">
+            <StackPane fx:id="stackPanel" prefHeight="198.0" prefWidth="600.0">
                <children>
-                  <ImageView fx:id="imgView" fitHeight="338.0" fitWidth="597.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imgViewInput" fitHeight="338.0" fitWidth="299.0" pickOnBounds="true" preserveRatio="true" />
                </children>
             </StackPane>
-            <Button fx:id="btnIniciarDetec" mnemonicParsing="false" onAction="#actIniciarDetec" text="Iniciar Detecção" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="btnPararDetec" mnemonicParsing="false" onAction="#actPararDetec" text="Parar Detecção" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+            <Button fx:id="btnIniciarRe" mnemonicParsing="false" onAction="#actBtnIniciarRe" prefHeight="25.0" prefWidth="142.0" text="Iniciar Reconhecimento" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+            <StackPane fx:id="stackPanel1" prefHeight="198.0" prefWidth="600.0" GridPane.columnIndex="1">
+               <children>
+                  <ImageView fx:id="imgViewResul" fitHeight="338.0" fitWidth="299.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </StackPane>
+            <Button fx:id="btnCarregar" mnemonicParsing="false" onAction="#actBtnCarregar" text="Carregar Imagem" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </center>

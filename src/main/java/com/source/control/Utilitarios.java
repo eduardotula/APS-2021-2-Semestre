@@ -56,8 +56,14 @@ public class Utilitarios {
 
 	public static void showImage(Mat img) {
 		try {
+			if(img.type() == 0) {
+				Mat img2 = new Mat();
+				opencv_imgproc.cvtColor(img, img2, opencv_imgproc.COLOR_GRAY2BGR);
+				showImage(convertMatToImage(img2));
+			}else {
+				showImage(convertMatToImage(img));
+			}
 			
-			showImage(convertMatToImage(img));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

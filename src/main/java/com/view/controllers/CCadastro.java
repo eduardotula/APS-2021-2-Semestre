@@ -24,6 +24,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * Classe que é utilizada como controlador de listeners para interface GUI Cadastro.fxml*/
 public class CCadastro implements Initializable {
 
 	@FXML

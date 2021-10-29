@@ -28,6 +28,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+/**
+ * Classe que é utilizada como controlador de listeners para interface GUI Registro.fxml*/
+
 public class CRegistro implements Initializable {
 
 	@FXML

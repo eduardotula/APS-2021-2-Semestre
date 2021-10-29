@@ -12,6 +12,9 @@ import javax.persistence.Transient;
 
 import org.bytedeco.opencv.opencv_core.Mat;
 
+/**
+ * Modelo para objecto Acesso que é utilizado para representar dados na TableView CRegistro e este modelo esta mapeado com a tabela
+ * do banco de dados ACESSO*/
 @Entity(name = "ACESSO")
 public class Acesso implements Serializable {
 	private static final long serialVersionUID = 1L;

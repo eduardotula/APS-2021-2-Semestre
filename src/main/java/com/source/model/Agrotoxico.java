@@ -10,6 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+/**
+ * Modelo para objecto Acesso que é utilizado para representar uma lista de agrotoxicos e este modelo esta mapeado com a tabela
+ * do banco de dados AGROTOXICO*/
+
 @Entity(name = "AGROTOXICO")
 public class Agrotoxico implements Serializable{
 	private static final long serialVersionUID = 1L;

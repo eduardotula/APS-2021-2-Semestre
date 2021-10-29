@@ -7,6 +7,8 @@ import javafx.scene.control.Control;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+/**
+ * Classe auxilar na criação das tabelas CRegistro.tablePro e CRegistro.tableAce*/
 public class TableHelpers {
 	
 	

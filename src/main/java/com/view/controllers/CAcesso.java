@@ -6,6 +6,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 
+/**
+ * Classe que é utilizada como controlador de listeners para interface GUI Acesso.fxml*/
 public class CAcesso {
 
 	@FXML
@@ -19,7 +21,7 @@ public class CAcesso {
 	@FXML
 	private Button btnSalvar;
 	
-	
+	//TODO Terminar Classe controle
 	@FXML
 	private void actBtnCancelar() {
 		

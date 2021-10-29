@@ -1,7 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * 
+ * Esta classe contem diversos metodos estaticos necessarios para detecção de rostos e outros metodos auxiliares
+ * para processamento de imagens
+ * 
  */
 package com.source.control;
 
@@ -56,14 +57,14 @@ public class Utilitarios {
 
 	public static void showImage(Mat img) {
 		try {
-			if(img.type() == 0) {
+			if (img.type() == 0) {
 				Mat img2 = new Mat();
 				opencv_imgproc.cvtColor(img, img2, opencv_imgproc.COLOR_GRAY2BGR);
 				showImage(convertMatToImage(img2));
-			}else {
+			} else {
 				showImage(convertMatToImage(img));
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -83,8 +84,8 @@ public class Utilitarios {
 		for (Rect rect : facesDetect.get()) {
 			System.out.println(rect.x() + "   " + rect.y() + "  " + rect.width() + "  " + rect.height());
 			opencv_imgproc.rectangle(grabbedImage, new Point(rect.x(), rect.y()),
-					new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.GREEN, 1, opencv_imgproc.LINE_AA,
-					0);
+					new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.GREEN, 1,
+					opencv_imgproc.LINE_AA, 0);
 			rect.close();
 		}
 		facesDetect.close();
@@ -93,24 +94,30 @@ public class Utilitarios {
 	}
 
 	/**
-	 * Detecta rostos em uma imagem grabbedImage detecta qual o contorno com maio tamanho e retorna uma imagem
-	 * tipo JavaFx
-	 * @param cas Cascade Classifier com classificadores
+	 * Detecta rostos em uma imagem grabbedImage detecta qual o contorno com maio
+	 * tamanho e retorna uma imagem tipo JavaFx
+	 * 
+	 * @param cas          Cascade Classifier com classificadores
 	 * @param grabbedImage imagem para ser processada
 	 * @return Image retorna uma imagem com rosto contornado por um retangulo
-	 * @throws Exception caso a imagem não contenha rostos ou imagem não estiver no formato correto*/
-	public static Image detectFacePrincipalRect(CascadeClassifier cas, Mat grabbedImage) throws Exception{
+	 * @throws Exception caso a imagem não contenha rostos ou imagem não estiver no
+	 *                   formato correto
+	 */
+	public static Image detectFacePrincipalRect(CascadeClassifier cas, Mat grabbedImage) throws Exception {
 		RectVector facesDetect = detectFaces(cas, grabbedImage);
 		System.out.println(facesDetect.get().length);
 		Rect rect = detectFacePrincipal(facesDetect);
 		Mat img = grabbedImage.clone();
 		System.out.println(rect.x() + "   " + rect.y() + "  " + rect.width() + "  " + rect.height());
 		opencv_imgproc.rectangle(img, new Point(rect.x(), rect.y()),
-				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.GREEN, 1, opencv_imgproc.LINE_AA, 0);
+				new Point(rect.x() + rect.width(), rect.y() + rect.height()), Scalar.GREEN, 1, opencv_imgproc.LINE_AA,
+				0);
 		Image fxImg = convertMatToImage(img);
-		
-		img.close();rect.close();facesDetect.close();
-		
+
+		img.close();
+		rect.close();
+		facesDetect.close();
+
 		return fxImg;
 
 	}
@@ -135,17 +142,18 @@ public class Utilitarios {
 		cas.detectMultiScale(imgGray, facesDetect);
 		System.out.println(facesDetect.size() + "  size");
 		imgGray.close();
-		
+
 		return facesDetect;
 	}
 
 	public static RectVector cloneRectVector(RectVector vector) {
 		RectVector ve = new RectVector(vector.size());
-		for(int i = 0;i<vector.size();i++) {
-			ve.put(i,vector.get(i));
+		for (int i = 0; i < vector.size(); i++) {
+			ve.put(i, vector.get(i));
 		}
 		return ve;
 	}
+
 	/**
 	 * Detecta o rosto com maior resolução
 	 * 
@@ -161,23 +169,25 @@ public class Utilitarios {
 			if (f.width() > rostoPrimario.width() && f.height() > rostoPrimario.height()) {
 				rostoPrimario = new Rect(f);
 			}
-			
+
 		}
 		System.out.println("RostoPrimaro " + rostoPrimario.width());
 		return rostoPrimario;
 	}
-	
+
 	/**
 	 * Libera recursos
-	 * @param args objetos para serem fechados*/
+	 * 
+	 * @param args objetos para serem fechados
+	 */
 	public static void releaseResources(Pointer... args) {
-		for(Pointer arg : args) {
+		for (Pointer arg : args) {
 			try {
 				arg.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-}
+	}
 
 }

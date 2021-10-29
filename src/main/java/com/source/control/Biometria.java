@@ -14,6 +14,9 @@ import org.bytedeco.opencv.opencv_features2d.DescriptorMatcher;
 import org.bytedeco.opencv.opencv_features2d.FlannBasedMatcher;
 import org.bytedeco.opencv.opencv_xfeatures2d.SURF;
 
+
+/**
+ * Esta classe contem os metodos necessarios para processar e comparar impressões digitais*/
 public class Biometria {
 	
 	private float ratio =  0.7f;

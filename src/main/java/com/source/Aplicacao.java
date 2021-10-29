@@ -18,6 +18,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Em conjunto com a classe Aps20212SemestreApplication essas classes são responsaveis por carregar recursos e inicia a aplicação
+ * Esta classe contem Stage primaryStage e objetos para operações CRUD com banco de dados EntityManager e EntittyManagerFactory*/
+
 public class Aplicacao extends Application {
 	public static ConfigurableApplicationContext applicationContext;
 	public static HashMap<String, FXMLLoader> listFrameRoot = new HashMap<String, FXMLLoader>();

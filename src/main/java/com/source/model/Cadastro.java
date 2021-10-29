@@ -10,6 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+/**
+ * Modelo para objecto Acesso que é utilizado para representar dados na TableView CRegistro e este modelo esta mapeado com a tabela
+ * do banco de dados CADASTRO*/
+
 @Entity(name = "CADASTRO")
 public class Cadastro implements Serializable{
 	private static final long serialVersionUID = 1L

@@ -22,6 +22,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+/**
+ * Classe que é utilizada como controlador de listeners para interface GUI Login.fxml*/
 @Component
 public class CLogin {
 

@@ -1,5 +1,8 @@
 package com.source.model.table;
 
+import com.source.model.Acesso;
+import com.source.model.Cadastro;
+
 import javafx.scene.control.Control;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -9,23 +12,23 @@ public class TableHelpers {
 	
 	public static class TableAceHelper {
 		
-		public TableColumn<AcessosModel, Integer> getIdColumn(){
-			TableColumn<AcessosModel, Integer> col = new TableColumn<AcessosModel, Integer>("Id");
-			col.setCellValueFactory(new PropertyValueFactory<AcessosModel, Integer>("id"));
+		public TableColumn<Acesso, Integer> getIdColumn(){
+			TableColumn<Acesso, Integer> col = new TableColumn<Acesso, Integer>("Id");
+			col.setCellValueFactory(new PropertyValueFactory<Acesso, Integer>("id"));
 			col.setMinWidth(60);
 			return col;
 		}
-		public TableColumn<AcessosModel, String> getNomeColumn(){
-			TableColumn<AcessosModel, String> col = new TableColumn<AcessosModel, String>("Nome");
-			col.setCellValueFactory(new PropertyValueFactory<AcessosModel, String>("nome"));
+		public TableColumn<Acesso, String> getNomeColumn(){
+			TableColumn<Acesso, String> col = new TableColumn<Acesso, String>("Nome");
+			col.setCellValueFactory(new PropertyValueFactory<Acesso, String>("nome"));
 			col.setMinWidth(100);
 			col.setPrefWidth(Control.USE_COMPUTED_SIZE);
 			col.setPrefWidth(20000);
 			return col;
 		}
-		public TableColumn<AcessosModel, String> getNivelColumn(){
-			TableColumn<AcessosModel, String> col = new TableColumn<AcessosModel, String>("Nível de Acesso");
-			col.setCellValueFactory(new PropertyValueFactory<AcessosModel, String>("nivel"));
+		public TableColumn<Acesso, String> getNivelColumn(){
+			TableColumn<Acesso, String> col = new TableColumn<Acesso, String>("Nível de Acesso");
+			col.setCellValueFactory(new PropertyValueFactory<Acesso, String>("nivel"));
 			col.setMinWidth(70);
 			return col;
 		}
@@ -34,36 +37,36 @@ public class TableHelpers {
 
 	public static class TableProHelper {
 
-		public TableColumn<PropriedadesModel, Integer> getIdColumn(){
-			TableColumn<PropriedadesModel, Integer> col = new TableColumn<PropriedadesModel, Integer>("Id");
-			col.setCellValueFactory(new PropertyValueFactory<PropriedadesModel, Integer>("id"));
+		public TableColumn<Cadastro, Integer> getIdColumn(){
+			TableColumn<Cadastro, Integer> col = new TableColumn<Cadastro, Integer>("Id");
+			col.setCellValueFactory(new PropertyValueFactory<Cadastro, Integer>("id"));
 			col.setMinWidth(60);
 			return col;
 		}
-		public TableColumn<PropriedadesModel, String> getRazaoColumn(){
-			TableColumn<PropriedadesModel, String> col = new TableColumn<PropriedadesModel, String>("Nome/Razão Social");
-			col.setCellValueFactory(new PropertyValueFactory<PropriedadesModel, String>("razao"));
+		public TableColumn<Cadastro, String> getRazaoColumn(){
+			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Nome/Razão Social");
+			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("unidade"));
 			col.setMinWidth(100);
 			col.setPrefWidth(Control.USE_COMPUTED_SIZE);
 			col.setMaxWidth(20000);
 
 			return col;
 		}
-		public TableColumn<PropriedadesModel, String> getEstadoColumn(){
-			TableColumn<PropriedadesModel, String> col = new TableColumn<PropriedadesModel, String>("Estado");
-			col.setCellValueFactory(new PropertyValueFactory<PropriedadesModel, String>("estado"));
+		public TableColumn<Cadastro, String> getEstadoColumn(){
+			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Cidade");
+			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("cidade"));
 			col.setMinWidth(60);
 			return col;
 		}
-		public TableColumn<PropriedadesModel, String> getNivelColumn(){
-			TableColumn<PropriedadesModel, String> col = new TableColumn<PropriedadesModel, String>("Nível");
-			col.setCellValueFactory(new PropertyValueFactory<PropriedadesModel, String>("nivel"));
+		public TableColumn<Cadastro, String> getNivelColumn(){
+			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Estado");
+			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("estado"));
 			col.setMinWidth(50);
 			return col;
 		}
-		public TableColumn<PropriedadesModel, String> getRamoColumn(){
-			TableColumn<PropriedadesModel, String> col = new TableColumn<PropriedadesModel, String>("Ramo de Atividade");
-			col.setCellValueFactory(new PropertyValueFactory<PropriedadesModel, String>("ramo"));
+		public TableColumn<Cadastro, String> getRamoColumn(){
+			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Destino");
+			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("destino"));
 			col.setMinWidth(150);
 			return col;
 		}

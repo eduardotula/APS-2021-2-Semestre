@@ -74,7 +74,7 @@ public class CCadastro implements Initializable {
 	@FXML
 	private ListView<String> listAgro;
 
-	private static Cadastro c;
+	private Cadastro c;
 
 	private Border bordaVerm = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(3),
 			new BorderWidths(2), new Insets(-2)));
@@ -86,6 +86,7 @@ public class CCadastro implements Initializable {
 		setBordas();
 
 	}
+
 
 	@FXML
 	public void actBtnSalvar() {
@@ -118,7 +119,7 @@ public class CCadastro implements Initializable {
 			if(!flag) ControllerBd.em.persist(c);
 			ControllerBd.commit();
 			
-			
+			CRegistro.refreshTablePro();
 			ControllerBd.em.detach(c);
 			c = null;
 			resetTxt();
@@ -145,7 +146,7 @@ public class CCadastro implements Initializable {
 	public void actBtnAdicionar() {
 
 	}
-	private void resetTxt() {
+	public void resetTxt() {
 		txtUnidade.setText("");
 		txtProdAnual.setText("");
 		txtNEmpregados.setText("");
@@ -164,11 +165,29 @@ public class CCadastro implements Initializable {
 		txtTaxasFed.setText("");
 	}
 
-	public static void setCadastro(Cadastro cadastro) {
-		CCadastro.c = cadastro;
+	public void setCadastro(Cadastro cadastro, Integer nivel) {
+		this.c = cadastro;
 	}
 
-	public static Cadastro getCadastro() {
+	public void setEditavel(boolean bol) {
+		txtUnidade.setEditable(bol);
+		txtProdAnual.setEditable(bol);
+		txtNEmpregados.setEditable(bol);
+		comboDestino.setEditable(bol);
+		txtNivelAuto.setEditable(bol);
+		txtQMaquinas.setEditable(bol);
+		txtCidade.setEditable(bol);
+		txtCep.setEditable(bol);
+		txtEndereco.setEditable(bol);
+		txtPais.setEditable(bol);
+		txtEstado.setText("");
+		txtFiscaisRece.setEditable(bol);
+		txtMuniPagos.setEditable(bol);
+		txtEstaReco.setEditable(bol);
+		txtFedePagos.setEditable(bol);
+		txtTaxasFed.setEditable(bol);
+	}
+	public Cadastro getCadastro() {
 		return c;
 	}
 
@@ -216,8 +235,10 @@ public class CCadastro implements Initializable {
 		@Override
 		public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 			try {
-				Integer.parseInt(newValue);
-				f.setBorder(bordaDef);
+				if(newValue.matches("\\d+")) f.setBorder(bordaDef);
+				else {
+					f.setBorder(bordaVerm);
+				}
 			} catch (NumberFormatException e) {
 				f.setBorder(bordaVerm);
 			}

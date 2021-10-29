@@ -16,12 +16,38 @@ public class ControllerBd {
 	private static EntityTransaction trans = em.getTransaction();
 
 
-	public static void create(Object ob) throws Exception {
-		begin();
-		em.persist(ob);
-		trans.commit();
+	public static void create(Object ob){
+		try {
+			checkTrans();
+			begin();
+			em.persist(ob);
+			trans.commit();
+		} catch (PersistenceException e) {
+			checkTrans();
+			e.printStackTrace();
+		}
+	}
+	
+	public static void delete(Object obj) {
+		try {
+			checkTrans();
+			begin();
+			em.remove(obj);
+			trans.commit();
+		} catch (PersistenceException e) {
+			checkTrans();
+			e.printStackTrace();
+		}
 	}
 
+	public static boolean checkPersist(Object obj) {
+		try {
+			return em.contains(obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 	public static Object findById(Class<?> classe,Integer id) throws IllegalArgumentException{
 		return em.find(classe, id);

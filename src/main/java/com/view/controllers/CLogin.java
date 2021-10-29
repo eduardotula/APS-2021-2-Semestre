@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.source.Aplicacao;
 import com.source.control.Utilitarios;
-
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -66,6 +64,9 @@ public class CLogin {
 			imgViewInput.setFitWidth(stackPanel.getWidth());
 			imgViewInput.setFitHeight(stackPanel.getHeight());
 			imagem.close();
+			
+
+			
 			btnIniciarRe.setDisable(false);
 		} catch (Exception e) {
 			Alert a = new Alert(AlertType.ERROR, "Formato de arquivo inválido");

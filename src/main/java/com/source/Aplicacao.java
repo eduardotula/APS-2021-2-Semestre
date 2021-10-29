@@ -13,6 +13,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -22,6 +23,7 @@ public class Aplicacao extends Application {
 	public static HashMap<String, FXMLLoader> listFrameRoot = new HashMap<String, FXMLLoader>();
 	private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("aps");
 	public static EntityManager em = emf.createEntityManager();
+	public static Stage primaryStage;
 	
 	@Override
 	public void init() throws Exception {
@@ -36,7 +38,7 @@ public class Aplicacao extends Application {
 		
 		try {
 			applicationContext.publishEvent(new StageReadyEvent(stage));
-			
+			primaryStage = stage;
 			listFrameRoot.put("Login",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/Login.fxml")));
 			listFrameRoot.put("Cadastro",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/Cadastro.fxml")));
 			listFrameRoot.put("Registro",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/Registro.fxml")));
@@ -54,8 +56,10 @@ public class Aplicacao extends Application {
 	public void stop() throws Exception {
 		super.stop();
 		applicationContext.close();
+		Platform.exit();
 		System.exit(0);
 	}
+	
 
 
 

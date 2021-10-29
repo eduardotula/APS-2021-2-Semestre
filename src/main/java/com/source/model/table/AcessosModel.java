@@ -1,4 +1,4 @@
-package com.source.model;
+package com.source.model.table;
 
 public class AcessosModel {
 

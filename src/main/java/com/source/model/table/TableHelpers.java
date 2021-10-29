@@ -1,4 +1,4 @@
-package com.source.model;
+package com.source.model.table;
 
 import javafx.scene.control.Control;
 import javafx.scene.control.TableColumn;

@@ -7,6 +7,7 @@ import org.bytedeco.opencv.opencv_core.DMatch;
 import org.bytedeco.opencv.opencv_core.DMatchVectorVector;
 import org.bytedeco.opencv.opencv_core.KeyPointVector;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Rect;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_features2d.DescriptorMatcher;
@@ -56,7 +57,7 @@ public class Biometria {
 		
 		Double preci = (double) ((listOfGoodMatches.size()*100) / knnMatches.size());
 		System.out.println(preci);
-		// -- Draw matches
+		
 		Mat imgMatches = new Mat();
 		opencv_features2d.drawMatchesKnn(img, keyPointImg1, img2, keyPointImg2, listOfGoodMatches,imgMatches,Scalar.all(-1),Scalar.all(-1),null, opencv_features2d.DRAW_RICH_KEYPOINTS);
 
@@ -64,6 +65,12 @@ public class Biometria {
 		Utilitarios.showImage(imgMatches);
 		return preci;
 		
+	}
+	
+	public static Mat cropImg(Mat img) {
+		
+		Rect rec = new Rect((img.rows()/2)-100, (img.cols()/2)-100, 200, 200);
+		return new Mat(img,rec);
 	}
 	
 	public Mat thin(Mat img1) {

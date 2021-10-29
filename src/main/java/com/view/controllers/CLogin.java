@@ -1,15 +1,19 @@
 package com.view.controllers;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.springframework.stereotype.Component;
 
 import com.source.Aplicacao;
 import com.source.control.Utilitarios;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -18,11 +22,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+@Component
 public class CLogin {
 
 	@FXML
-	private BorderPane borderPane;
+	private BorderPane parentPane;
 	@FXML
 	private TextField txtSenhaMestra;
 	@FXML
@@ -39,43 +45,55 @@ public class CLogin {
 	private Button btnCarregar;
 	@FXML
 	private Button btnIniciarRe;
-	
+
 	private Mat imagem;
-	
+
 	public CLogin() {
-		btnIniciarRe.setDisable(true);
-		Aplicacao.stage.setResizable(false);
+
 	}
-	
+
 	@FXML
 	private void actBtnCarregar() {
 		try {
-			
+
 			FileChooser cho = new FileChooser();
-			File f = cho.showOpenDialog(Aplicacao.stage);
-			imagem = opencv_imgcodecs.imread(f.getAbsolutePath(),opencv_imgcodecs.IMREAD_GRAYSCALE);
+			File f = cho.showOpenDialog(null);
+			imagem = opencv_imgcodecs.imread(f.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE);
 			Mat show = imagem.clone();
 			opencv_imgproc.cvtColor(imagem, show, opencv_imgproc.COLOR_GRAY2BGR);
 			imgViewInput.setImage(Utilitarios.convertMatToImage(show));
+			imgViewResul.setImage(Utilitarios.convertMatToImage(show));
 			imgViewInput.setFitWidth(stackPanel.getWidth());
 			imgViewInput.setFitHeight(stackPanel.getHeight());
 			imagem.close();
-			show.close();
 			btnIniciarRe.setDisable(false);
 		} catch (Exception e) {
-			new Alert(AlertType.ERROR,"Formato de imagem inválido");
+			Alert a = new Alert(AlertType.ERROR, "Formato de arquivo inválido");
+			a.setHeaderText(null);
+			a.showAndWait();
 			e.printStackTrace();
 		}
 	}
-	
+
 	@FXML
 	private void actBtnIniciarRe() {
-		//TODO 
-		
+		// TODO
+
+
 	}
-	
+
 	@FXML
 	private void actBtnLogin() {
-		//TODO
+		// TODO
+		Alert aler = new Alert(AlertType.INFORMATION, "Login confirmado, nível de acesso: %s");
+		aler.setHeaderText(null);
+		aler.showAndWait();
+		Stage stage = (Stage) parentPane.getScene().getWindow();
+		try {
+			stage.setScene(new Scene(Aplicacao.listFrameRoot.get("Registro").load(), 600, 500));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+
 }

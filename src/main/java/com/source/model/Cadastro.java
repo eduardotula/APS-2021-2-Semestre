@@ -1,10 +1,12 @@
 package com.source.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,8 +59,8 @@ public class Cadastro implements Serializable{
 	@Column(name = "TAXAS_FED",columnDefinition = "DECIMAL(18,2)",nullable = false)
 	private Double taxasFed;
 	//Agrotoxico
-	@OneToMany(mappedBy = "cadastro")
-	private List<Agrotoxico> agrotoxicos;
+	@OneToMany(mappedBy = "cadastro",fetch = FetchType.EAGER)
+	private List<Agrotoxico> agrotoxicos = new ArrayList<Agrotoxico>();
 	
 	public Cadastro() {
 		
@@ -87,6 +89,16 @@ public class Cadastro implements Serializable{
 		this.impFedPago = impFedPago;
 		this.taxasFed = taxasFed;
 		this.agrotoxicos = agrotoxicos;
+	}
+
+
+	public Cadastro(int id, String unidade, String destino, String cidade, String estado) {
+		super();
+		this.id = id;
+		this.unidade = unidade;
+		this.destino = destino;
+		this.cidade = cidade;
+		this.estado = estado;
 	}
 
 	public int getId() {
@@ -311,6 +323,14 @@ public class Cadastro implements Serializable{
 		this.agrotoxicos = agrotoxicos;
 	}
 	
+	public void addAgrotoxico(Agrotoxico agro) {
+		agrotoxicos.add(agro);
+		agro.setCadastro(this);
+	}
+	public void removeAgrotoxico(Agrotoxico agro) {
+		agrotoxicos.remove(agro);
+		agro.setCadastro(null);
+	}
 		
 	
 	

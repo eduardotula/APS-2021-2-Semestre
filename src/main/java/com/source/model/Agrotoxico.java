@@ -30,4 +30,39 @@ public class Agrotoxico implements Serializable{
 	@JoinColumn(name = "CADASTRO_ID")
 	private Cadastro cadastro;
 	
+	public Agrotoxico() {
+		
+	}
+
+	public Agrotoxico(Integer id, String agrotoxico, Cadastro cadastro) {
+		super();
+		this.id = id;
+		this.agrotoxico = agrotoxico;
+		this.cadastro = cadastro;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getAgrotoxico() {
+		return agrotoxico;
+	}
+
+	public void setAgrotoxico(String agrotoxico) {
+		this.agrotoxico = agrotoxico;
+	}
+
+	public Cadastro getCadastro() {
+		return cadastro;
+	}
+
+	public void setCadastro(Cadastro cadastro) {
+		this.cadastro = cadastro;
+	}
+	
 }

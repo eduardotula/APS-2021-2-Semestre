@@ -3,12 +3,15 @@ package com.view.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.source.Alerts;
 import com.source.control.ControllerBd;
+import com.source.model.Agrotoxico;
 import com.source.model.Cadastro;
-
+import com.source.model.TableHelpers;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -76,7 +79,8 @@ public class CCadastro implements Initializable {
 	@FXML
 	private Button btnAdicionar;
 	@FXML
-	private ListView<String> listAgro;
+	private ListView<Agrotoxico> listAgro;
+	private ObservableList<Agrotoxico> agroModel = FXCollections.observableArrayList();
 
 	//TODO agrotoxicos
 	
@@ -91,15 +95,20 @@ public class CCadastro implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		bordaDef = txtUnidade.getBorder();
 		setBordas();
+		listAgro.setCellFactory(new TableHelpers.ListHelper());
+		listAgro.setItems(agroModel);
 
 	}
 	public void construtor(Cadastro cadastro, Integer nivel) {
 		this.c = cadastro;
 		this.nivel = nivel;
 		comboDestino.setItems(FXCollections.observableArrayList(new String[] {"Externo", "Interno"}));
-		
+		ControllerBd.begin();
 		if(c != null) {
+			c = (Cadastro) ControllerBd.findById(Cadastro.class, c.getId());
 			setValues();
+		}else {
+			c = new Cadastro();
 		}
 	}
 
@@ -109,14 +118,9 @@ public class CCadastro implements Initializable {
 		try {
 			boolean flag = true;
 			
-			if(c == null) {c = new Cadastro(); flag = false;
-			}else if(!ControllerBd.em.contains(c)) {
-				c = (Cadastro) ControllerBd.findById(Cadastro.class, c.getId());
-			}else if(!!ControllerBd.em.contains(c)) {
-				throw new Exception("Cadastro não localizado");
-			}
+			if(c.getId() == 0) { flag = false;}
 			
-			ControllerBd.begin();
+			
 			c.setUnidade(txtUnidade.getText());
 			c.setProdAnual(Double.parseDouble(txtProdAnual.getText()));
 			c.setnEmpregados(Integer.parseInt(txtNEmpregados.getText()));
@@ -128,40 +132,66 @@ public class CCadastro implements Initializable {
 			c.setEndereco(txtEndereco.getText());
 			c.setPais(txtPais.getText());
 			c.setEstado(txtEstado.getText());
-			c.setInceFiscaRece(Double.parseDouble(txtFiscaisRece.getText()));
-			c.setImpMuniPagos(Double.parseDouble(txtMuniPagos.getText()));
-			c.setImpEstaduRecolhidos(Double.parseDouble(txtEstaReco.getText()));
-			c.setImpFedPago(Double.parseDouble(txtFedePagos.getText()));
-			c.setTaxasFed(Double.parseDouble(txtTaxasFed.getText()));
+			if(nivel >= 2) {
+				c.setInceFiscaRece(Double.parseDouble(txtFiscaisRece.getText()));
+				c.setImpMuniPagos(Double.parseDouble(txtMuniPagos.getText()));
+				c.setImpEstaduRecolhidos(Double.parseDouble(txtEstaReco.getText()));
+				c.setImpFedPago(Double.parseDouble(txtFedePagos.getText()));
+				c.setTaxasFed(Double.parseDouble(txtTaxasFed.getText()));
+			}else {
+				c.setInceFiscaRece(0.0);
+				c.setImpMuniPagos(0.0);
+				c.setImpEstaduRecolhidos(0.0);
+				c.setImpFedPago(0.0);
+				c.setTaxasFed(0.0);
+			}
 			
-			if(!flag) ControllerBd.em.persist(c);
+			if(!flag) ControllerBd.em.persist(c);  
+			else ControllerBd.em.merge(c);
+			
 			ControllerBd.commit();
 			
+			
 			CRegistro.refreshTablePro();
-			ControllerBd.em.detach(c);
 			c = null;
 			resetTxt();
 			((Stage) parentPane.getScene().getWindow()).close();
 		} catch (Exception e) {
 			e.printStackTrace();
+			Alerts.showError("Falha ao inserir dados, cheque os campos");
 		}
 	}
 
 	@FXML
 	public void actBtnCancelar() {
 		resetTxt();
+		ControllerBd.checkTrans();
 		((Stage) parentPane.getScene().getWindow()).close();
 		
 	}
 
 	@FXML
 	public void actBtnRemover() {
+		int index = listAgro.getSelectionModel().getSelectedIndex();
+		if(index > -1) {
+			Agrotoxico agro = c.getAgrotoxicos().get(index);
+			agroModel.remove(agro);
+			c.removeAgrotoxico(agro);
+		}
 
+		
 	}
 
 	@FXML
 	public void actBtnAdicionar() {
-
+		String agro = txtAgro.getText();
+		if(!agro.isEmpty()) {
+			Agrotoxico a = new Agrotoxico(null, agro,c);
+			c.addAgrotoxico(a);
+			agroModel.add(a);
+			ControllerBd.em.persist(a);
+			txtAgro.clear();
+		}
 	}
 	public void resetTxt() {
 		txtUnidade.setText("");
@@ -182,6 +212,8 @@ public class CCadastro implements Initializable {
 		txtTaxasFed.setText("");
 		nivel = null;
 		c = null;
+		agroModel.clear();
+		txtAgro.clear();
 	}
 
 	private void setValues() {
@@ -196,11 +228,19 @@ public class CCadastro implements Initializable {
 		txtEndereco.setText(c.getEndereco());
 		txtPais.setText(c.getPais());
 		txtEstado.setText(c.getEstado());
-		txtFiscaisRece.setText(c.getInceFiscaReceStr());
-		txtMuniPagos.setText(c.getImpMuniPagosStr());
-		txtEstaReco.setText(c.getImpEstaduRecolhidosStr());
-		txtFedePagos.setText(c.getImpFedPagoStr());
-		txtTaxasFed.setText(c.getTaxasFedStr());
+		if(nivel >= 2) {
+			txtFiscaisRece.setText(c.getInceFiscaReceStr());
+			txtMuniPagos.setText(c.getImpMuniPagosStr());
+			txtEstaReco.setText(c.getImpEstaduRecolhidosStr());
+			txtFedePagos.setText(c.getImpFedPagoStr());
+			txtTaxasFed.setText(c.getTaxasFedStr());
+		}
+		if(nivel >= 3) {
+			agroModel.addAll(c.getAgrotoxicos());
+		}
+
+		
+		
 	}
 	public void setEditavel(boolean bol) {
 		txtUnidade.setEditable(bol);
@@ -213,14 +253,27 @@ public class CCadastro implements Initializable {
 		txtEndereco.setEditable(bol);
 		txtPais.setEditable(bol);
 		txtEstado.setEditable(bol);
-		txtFiscaisRece.setEditable(bol);
-		txtMuniPagos.setEditable(bol);
-		txtEstaReco.setEditable(bol);
-		txtFedePagos.setEditable(bol);
-		txtTaxasFed.setEditable(bol);
-		btnAdicionar.setDisable(!bol);
+		if(bol && nivel >=2) {
+			txtFiscaisRece.setEditable(bol);
+			txtMuniPagos.setEditable(bol);
+			txtEstaReco.setEditable(bol);
+			txtFedePagos.setEditable(bol);
+			txtTaxasFed.setEditable(bol);
+		}else {
+			txtFiscaisRece.setEditable(false);
+			txtMuniPagos.setEditable(false);
+			txtEstaReco.setEditable(false);
+			txtFedePagos.setEditable(false);
+			txtTaxasFed.setEditable(false);
+		}
+		if(bol && nivel >= 3) {
+			btnRemover.setDisable(false);
+			btnAdicionar.setDisable(false);
+		}else {
+			btnRemover.setDisable(true);
+			btnAdicionar.setDisable(true);
+		}
 		btnCancelar.setDisable(!bol);
-		btnRemover.setDisable(!bol);
 		btnSalvar.setDisable(!bol);
 	}
 

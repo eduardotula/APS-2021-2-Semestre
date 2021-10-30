@@ -103,7 +103,7 @@ public class CRegistro implements Initializable {
 	public void actMenuAdicionar() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
 			controlerCadastro.resetTxt();
-			controlerCadastro.construtor(null, 1);
+			controlerCadastro.construtor(null, acessoAtual.getNivel());
 			controlerCadastro.setEditavel(true);
 			frameCadastro.show();
 			frameCadastro.centerOnScreen();
@@ -123,8 +123,8 @@ public class CRegistro implements Initializable {
 	public void actMenuExibir() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
 			controlerCadastro.resetTxt();
-			controlerCadastro.setEditavel(false);
 			controlerCadastro.construtor(tablePro.getSelectionModel().getSelectedItem(), acessoAtual.getNivel());
+			controlerCadastro.setEditavel(false);
 			frameCadastro.show();
 			frameCadastro.centerOnScreen();
 		} else {
@@ -143,8 +143,9 @@ public class CRegistro implements Initializable {
 	public void actMenuEditar() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
 			controlerCadastro.resetTxt();
-			controlerCadastro.setEditavel(true);
 			controlerCadastro.construtor(tablePro.getSelectionModel().getSelectedItem(), acessoAtual.getNivel());
+			controlerCadastro.setEditavel(true);
+			
 			frameCadastro.show();
 		} else {
 			if(acessoAtual.getNivel() >= 3) {
@@ -201,14 +202,26 @@ public class CRegistro implements Initializable {
 	
 	public static void refreshTablePro() {
 		modelPropriedades.clear();
-		List<Cadastro> l = Aplicacao.em.createQuery("select a from CADASTRO a",Cadastro.class).getResultList();
-		if(l.size() > 0) modelPropriedades.addAll(l);
+		ControllerBd.checkTrans();
+		@SuppressWarnings("unchecked")
+		List<Object[]> l = Aplicacao.em.createQuery("select a.id,a.unidade,a.cidade,a.estado,a.destino from CADASTRO a ").getResultList();
+		if(l.size() > 0) 
+			for(Object[] c : l) {
+				modelPropriedades.add(new Cadastro((int)c[0], (String)c[1], (String)c[4], (String)c[2], (String)c[3]));
+			}
 	}
 
 	public static void refreshTableAce() {
 		modelAcessos.clear();
-		List<Acesso> l = Aplicacao.em.createQuery("select a from ACESSO a",Acesso.class).getResultList();
-		if(l.size() > 0) modelAcessos.addAll(l); 
+		ControllerBd.checkTrans();
+		@SuppressWarnings("unchecked")
+		List<Object[]> l = Aplicacao.em.createQuery("select a.id,a.nivel,a.nome from ACESSO a").getResultList();
+		if(l.size() > 0) {
+			for(Object[] a : l) {
+				 modelAcessos.add(new Acesso((int)a[0], (String)a[2], (int)a[1]));
+			}
+			
+		}
 		
 		
 

@@ -60,6 +60,14 @@ public class Acesso implements Serializable {
 		}
 
 	}
+	
+
+	public Acesso(Integer id, String nome, int nivel) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.nivel = nivel;
+	}
 
 	public void cloneImagem(Mat img) {
 		this.imagemMat = img.clone();

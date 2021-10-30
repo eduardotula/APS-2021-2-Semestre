@@ -2,9 +2,6 @@ package com.view.controllers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -12,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.source.Alerts;
 import com.source.Aplicacao;
-import com.source.control.ControllerBd;
 import com.source.control.Utilitarios;
 import com.source.model.Acesso;
 

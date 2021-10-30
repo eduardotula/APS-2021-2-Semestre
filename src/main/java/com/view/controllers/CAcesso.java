@@ -71,7 +71,10 @@ public class CAcesso implements Initializable{
 	
 	public void construtor(Acesso acesso) {
 		this.acesso = acesso;
-		if(this.acesso != null) setValues();
+		if(this.acesso != null) {
+			this.acesso = (Acesso) ControllerBd.findById(Acesso.class, acesso.getId());
+			setValues();
+		}
 	}
 	
 	@FXML
@@ -88,11 +91,7 @@ public class CAcesso implements Initializable{
 			if (acesso == null) {
 				acesso = new Acesso();
 				flag = false;
-			} else if (!ControllerBd.em.contains(acesso)) {
-				acesso = (Acesso) ControllerBd.findById(Acesso.class, acesso.getId());
-			}else if(!ControllerBd.em.contains(acesso)){ 
-				throw new Exception("Acesso não localizado");
-			}
+			} 
 			
 			ControllerBd.begin();
 			
@@ -103,18 +102,19 @@ public class CAcesso implements Initializable{
 			
 			acesso.setNome(txtUsuario.getText());
 			acesso.setNivel(Integer.parseInt(comboNivel.getSelectionModel().getSelectedItem()));
-			
-			if(imagem == null && imagem.empty() ) {
+			if(img.getImage() == null) {
 				Alerts.showError("Campo Imagem não pode estar vazio");
 				throw new Exception();
 			}
-			acesso.setImagemMat(imagem);
-			acesso.setCol(imagem.cols());
-			acesso.setRows(imagem.rows());
-			acesso.setType(imagem.type());
-			acesso.setImagemByte(acesso.getImagemAsByteArr());
+			if(imagem != null) {
+				acesso.setImagemMat(imagem);
+				acesso.setCol(imagem.cols());
+				acesso.setRows(imagem.rows());
+				acesso.setType(imagem.type());
+				acesso.setImagemByte(acesso.getImagemAsByteArr());
+			}
+
 			
-			for(byte b : acesso.getImagemByte()) System.out.print(b);
 			if(!flag) ControllerBd.em.persist(acesso);
 			ControllerBd.commit();
 			

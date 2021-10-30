@@ -1,23 +1,27 @@
 package com.source.model;
 
 import javafx.scene.control.Control;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
 /**
- * Classe auxilar na criação das tabelas CRegistro.tablePro e CRegistro.tableAce*/
+ * Classe auxilar na criação das tabelas CRegistro.tablePro e CRegistro.tableAce
+ */
 public class TableHelpers {
-	
-	
+
 	public static class TableAceHelper {
-		
-		public TableColumn<Acesso, Integer> getIdColumn(){
+
+		public TableColumn<Acesso, Integer> getIdColumn() {
 			TableColumn<Acesso, Integer> col = new TableColumn<Acesso, Integer>("Id");
 			col.setCellValueFactory(new PropertyValueFactory<Acesso, Integer>("id"));
 			col.setMinWidth(60);
 			return col;
 		}
-		public TableColumn<Acesso, String> getNomeColumn(){
+
+		public TableColumn<Acesso, String> getNomeColumn() {
 			TableColumn<Acesso, String> col = new TableColumn<Acesso, String>("Nome");
 			col.setCellValueFactory(new PropertyValueFactory<Acesso, String>("nome"));
 			col.setMinWidth(100);
@@ -25,24 +29,26 @@ public class TableHelpers {
 			col.setPrefWidth(20000);
 			return col;
 		}
-		public TableColumn<Acesso, String> getNivelColumn(){
+
+		public TableColumn<Acesso, String> getNivelColumn() {
 			TableColumn<Acesso, String> col = new TableColumn<Acesso, String>("Nível de Acesso");
 			col.setCellValueFactory(new PropertyValueFactory<Acesso, String>("nivel"));
 			col.setMinWidth(70);
 			return col;
 		}
-		
+
 	}
 
 	public static class TableProHelper {
 
-		public TableColumn<Cadastro, Integer> getIdColumn(){
+		public TableColumn<Cadastro, Integer> getIdColumn() {
 			TableColumn<Cadastro, Integer> col = new TableColumn<Cadastro, Integer>("Id");
 			col.setCellValueFactory(new PropertyValueFactory<Cadastro, Integer>("id"));
 			col.setMinWidth(60);
 			return col;
 		}
-		public TableColumn<Cadastro, String> getRazaoColumn(){
+
+		public TableColumn<Cadastro, String> getRazaoColumn() {
 			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Nome/Razão Social");
 			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("unidade"));
 			col.setMinWidth(100);
@@ -51,19 +57,22 @@ public class TableHelpers {
 
 			return col;
 		}
-		public TableColumn<Cadastro, String> getEstadoColumn(){
+
+		public TableColumn<Cadastro, String> getEstadoColumn() {
 			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Cidade");
 			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("cidade"));
 			col.setMinWidth(60);
 			return col;
 		}
-		public TableColumn<Cadastro, String> getNivelColumn(){
+
+		public TableColumn<Cadastro, String> getNivelColumn() {
 			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Estado");
 			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("estado"));
 			col.setMinWidth(50);
 			return col;
 		}
-		public TableColumn<Cadastro, String> getRamoColumn(){
+
+		public TableColumn<Cadastro, String> getRamoColumn() {
 			TableColumn<Cadastro, String> col = new TableColumn<Cadastro, String>("Destino");
 			col.setCellValueFactory(new PropertyValueFactory<Cadastro, String>("destino"));
 			col.setMinWidth(150);
@@ -71,8 +80,22 @@ public class TableHelpers {
 		}
 	}
 
+	public static class ListHelper implements Callback<ListView<Agrotoxico>, ListCell<Agrotoxico>> {
+
+		@Override
+		public ListCell<Agrotoxico> call(ListView<Agrotoxico> param) {
+			return new ListCell<Agrotoxico>() {
+				@Override
+				public void updateItem(Agrotoxico agro, boolean empty) {
+					super.updateItem(agro, empty);
+					if (empty || agro == null) {
+						setText(null);
+					} else {
+						setText(agro.getAgrotoxico());
+					}
+				}
+			};
+		}
+	}
+
 }
-
-
-
-

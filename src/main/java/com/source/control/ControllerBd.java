@@ -81,7 +81,7 @@ public class ControllerBd {
 		trans.begin();
 	}
 
-	private static void checkTrans() throws PersistenceException {
+	public static void checkTrans() throws PersistenceException {
 		if (trans.isActive()) {
 			trans.rollback();
 		}

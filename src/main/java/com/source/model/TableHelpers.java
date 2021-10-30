@@ -1,7 +1,4 @@
-package com.source.model.table;
-
-import com.source.model.Acesso;
-import com.source.model.Cadastro;
+package com.source.model;
 
 import javafx.scene.control.Control;
 import javafx.scene.control.TableColumn;

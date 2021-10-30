@@ -22,39 +22,39 @@ public class Cadastro implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
 	private int id;
-	@Column(name = "UNIDADE", columnDefinition = "VARCHAR(150)")
+	@Column(name = "UNIDADE", columnDefinition = "VARCHAR(150)",nullable = false)
 	private String unidade;
-	@Column(name = "PROD_ATUAL", columnDefinition = "DECIMAL(18,2)")
-	private Double prodAtual;
-	@Column(name = "N_EMPREGADOS")
+	@Column(name = "PROD_ANUAL", columnDefinition = "DECIMAL(18,2)",nullable = false)
+	private Double prodAnual;
+	@Column(name = "N_EMPREGADOS",nullable = false)
 	private Integer nEmpregados;
-	@Column(name = "DESTINO_PROD", length = 30)
+	@Column(name = "DESTINO_PROD", length = 30,nullable = false)
 	private String destino;
-	@Column(name = "NIVEL_AUTO")
+	@Column(name = "NIVEL_AUTO",nullable = false)
 	private Integer nivelAuto;
-	@Column(name = "QUANT_MAQUINAS")
+	@Column(name = "QUANT_MAQUINAS",nullable = false)
 	private Integer qantiMaquinas;
 	//Propriedade
-	@Column(name = "CIDADE", length = 60)
+	@Column(name = "CIDADE", length = 60,nullable = false)
 	private String cidade;
-	@Column(name = "CEP",length = 10)
+	@Column(name = "CEP",length = 10,nullable = false)
 	private String cep;
-	@Column(name = "ENDERECO", length = 100)
+	@Column(name = "ENDERECO", length = 100,nullable = false)
 	private String endereco;
-	@Column(name = "ESTADO",columnDefinition = "CHAR(2)")
+	@Column(name = "ESTADO",columnDefinition = "CHAR(2)",nullable = false)
 	private String estado;
-	@Column(name = "PAIS",length = 30)
+	@Column(name = "PAIS",length = 30,nullable = false)
 	private String pais;
 	//Dados
-	@Column(name = "INCE_FISCA_RECE",columnDefinition = "DECIMAL(18,2)")
+	@Column(name = "INCE_FISCA_RECE",columnDefinition = "DECIMAL(18,2)",nullable = false)
 	private Double inceFiscaRece;
-	@Column(name = "IMP_MUNI_PAGO",columnDefinition = "DECIMAL(18,2)")
+	@Column(name = "IMP_MUNI_PAGO",columnDefinition = "DECIMAL(18,2)",nullable = false)
 	private Double impMuniPagos;
-	@Column(name = "IMP_ESTADU_RECOLHIDOS",columnDefinition = "DECIMAL(18,2)")
+	@Column(name = "IMP_ESTADU_RECOLHIDOS",columnDefinition = "DECIMAL(18,2)",nullable = false)
 	private Double impEstaduRecolhidos;
-	@Column(name = "IMP_FED_PAGO",columnDefinition = "DECIMAL(18,2)")
+	@Column(name = "IMP_FED_PAGO",columnDefinition = "DECIMAL(18,2)",nullable = false)
 	private Double impFedPago;
-	@Column(name = "TAXAS_FED",columnDefinition = "DECIMAL(18,2)")
+	@Column(name = "TAXAS_FED",columnDefinition = "DECIMAL(18,2)",nullable = false)
 	private Double taxasFed;
 	//Agrotoxico
 	@OneToMany(mappedBy = "cadastro")
@@ -64,14 +64,14 @@ public class Cadastro implements Serializable{
 		
 	}
 
-	public Cadastro(int id,String unidade ,Double prodAtual, Integer nEmpregados, String destino, Integer nivelAuto,
+	public Cadastro(int id,String unidade ,Double prodAnual, Integer nEmpregados, String destino, Integer nivelAuto,
 			Integer qantiMaquinas, String cidade, String cep, String endereco, String estado, String pais,
 			Double inceFiscaRece, Double impMuniPagos, Double impEstaduRecolhidos, Double impFedPago, Double taxasFed,
 			List<Agrotoxico> agrotoxicos) {
 		super();
 		this.id = id;
 		this.unidade = unidade;
-		this.prodAtual = prodAtual;
+		this.prodAnual = prodAnual;
 		this.nEmpregados = nEmpregados;
 		this.destino = destino;
 		this.nivelAuto = nivelAuto;
@@ -105,16 +105,33 @@ public class Cadastro implements Serializable{
 		this.id = id;
 	}
 
-	public Double getProdAtual() {
-		return prodAtual;
+	public Double getProdAnual() {
+		return prodAnual;
+	}
+	public String getProdAnualStr() {
+		try {
+			return Double.toString(prodAnual);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	public void setProdAtual(Double prodAtual) {
-		this.prodAtual = prodAtual;
+	public void setProdAnual(Double prodAtual) {
+		this.prodAnual = prodAtual;
 	}
 
 	public Integer getnEmpregados() {
 		return nEmpregados;
+	}
+	
+	public String getnEmpregadosStr() {
+		try {
+			return Integer.toString(nEmpregados);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void setnEmpregados(Integer nEmpregados) {
@@ -132,6 +149,16 @@ public class Cadastro implements Serializable{
 	public Integer getNivelAuto() {
 		return nivelAuto;
 	}
+	public String getNivelAutoStr() {
+		try {
+			return Integer.toString(nivelAuto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	
 
 	public void setNivelAuto(Integer nivelAuto) {
 		this.nivelAuto = nivelAuto;
@@ -140,10 +167,19 @@ public class Cadastro implements Serializable{
 	public Integer getQantiMaquinas() {
 		return qantiMaquinas;
 	}
+	public String getQantiMaquinasStr() {
+		try {
+			return Integer.toString(qantiMaquinas);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public void setQantiMaquinas(Integer qantiMaquinas) {
 		this.qantiMaquinas = qantiMaquinas;
 	}
+	
 
 	public String getCidade() {
 		return cidade;
@@ -188,6 +224,15 @@ public class Cadastro implements Serializable{
 	public Double getInceFiscaRece() {
 		return inceFiscaRece;
 	}
+	public String getInceFiscaReceStr() {
+		try {
+			return Double.toString(inceFiscaRece);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 
 	public void setInceFiscaRece(Double inceFiscaRece) {
 		this.inceFiscaRece = inceFiscaRece;
@@ -195,6 +240,14 @@ public class Cadastro implements Serializable{
 
 	public Double getImpMuniPagos() {
 		return impMuniPagos;
+	}
+	public String getImpMuniPagosStr() {
+		try {
+			return Double.toString(impMuniPagos);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void setImpMuniPagos(Double impMuniPagos) {
@@ -204,6 +257,14 @@ public class Cadastro implements Serializable{
 	public Double getImpEstaduRecolhidos() {
 		return impEstaduRecolhidos;
 	}
+	public String getImpEstaduRecolhidosStr() {
+		try {
+			return Double.toString(impEstaduRecolhidos);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public void setImpEstaduRecolhidos(Double impEstaduRecolhidos) {
 		this.impEstaduRecolhidos = impEstaduRecolhidos;
@@ -212,6 +273,14 @@ public class Cadastro implements Serializable{
 	public Double getImpFedPago() {
 		return impFedPago;
 	}
+	public String getImpFedPagoStr() {
+		try {
+			return Double.toString(impFedPago);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public void setImpFedPago(Double impFedPago) {
 		this.impFedPago = impFedPago;
@@ -219,6 +288,15 @@ public class Cadastro implements Serializable{
 
 	public Double getTaxasFed() {
 		return taxasFed;
+	}
+	
+	public String getTaxasFedStr() {
+		try {
+			return Double.toString(taxasFed);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void setTaxasFed(Double taxasFed) {
@@ -233,7 +311,7 @@ public class Cadastro implements Serializable{
 		this.agrotoxicos = agrotoxicos;
 	}
 	
-	
+		
 	
 	
 }

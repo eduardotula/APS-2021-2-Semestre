@@ -73,7 +73,7 @@ public class Biometria {
 	public static Mat cropImg(Mat img) {
 		
 		Rect rec = new Rect((img.rows()/2)-100, (img.cols()/2)-100, 200, 200);
-		return new Mat(img,rec);
+		return new Mat(img.clone(),rec);
 	}
 	
 	public Mat thin(Mat img1) {

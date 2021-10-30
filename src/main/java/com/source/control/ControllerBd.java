@@ -6,17 +6,17 @@ import javax.persistence.PersistenceException;
 
 import com.source.Aplicacao;
 
-
 /**
- * Classe para operações CRUD generico, esta classe não é Thread safe e possui somente um EntityManager*/
+ * Classe para operações CRUD generico, esta classe não é Thread safe e possui
+ * somente um EntityManager
+ */
 
 public class ControllerBd {
 
 	public static EntityManager em = Aplicacao.em;
 	private static EntityTransaction trans = em.getTransaction();
 
-
-	public static void create(Object ob){
+	public static void create(Object ob) {
 		try {
 			checkTrans();
 			begin();
@@ -27,7 +27,7 @@ public class ControllerBd {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void delete(Object obj) {
 		try {
 			checkTrans();
@@ -40,6 +40,14 @@ public class ControllerBd {
 		}
 	}
 
+	/**
+	 * Check if the instance is a managed entity instance belonging to the current
+	 * persistence context.
+	 * 
+	 * @param entity entity instance
+	 * @return boolean indicating if entity is in persistence context
+	 * @throws IllegalArgumentException if not an entity
+	 */
 	public static boolean checkPersist(Object obj) {
 		try {
 			return em.contains(obj);
@@ -48,24 +56,27 @@ public class ControllerBd {
 			return false;
 		}
 	}
-	
-	public static Object findById(Class<?> classe,Integer id) throws IllegalArgumentException{
+
+	public static Object findById(Class<?> classe, Integer id) throws IllegalArgumentException {
 		return em.find(classe, id);
 	}
-	
-	public static Object findByIdDeatch(Class<?> classe, Integer id) throws IllegalArgumentException{
+
+	public static Object findByIdDeatch(Class<?> classe, Integer id) throws IllegalArgumentException {
 		Object o = em.find(classe, id);
 		em.detach(o);
 		return o;
 	}
-	
+
 	public static void commit() throws Exception {
-		if(trans.isActive()) {trans.commit();
-		}else { throw new Exception();}
-		
+		if (trans.isActive()) {
+			trans.commit();
+		} else {
+			throw new Exception();
+		}
+
 	}
-	
-	public static void begin() throws PersistenceException{
+
+	public static void begin() throws PersistenceException {
 		checkTrans();
 		trans.begin();
 	}

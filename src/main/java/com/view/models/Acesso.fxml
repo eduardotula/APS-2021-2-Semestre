@@ -9,8 +9,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="356.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="parentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="356.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.controllers.CAcesso">
    <children>
       <Label layoutX="6.0" layoutY="4.0" prefHeight="21.0" prefWidth="63.0" text="Usuário">
          <font>
@@ -25,9 +24,10 @@
       </Label>
       <ComboBox fx:id="comboNivel" layoutX="229.0" layoutY="25.0" prefHeight="25.0" prefWidth="113.0" />
       <Line endX="253.0" endY="-52.0" layoutX="107.0" layoutY="114.0" startX="-107.0" startY="-52.0" />
-      <ImageView fx:id="img" fitHeight="200.0" fitWidth="200.0" layoutX="80.0" layoutY="108.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="img" fitHeight="200.0" fitWidth="200.0" layoutX="76.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="btnCancelar" layoutX="114.0" layoutY="330.0" mnemonicParsing="false" onAction="#actBtnCancelar" text="Cancelar" />
       <Line endX="246.0" endY="-52.0" layoutX="114.0" layoutY="380.0" startX="-114.0" startY="-52.0" />
       <Button fx:id="btnSalvar" layoutX="176.0" layoutY="330.0" mnemonicParsing="false" onAction="#actBtnSalvar" text="Salvar" />
+      <Button fx:id="btnSalvarImg" layoutX="133.0" layoutY="292.0" mnemonicParsing="false" onAction="#actBtnSalvarImg" text="Salvar Imagem" />
    </children>
 </AnchorPane>

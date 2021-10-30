@@ -2,8 +2,10 @@ package com.source.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,7 +30,8 @@ public class Acesso implements Serializable {
 	@Column(name = "NIVEL")
 	private int nivel;
 	@Lob
-	@Column(name = "IMAGEM", columnDefinition = "BLOB(40K)")
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "IMAGEM")
 	private byte[] imagemByte;
 	@Column(name = "ROWS")
 	private int rows;
@@ -155,6 +158,11 @@ public class Acesso implements Serializable {
 
 	public void setImagemMat(Mat imagemMat) {
 		this.imagemMat = imagemMat;
+		if(!imagemMat.empty()) {
+			this.rows = imagemMat.rows();
+			this.col = imagemMat.cols();
+			this.type = imagemMat.type();
+		}
 	}
 
 }

@@ -10,9 +10,9 @@ import com.source.Aplicacao;
 import com.source.control.ControllerBd;
 import com.source.model.Acesso;
 import com.source.model.Cadastro;
-import com.source.model.table.TableHelpers;
-import com.source.model.table.TableHelpers.TableAceHelper;
-import com.source.model.table.TableHelpers.TableProHelper;
+import com.source.model.TableHelpers;
+import com.source.model.TableHelpers.TableAceHelper;
+import com.source.model.TableHelpers.TableProHelper;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -55,9 +55,13 @@ public class CRegistro implements Initializable {
 	public TextField txtNivel;
 
 	private Acesso acessoAtual;
+	
 	private Stage frameCadastro = new Stage();
 	private CCadastro controlerCadastro;
-
+	
+	private Stage frameAcesso = new Stage();
+	private CAcesso controlerAcesso;
+	
 	private static ObservableList<Cadastro> modelPropriedades = FXCollections.observableArrayList();
 	private static ObservableList<Acesso> modelAcessos = FXCollections.observableArrayList();
 
@@ -73,27 +77,44 @@ public class CRegistro implements Initializable {
 
 		try {
 			FXMLLoader root = Aplicacao.listFrameRoot.get("Cadastro");
-			
 			frameCadastro.setScene(new Scene(root.load(), 600, 600));
 			frameCadastro.setResizable(false);
 			controlerCadastro = root.getController();
 			frameCadastro.setTitle("Cadastro");
+			
+			root = Aplicacao.listFrameRoot.get("Acesso");
+			frameAcesso.setScene(new Scene(root.load(), 360, 360));
+			frameAcesso.setResizable(false);
+			controlerAcesso = root.getController();
+			frameAcesso.setTitle("Cadastro Acesso");
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
+	public void construtor(Acesso acesso) {
+		this.acessoAtual = acesso;
+		txtUsuario.setText(acesso.getNome());
+		txtNivel.setText(Integer.toString(acesso.getNivel()));
+	}
 
 	@FXML
 	public void actMenuAdicionar() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-			// TODO tela de cadastro
-			controlerCadastro.setCadastro(null, 1);
+			controlerCadastro.resetTxt();
+			controlerCadastro.construtor(null, 1);
+			controlerCadastro.setEditavel(true);
 			frameCadastro.show();
 			frameCadastro.centerOnScreen();
 		} else {
-
+			if(acessoAtual.getNivel() >= 3) {
+				controlerAcesso.resetTxts();
+				controlerAcesso.construtor(null);
+				controlerAcesso.setEditavel(true);
+				frameAcesso.show();
+				frameAcesso.centerOnScreen();
+			}else Alerts.showError("Apenas usuarios nível 3 podem cadastrar acessos");
 		}
 
 	}
@@ -101,12 +122,19 @@ public class CRegistro implements Initializable {
 	@FXML
 	public void actMenuExibir() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-			// TODO Exibir tela de cadastro não editavel
+			controlerCadastro.resetTxt();
 			controlerCadastro.setEditavel(false);
-			controlerCadastro.setCadastro(tablePro.getSelectionModel().getSelectedItem(), acessoAtual.getNivel());
+			controlerCadastro.construtor(tablePro.getSelectionModel().getSelectedItem(), acessoAtual.getNivel());
 			frameCadastro.show();
+			frameCadastro.centerOnScreen();
 		} else {
-
+			if(acessoAtual.getNivel() >= 3) {
+				controlerAcesso.resetTxts();
+				controlerAcesso.construtor(tableAce.getSelectionModel().getSelectedItem());
+				controlerAcesso.setEditavel(false);
+				frameAcesso.show();
+				frameAcesso.centerOnScreen();
+			}else Alerts.showError("Apenas usuarios nível 3 podem Exibir acessos");
 		}
 
 	}
@@ -114,12 +142,18 @@ public class CRegistro implements Initializable {
 	@FXML
 	public void actMenuEditar() {
 		if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-			// TODO Exibir tela de cadastro editavel
+			controlerCadastro.resetTxt();
 			controlerCadastro.setEditavel(true);
-			controlerCadastro.setCadastro(tablePro.getSelectionModel().getSelectedItem(), acessoAtual.getNivel());
+			controlerCadastro.construtor(tablePro.getSelectionModel().getSelectedItem(), acessoAtual.getNivel());
 			frameCadastro.show();
 		} else {
-
+			if(acessoAtual.getNivel() >= 3) {
+				controlerAcesso.resetTxts();
+				controlerAcesso.construtor(tableAce.getSelectionModel().getSelectedItem());
+				controlerAcesso.setEditavel(true);
+				frameAcesso.show();
+				frameAcesso.centerOnScreen();
+			}else Alerts.showError("Apenas usuarios nível 3 podem Editar acessos");
 		}
 	}
 
@@ -129,22 +163,32 @@ public class CRegistro implements Initializable {
 			if(Alerts.showConfirmation("Deseja apagar linha selecionada")) {
 				
 				if (tabPane.getSelectionModel().getSelectedIndex() == 0) {
-					Cadastro obj = tablePro.getSelectionModel().getSelectedItem();
-					if(ControllerBd.checkPersist(obj)) {
-						ControllerBd.delete(obj);
-					}else {
-						obj = (Cadastro) ControllerBd.findById(Cadastro.class, obj.getId());
-						ControllerBd.delete(obj);
-					}
+					if(tablePro.getSelectionModel().getSelectedIndex() > -1) {
+						Cadastro obj = tablePro.getSelectionModel().getSelectedItem();
+						if(ControllerBd.checkPersist(obj)) {
+							ControllerBd.delete(obj);
+						}else {
+							obj = (Cadastro) ControllerBd.findById(Cadastro.class, obj.getId());
+							ControllerBd.delete(obj);
+							
+						}
+						refreshTablePro();
+					}else Alerts.showError("Nenhuma linha selecionada");
+
 					
 				} else {
-					Acesso obj = tableAce.getSelectionModel().getSelectedItem();
-					if(ControllerBd.checkPersist(obj)) {
-						ControllerBd.delete(obj);
-					}else {
-						obj = (Acesso) ControllerBd.findById(Acesso.class, obj.getId());
-						ControllerBd.delete(obj);
-					}
+					if(tableAce.getSelectionModel().getSelectedIndex() > -1) {
+						Acesso obj = tableAce.getSelectionModel().getSelectedItem();
+						if(ControllerBd.checkPersist(obj)) {
+							ControllerBd.delete(obj);
+						}else {
+							obj = (Acesso) ControllerBd.findById(Acesso.class, obj.getId());
+							ControllerBd.delete(obj);
+							
+						}
+						refreshTableAce();
+					}else Alerts.showError("Nenhuma linha selecionada");
+
 				}
 			}
 		} catch (Exception e) {
@@ -153,14 +197,18 @@ public class CRegistro implements Initializable {
 		}
 	}
 
+
+	
 	public static void refreshTablePro() {
+		modelPropriedades.clear();
 		List<Cadastro> l = Aplicacao.em.createQuery("select a from CADASTRO a",Cadastro.class).getResultList();
 		if(l.size() > 0) modelPropriedades.addAll(l);
 	}
 
 	public static void refreshTableAce() {
+		modelAcessos.clear();
 		List<Acesso> l = Aplicacao.em.createQuery("select a from ACESSO a",Acesso.class).getResultList();
-		if(l.size() > 0) modelAcessos.addAll(l);
+		if(l.size() > 0) modelAcessos.addAll(l); 
 		
 		
 

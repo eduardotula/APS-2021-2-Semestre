@@ -50,7 +50,7 @@ public class Alerts {
 	public static Boolean showConfirmation(String mensagem) {
 		try {
 			b = null;
-			Alert a = new Alert(AlertType.CONFIRMATION);
+			Alert a = new Alert(AlertType.CONFIRMATION,mensagem);
 			a.setHeaderText(null);
 			Optional<ButtonType> ob = a.showAndWait();
 			ob.ifPresent(new Consumer<ButtonType>() {

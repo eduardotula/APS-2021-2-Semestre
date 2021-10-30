@@ -2,15 +2,22 @@ package com.view.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.springframework.stereotype.Component;
 
+import com.source.Alerts;
 import com.source.Aplicacao;
+import com.source.control.ControllerBd;
 import com.source.control.Utilitarios;
+import com.source.model.Acesso;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -88,12 +95,14 @@ public class CLogin {
 	@FXML
 	private void actBtnLogin() {
 		// TODO
-		Alert aler = new Alert(AlertType.INFORMATION, "Login confirmado, nível de acesso: %s");
-		aler.setHeaderText(null);
-		aler.showAndWait();
-		Stage stage = (Stage) parentPane.getScene().getWindow();
+		Alerts.showInformation("Login confirmado, nível de acesso: %s");
+		Acesso ace = new Acesso(null, "Master", 3, null, 0, 0, 0, null);
 		try {
-			stage.setScene(new Scene(Aplicacao.listFrameRoot.get("Registro").load(), 600, 500));
+			Stage stage = (Stage) parentPane.getScene().getWindow();
+			FXMLLoader root = Aplicacao.listFrameRoot.get("Registro");
+			stage.setScene(new Scene(root.load(), 600, 500));
+			CRegistro controller = root.getController();
+			controller.construtor(ace);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

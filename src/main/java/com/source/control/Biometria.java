@@ -21,30 +21,24 @@ public class Biometria {
 	
 	private float ratio =  0.7f;
 	
+	private SURF surf = SURF.create();
 	
-	public Double compare(Mat img, Mat img2) {
-		opencv_imgproc.equalizeHist(img, img);
-		opencv_imgproc.GaussianBlur(img, img, new Size(3,3), 0);
-		
-		opencv_imgproc.equalizeHist(img2, img2);
-		opencv_imgproc.GaussianBlur(img2, img2, new Size(3,3), 0);
-		img2 = thin(img2);
-		img = thin(img);
-		opencv_imgproc.GaussianBlur(img, img, new Size(3,3),0);
-		opencv_imgproc.GaussianBlur(img2, img2, new Size(3,3),0);
+	public Mat compare(Mat img, Mat img2, double preciEspera) {
 		
 		
-		SURF a = SURF.create();
+		
 		KeyPointVector keyPointImg1 = new KeyPointVector();
 		KeyPointVector keyPointImg2 = new KeyPointVector();
 		Mat objectDescImg1 = new Mat();
 		Mat objectDescImg2 = new Mat();
-		a.detectAndCompute(img, new Mat(), keyPointImg1, objectDescImg1, false);
-		a.detectAndCompute(img2, new Mat(), keyPointImg2, objectDescImg2, false);
+		surf.detectAndCompute(img, new Mat(), keyPointImg1, objectDescImg1, false);
+		surf.detectAndCompute(img2, new Mat(), keyPointImg2, objectDescImg2, false);
 		DescriptorMatcher matcher = FlannBasedMatcher.create(FlannBasedMatcher.FLANNBASED);
 		DMatchVectorVector knnMatches = new DMatchVectorVector();
 		matcher.knnMatch(objectDescImg1, objectDescImg2, knnMatches, 2);
 
+		
+		
 		
 		DMatchVectorVector listOfGoodMatches = new DMatchVectorVector();
 		for (int i = 0; i < knnMatches.size(); i++) {
@@ -61,22 +55,36 @@ public class Biometria {
 		Double preci = (double) ((listOfGoodMatches.size()*100) / knnMatches.size());
 		System.out.println(preci);
 		
-		Mat imgMatches = new Mat();
-		opencv_features2d.drawMatchesKnn(img, keyPointImg1, img2, keyPointImg2, listOfGoodMatches,imgMatches,Scalar.all(-1),Scalar.all(-1),null, opencv_features2d.DRAW_RICH_KEYPOINTS);
-
+		if(preci >= preciEspera) {
+			Mat imagemCompara  = new Mat();
+			opencv_features2d.drawMatchesKnn(img, keyPointImg1, img2, keyPointImg2, listOfGoodMatches,imagemCompara,Scalar.all(-1),Scalar.all(-1),null, opencv_features2d.NOT_DRAW_SINGLE_POINTS);
+			listOfGoodMatches.close();
+			return imagemCompara;
+		}
+		listOfGoodMatches.close();
+		return null;
 		
-		Utilitarios.showImage(imgMatches);
-		return preci;
 		
+	}
+	
+	public static Mat processImg(Mat imagem) {
+		Mat img = cropImg(imagem);
+		opencv_imgproc.equalizeHist(img, img);
+		opencv_imgproc.GaussianBlur(img, img, new Size(3,3), 0);
+		
+		//Mat dst = thin(img);
+		opencv_imgproc.GaussianBlur(img, img, new Size(3,3),0);
+		return img;
 	}
 	
 	public static Mat cropImg(Mat img) {
 		
 		Rect rec = new Rect((img.rows()/2)-100, (img.cols()/2)-100, 200, 200);
 		return new Mat(img.clone(),rec);
+		
 	}
 	
-	public Mat thin(Mat img1) {
+	private static Mat thin(Mat img1) {
 		Mat tresh = img1.clone();
 
 		opencv_imgproc.threshold(tresh, tresh, 0, 255, opencv_imgproc.THRESH_OTSU);
@@ -101,7 +109,10 @@ public class Biometria {
 			if (zeros == size)
 				a = false;
 		}
+		temp.close();
+		eroded.close();
 		return skel;
+		
 	}
 
 }

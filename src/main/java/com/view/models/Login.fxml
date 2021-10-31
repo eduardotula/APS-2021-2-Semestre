@@ -36,14 +36,16 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Line?>
 
-<BorderPane fx:id="parentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.controllers.CLogin">
+<BorderPane fx:id="parentPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="462.0" prefWidth="460.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.view.controllers.CLogin">
    <bottom>
       <FlowPane prefHeight="22.0" prefWidth="500.0" BorderPane.alignment="CENTER">
          <children>
@@ -56,30 +58,51 @@
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="200.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="200.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" percentHeight="90.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="200.0" prefHeight="200.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="200.0" vgrow="SOMETIMES" />
           <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <StackPane fx:id="stackPanel" prefHeight="338.0" prefWidth="262.0">
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
                <children>
-                  <ImageView fx:id="imgViewInput" fitHeight="321.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true" />
+                  <Button fx:id="btnIniciarRe" layoutX="230.0" layoutY="2.0" mnemonicParsing="false" onAction="#actBtnIniciarRe" prefHeight="25.0" prefWidth="142.0" text="Iniciar Reconhecimento" />
+                  <Button fx:id="btnCarregar" layoutX="121.0" layoutY="2.0" mnemonicParsing="false" onAction="#actBtnCarregar" text="Carregar Imagem" />
+                  <Line endX="358.0" layoutX="101.0" startX="-100.0" />
+                  <Line endX="359.0" endY="1.0" layoutX="101.0" layoutY="34.0" startX="-100.0" />
                </children>
-            </StackPane>
-            <StackPane fx:id="stackPanel1" prefHeight="198.0" prefWidth="600.0" GridPane.columnIndex="1">
+            </AnchorPane>
+            <AnchorPane prefHeight="229.0" prefWidth="460.0" GridPane.columnSpan="2147483647">
                <children>
-                  <ImageView fx:id="imgViewResul" fitHeight="312.0" fitWidth="261.0" pickOnBounds="true" preserveRatio="true" />
+                  <Line endX="0.5" endY="168.0" layoutX="229.0" layoutY="59.0" startX="0.5" startY="-48.0" />
+                  <Line endX="346.0" endY="12.0" layoutX="113.0" layoutY="215.0" startX="-113.0" startY="12.0" />
+                  <Label layoutX="65.0" layoutY="18.0" text="Imagem de Entrada" />
+                  <StackPane layoutX="5.0" layoutY="43.0" prefHeight="179.0" prefWidth="222.0">
+                     <children>
+                        <ImageView fx:id="imgViewInput" fitHeight="179.0" fitWidth="224.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
+                  <Label layoutX="288.0" layoutY="18.0" text="Imagem Encontrada" />
+                  <StackPane layoutX="230.0" layoutY="43.0" prefHeight="179.0" prefWidth="222.0">
+                     <children>
+                        <ImageView fx:id="imgViewResul" fitHeight="179.0" fitWidth="221.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
                </children>
-            </StackPane>
-            <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
                <children>
-                  <Button fx:id="btnCarregar" mnemonicParsing="false" onAction="#actBtnCarregar" text="Carregar Imagem" />
-                  <Button fx:id="btnIniciarRe" mnemonicParsing="false" onAction="#actBtnIniciarRe" prefHeight="25.0" prefWidth="142.0" text="Iniciar Reconhecimento" />
+                  <Label layoutX="199.0" layoutY="14.0" text="Comparação" />
+                  <StackPane layoutX="2.0" layoutY="36.0" prefHeight="160.0" prefWidth="460.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="36.0">
+                     <children>
+                        <ImageView fx:id="imgCompara" fitHeight="157.0" fitWidth="460.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
                </children>
-            </FlowPane>
+            </AnchorPane>
          </children>
       </GridPane>
    </center>

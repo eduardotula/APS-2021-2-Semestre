@@ -18,6 +18,7 @@ import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Scalar;
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
+
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -55,6 +56,31 @@ public class Utilitarios {
 		stage.show();
 	}
 
+	public static byte[] getImagemAsByteArr(Mat img) {
+		// Aloca um array de bytes de acordo com o tamanho da imagem
+		byte[] bytes = new byte[((int) (img.total() * img.elemSize()))];
+		img.data().get(bytes);
+		System.out.println(img.total());
+		System.out.println(img.elemSize());
+		System.out.println(img.type());
+		System.out.println(bytes.length);
+		return bytes;
+	}
+	
+	/**
+	 * Resconstroi a imagem a partir de um array de bytes
+	 * 
+	 * @param rows quantidade de linhas contida na imagem original
+	 * @param cols quantidade de colunas contida na imagem original
+	 * @param type tipo da imagem original
+	 * @param class1  array de bytes
+	 * @return 
+	 */
+	public static Mat createMatByByteArr(int rows, int cols, int type, byte[] bytes) {
+		Mat imagemMat = new Mat(rows, cols, type);
+		imagemMat.data().put(bytes);
+		return imagemMat;
+	}
 	public static void showImage(Mat img) {
 		try {
 			if (img.type() == 0) {

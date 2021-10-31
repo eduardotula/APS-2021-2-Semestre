@@ -1,10 +1,13 @@
 package com.source.control;
 
+import java.util.stream.Stream;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 
 import com.source.Aplicacao;
+import com.source.model.Acesso;
 
 /**
  * Classe para operações CRUD generico, esta classe não é Thread safe e possui
@@ -76,6 +79,11 @@ public class ControllerBd {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public static Stream<Acesso> getAcessoAsStream() {
+		return em.createQuery("SELECT a FROM ACESSO a").getResultStream();
+	}
+	
 	public static void begin() throws PersistenceException {
 		checkTrans();
 		trans.begin();

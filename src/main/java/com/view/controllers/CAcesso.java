@@ -137,8 +137,7 @@ public class CAcesso implements Initializable{
 		try {
 			imagem = opencv_imgcodecs.imread(new FileChooser().showOpenDialog(null).getAbsolutePath(),
 					opencv_imgcodecs.IMREAD_GRAYSCALE);
-			// TODO arrumar redução de img
-			Mat a = Biometria.cropImg(imagem);
+			Mat a = Biometria.processImg(imagem);
 			imagem.close();
 			imagem = a.clone();
 			Mat temp = new Mat();

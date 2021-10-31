@@ -2,6 +2,8 @@ package com.view.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
+
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import com.source.Alerts;
 import com.source.Aplicacao;
+import com.source.control.Biometria;
+import com.source.control.ControllerBd;
 import com.source.control.Utilitarios;
 import com.source.model.Acesso;
 
@@ -37,11 +41,9 @@ public class CLogin {
 	@FXML
 	public Button btnLogin;
 	@FXML
-	private StackPane stackPanel;
-	@FXML
 	private ImageView imgViewInput;
 	@FXML
-	private StackPane stackPanel1;
+	private ImageView imgCompara;
 	@FXML
 	private ImageView imgViewResul;
 	@FXML
@@ -49,8 +51,10 @@ public class CLogin {
 	@FXML
 	private Button btnIniciarRe;
 
-	private Mat imagem;
-
+	private Acesso acesso;
+	private Mat imagemInput;
+	private Mat imagemResult;
+	
 	public CLogin() {
 
 	}
@@ -61,15 +65,12 @@ public class CLogin {
 
 			FileChooser cho = new FileChooser();
 			File f = cho.showOpenDialog(null);
-			imagem = opencv_imgcodecs.imread(f.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE);
-			Mat show = imagem.clone();
-			opencv_imgproc.cvtColor(imagem, show, opencv_imgproc.COLOR_GRAY2BGR);
-			imgViewInput.setImage(Utilitarios.convertMatToImage(show));
-			imgViewResul.setImage(Utilitarios.convertMatToImage(show));
-			imgViewInput.setFitWidth(stackPanel.getWidth());
-			imgViewInput.setFitHeight(stackPanel.getHeight());
-			imagem.close();
+			Mat img = opencv_imgcodecs.imread(f.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE);
+			Mat show = img.clone();
+			imagemInput = Biometria.processImg(show);
+			opencv_imgproc.cvtColor(imagemInput, show, opencv_imgproc.COLOR_GRAY2BGR);
 			
+			imgViewInput.setImage(Utilitarios.convertMatToImage(show));
 
 			
 			btnIniciarRe.setDisable(false);
@@ -83,22 +84,47 @@ public class CLogin {
 
 	@FXML
 	private void actBtnIniciarRe() {
-		// TODO
-
-
+		Biometria b = new Biometria();
+		Stream<Acesso> stre = ControllerBd.getAcessoAsStream();
+		stre.forEach(obj -> {
+			
+			Mat img = Utilitarios.createMatByByteArr(obj.getRows(), obj.getCol(), obj.getType(), obj.getImagemByte());
+			Mat resul = b.compare(imagemInput, img,15);
+			if(resul != null) {
+				acesso = obj;
+				imagemResult = img;
+				imgCompara.setImage(Utilitarios.convertMatToImage(resul));
+			}
+		});
+		if(imagemResult != null) {
+			opencv_imgproc.cvtColor(imagemResult, imagemResult, opencv_imgproc.COLOR_GRAY2BGR);
+			imgViewResul.setImage(Utilitarios.convertMatToImage(imagemResult));
+			try {
+				Thread.sleep(5000);
+				loginConf(acesso);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}else {
+			Alerts.showError("Acesso não autorizado");
+		}
 	}
 
 	@FXML
 	private void actBtnLogin() {
-		// TODO
-		Alerts.showInformation("Login confirmado, nível de acesso: %s");
+		
 		Acesso ace = new Acesso(null, "Master", 3, null, 0, 0, 0, null);
+		loginConf(ace);
+	}
+	
+	private void loginConf(Acesso ass) {
 		try {
+			Alerts.showInformation(String.format("Login confirmado, nível de acesso: %d",ass.getNivel()));
 			Stage stage = (Stage) parentPane.getScene().getWindow();
 			FXMLLoader root = Aplicacao.listFrameRoot.get("Registro");
 			stage.setScene(new Scene(root.load(), 600, 500));
 			CRegistro controller = root.getController();
-			controller.construtor(ace);
+			controller.construtor(ass);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

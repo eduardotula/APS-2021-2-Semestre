@@ -77,7 +77,7 @@ public class CRegistro implements Initializable {
 
 		try {
 			FXMLLoader root = Aplicacao.listFrameRoot.get("Cadastro");
-			frameCadastro.setScene(new Scene(root.load(), 600, 600));
+			frameCadastro.setScene(new Scene(root.load(), 650, 600));
 			frameCadastro.setResizable(false);
 			controlerCadastro = root.getController();
 			frameCadastro.setTitle("Cadastro");
@@ -204,11 +204,16 @@ public class CRegistro implements Initializable {
 		modelPropriedades.clear();
 		ControllerBd.checkTrans();
 		@SuppressWarnings("unchecked")
-		List<Object[]> l = Aplicacao.em.createQuery("select a.id,a.unidade,a.cidade,a.estado,a.destino from CADASTRO a ").getResultList();
-		if(l.size() > 0) 
+		List<Object[]> l = Aplicacao.em.createQuery("select a.id,a.unidade,a.cidade,a.estado,a.destino,a.contemProibido from CADASTRO a ").getResultList();
+		if(l.size() > 0) {
 			for(Object[] c : l) {
-				modelPropriedades.add(new Cadastro((int)c[0], (String)c[1], (String)c[4], (String)c[2], (String)c[3]));
+				Cadastro cad = new Cadastro((int)c[0], (String)c[1], (String)c[4], (String)c[2], (String)c[3]);
+				//TODO Atualiar get contem proibido quando atualiar tabela
+				cad.setContemProibido((Boolean)c[5]);
+				modelPropriedades.add(cad);
 			}
+		}
+		
 	}
 
 	public static void refreshTableAce() {
@@ -235,7 +240,7 @@ public class CRegistro implements Initializable {
 		TableProHelper proH = new TableHelpers.TableProHelper();
 		tableAce.getColumns().addAll(aceH.getIdColumn(), aceH.getNivelColumn(), aceH.getNomeColumn());
 		tablePro.getColumns().addAll(proH.getIdColumn(), proH.getRazaoColumn(), proH.getEstadoColumn(),
-				proH.getNivelColumn(), proH.getRamoColumn());
+				proH.getNivelColumn(), proH.getRamoColumn(),proH.getSafeColumn());
 
 	}
 

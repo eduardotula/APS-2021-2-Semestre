@@ -1,10 +1,17 @@
 package com.source.model;
 
+import java.net.URL;
+
 import javafx.scene.control.Control;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
 /**
@@ -40,6 +47,9 @@ public class TableHelpers {
 	}
 
 	public static class TableProHelper {
+		
+		private String iconMorte = getClass().getResource("/morte.png").toString();
+		private String iconSafe = getClass().getResource("/confirm.png").toString();
 
 		public TableColumn<Cadastro, Integer> getIdColumn() {
 			TableColumn<Cadastro, Integer> col = new TableColumn<Cadastro, Integer>("Id");
@@ -78,24 +88,79 @@ public class TableHelpers {
 			col.setMinWidth(150);
 			return col;
 		}
-	}
-
-	public static class ListHelper implements Callback<ListView<Agrotoxico>, ListCell<Agrotoxico>> {
-
-		@Override
-		public ListCell<Agrotoxico> call(ListView<Agrotoxico> param) {
-			return new ListCell<Agrotoxico>() {
+		public TableColumn<Cadastro, Boolean> getSafeColumn() {
+			TableColumn<Cadastro, Boolean> col = new TableColumn<Cadastro, Boolean>("Status");
+			col.setCellValueFactory(new PropertyValueFactory<Cadastro, Boolean>("contemProibido"));
+			col.setMinWidth(40);
+			col.setCellFactory(new Callback<TableColumn<Cadastro,Boolean>, TableCell<Cadastro,Boolean>>() {
+				
 				@Override
-				public void updateItem(Agrotoxico agro, boolean empty) {
-					super.updateItem(agro, empty);
-					if (empty || agro == null) {
-						setText(null);
-					} else {
-						setText(agro.getAgrotoxico());
-					}
+				public TableCell<Cadastro, Boolean> call(TableColumn<Cadastro, Boolean> param) {
+					return new TableCell<Cadastro, Boolean>(){
+						@Override
+						protected void updateItem(Boolean item, boolean empty) {
+							super.updateItem(item, empty);
+							if(!empty) {
+								if(item != null) {
+									if(item){
+										setGraphic(new StackPane(new ImageView(iconMorte)));
+									}else {
+										setGraphic(new StackPane(new ImageView(iconSafe)));
+									}
+								}
+							}else setGraphic(null);
+
+						}
+					};
 				}
-			};
+			});
+			
+			return col;
+		}
+		
+	}
+	
+	public static class TableAgroHelper{
+		
+		private String iconMorte = getClass().getResource("/morte.png").toString();
+		private String iconSafe = getClass().getResource("/confirm.png").toString();
+		
+		
+		public TableColumn<Agrotoxico, String> getColumAgro() {
+			TableColumn<Agrotoxico, String> col = new TableColumn<Agrotoxico, String>("Agrotoxico");
+			col.setCellValueFactory(new PropertyValueFactory<Agrotoxico, String>("agrotoxico"));
+			col.setMinWidth(210);
+			return col;
+		}
+		public TableColumn<Agrotoxico, Boolean> getColumnProib() {
+			TableColumn<Agrotoxico, Boolean> col = new TableColumn<Agrotoxico, Boolean>("Liberado");
+			col.setCellValueFactory(new PropertyValueFactory<Agrotoxico, Boolean>("proibido"));
+			col.setMinWidth(60);
+			col.setCellFactory(new Callback<TableColumn<Agrotoxico,Boolean>, TableCell<Agrotoxico,Boolean>>() {
+				@Override
+				public TableCell<Agrotoxico, Boolean> call(TableColumn<Agrotoxico, Boolean> param) {
+					return new TableCell<Agrotoxico, Boolean>(){
+						@Override
+						protected void updateItem(Boolean item, boolean empty) {
+							super.updateItem(item, empty);
+							if(!empty) {
+								if(item != null) {
+									if(item){
+										setGraphic(new StackPane(new ImageView(iconMorte)));
+									}else {
+										setGraphic(new StackPane(new ImageView(iconSafe)));
+									}
+								}
+							}else setGraphic(null);
+
+						}
+					};
+				}
+			});
+			return col;
 		}
 	}
+
+
 
 }

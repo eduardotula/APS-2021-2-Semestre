@@ -6,8 +6,11 @@ import java.util.ResourceBundle;
 import com.source.Alerts;
 import com.source.control.ControllerBd;
 import com.source.model.Agrotoxico;
+import com.source.model.AgrotoxicoProibi;
 import com.source.model.Cadastro;
 import com.source.model.TableHelpers;
+import com.source.model.TableHelpers.TableAgroHelper;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,6 +21,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -63,6 +67,10 @@ public class CCadastro implements Initializable {
 	@FXML
 	private Button btnCancelar;
 	@FXML
+	private Button btnBanir;
+	@FXML
+	private Button btnPermitir;
+	@FXML
 	private TextField txtFiscaisRece;
 	@FXML
 	private TextField txtMuniPagos;
@@ -79,7 +87,7 @@ public class CCadastro implements Initializable {
 	@FXML
 	private Button btnAdicionar;
 	@FXML
-	private ListView<Agrotoxico> listAgro;
+	private TableView<Agrotoxico> listAgro;
 	private ObservableList<Agrotoxico> agroModel = FXCollections.observableArrayList();
 
 	//TODO agrotoxicos
@@ -91,18 +99,24 @@ public class CCadastro implements Initializable {
 			new BorderWidths(2), new Insets(-2)));
 	private Border bordaDef;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		bordaDef = txtUnidade.getBorder();
 		setBordas();
-		listAgro.setCellFactory(new TableHelpers.ListHelper());
 		listAgro.setItems(agroModel);
+		//Adiciona colunas na tabela
+		TableAgroHelper h = new TableHelpers.TableAgroHelper();
+		listAgro.getColumns().addAll(h.getColumAgro(),h.getColumnProib());
+		
 
 	}
 	public void construtor(Cadastro cadastro, Integer nivel) {
 		this.c = cadastro;
 		this.nivel = nivel;
 		comboDestino.setItems(FXCollections.observableArrayList(new String[] {"Externo", "Interno"}));
+		
+
 		ControllerBd.begin();
 		if(c != null) {
 			c = (Cadastro) ControllerBd.findById(Cadastro.class, c.getId());
@@ -119,7 +133,6 @@ public class CCadastro implements Initializable {
 			boolean flag = true;
 			
 			if(c.getId() == 0) { flag = false;}
-			
 			
 			c.setUnidade(txtUnidade.getText());
 			c.setProdAnual(Double.parseDouble(txtProdAnual.getText()));
@@ -177,20 +190,59 @@ public class CCadastro implements Initializable {
 			Agrotoxico agro = c.getAgrotoxicos().get(index);
 			agroModel.remove(agro);
 			c.removeAgrotoxico(agro);
+			c.checkProibido();
 		}
-
-		
 	}
 
 	@FXML
+	public void actBtnBanir() {
+		int row = listAgro.getSelectionModel().getSelectedIndex();
+		if(row > -1) {
+			Agrotoxico agro = agroModel.get(row);
+			AgrotoxicoProibi proib = ControllerBd.findAgroProib(agro.getAgrotoxico());
+			if(proib == null) {
+				AgrotoxicoProibi pro = new AgrotoxicoProibi(null, agro.getAgrotoxico());
+				ControllerBd.em.persist(pro);
+				agro.setProibido(true);
+				c.setContemProibido(true);
+				listAgro.refresh();
+			}
+		}
+	}
+	@FXML
+	public void actBtnPermitir() {
+		int row = listAgro.getSelectionModel().getSelectedIndex();
+		if(row > -1) {
+			Agrotoxico agro = agroModel.get(row);
+			AgrotoxicoProibi proib = ControllerBd.findAgroProib(agro.getAgrotoxico());
+			if(proib != null) {
+				ControllerBd.em.remove(proib);
+				agro.setProibido(false);
+				c.checkProibido();
+				listAgro.refresh();
+			}
+
+		}
+	}
+	
+	@FXML
 	public void actBtnAdicionar() {
-		String agro = txtAgro.getText();
-		if(!agro.isEmpty()) {
-			Agrotoxico a = new Agrotoxico(null, agro,c);
-			c.addAgrotoxico(a);
-			agroModel.add(a);
-			ControllerBd.em.persist(a);
-			txtAgro.clear();
+		try {
+			String agro = txtAgro.getText();
+			if(!agro.isEmpty()) {
+				AgrotoxicoProibi proibido = ControllerBd.findAgroProib(agro);
+				boolean pr = false;
+				if(proibido != null) pr = true;
+				Agrotoxico a = new Agrotoxico(null, agro,pr,c);
+				ControllerBd.em.persist(a);
+				c.addAgrotoxico(a);
+				c.setContemProibido(false);
+				agroModel.add(a);
+				c.checkProibido();
+				txtAgro.clear();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	public void resetTxt() {
@@ -214,6 +266,7 @@ public class CCadastro implements Initializable {
 		c = null;
 		agroModel.clear();
 		txtAgro.clear();
+		listAgro.refresh();
 	}
 
 	private void setValues() {

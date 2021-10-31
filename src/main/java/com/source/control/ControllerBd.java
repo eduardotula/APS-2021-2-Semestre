@@ -5,9 +5,14 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
+
+import org.hibernate.Query;
 
 import com.source.Aplicacao;
 import com.source.model.Acesso;
+import com.source.model.AgrotoxicoProibi;
+import com.sun.el.stream.Optional;
 
 /**
  * Classe para operações CRUD generico, esta classe não é Thread safe e possui
@@ -83,7 +88,7 @@ public class ControllerBd {
 	public static Stream<Acesso> getAcessoAsStream() {
 		return em.createQuery("SELECT a FROM ACESSO a").getResultStream();
 	}
-	
+
 	public static void begin() throws PersistenceException {
 		checkTrans();
 		trans.begin();
@@ -95,4 +100,17 @@ public class ControllerBd {
 		}
 	}
 
+
+
+	public static AgrotoxicoProibi findAgroProib(String agro) {
+		try {
+			TypedQuery<AgrotoxicoProibi> q = em
+					.createQuery("SELECT a FROM AGROTOXICO_PROIBI a WHERE a.agrotoxico = ?1", AgrotoxicoProibi.class)
+					.setParameter(1, agro);
+			return q.getSingleResult();
+		} catch (Exception e) {
+		}
+		return null;
+
+	}
 }

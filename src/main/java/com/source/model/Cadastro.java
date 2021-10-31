@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 /**
  * Modelo para objecto Acesso que é utilizado para representar dados na TableView CRegistro e este modelo esta mapeado com a tabela
@@ -58,6 +59,8 @@ public class Cadastro implements Serializable{
 	private Double impFedPago;
 	@Column(name = "TAXAS_FED",columnDefinition = "DECIMAL(18,2)",nullable = false)
 	private Double taxasFed;
+	@Column(name = "CONTEM_PROIB", columnDefinition = "BOOLEAN")
+	private Boolean contemProibido = false;
 	//Agrotoxico
 	@OneToMany(mappedBy = "cadastro",fetch = FetchType.EAGER)
 	private List<Agrotoxico> agrotoxicos = new ArrayList<Agrotoxico>();
@@ -69,7 +72,7 @@ public class Cadastro implements Serializable{
 	public Cadastro(int id,String unidade ,Double prodAnual, Integer nEmpregados, String destino, Integer nivelAuto,
 			Integer qantiMaquinas, String cidade, String cep, String endereco, String estado, String pais,
 			Double inceFiscaRece, Double impMuniPagos, Double impEstaduRecolhidos, Double impFedPago, Double taxasFed,
-			List<Agrotoxico> agrotoxicos) {
+			List<Agrotoxico> agrotoxicos, Boolean contemPro) {
 		super();
 		this.id = id;
 		this.unidade = unidade;
@@ -89,6 +92,7 @@ public class Cadastro implements Serializable{
 		this.impFedPago = impFedPago;
 		this.taxasFed = taxasFed;
 		this.agrotoxicos = agrotoxicos;
+		this.contemProibido = contemPro;
 	}
 
 
@@ -331,7 +335,23 @@ public class Cadastro implements Serializable{
 		agrotoxicos.remove(agro);
 		agro.setCadastro(null);
 	}
-		
+
+	public void checkProibido() {
+		if(agrotoxicos != null) {
+			contemProibido = false;
+			for(Agrotoxico agr : agrotoxicos) {
+				if(agr.getProibido()) contemProibido = true;
+			}
+		}
+	}
+	public Boolean getContemProibido() {
+		return contemProibido;
+	}
+
+	public void setContemProibido(Boolean contemProibido) {
+		this.contemProibido = contemProibido;
+	}
+	
 	
 	
 }

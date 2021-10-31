@@ -22,8 +22,10 @@ public class Agrotoxico implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
 	private Integer id;
-	@Column(name = "AGROTOXICO",columnDefinition = "VARCHAR(150)")
+	@Column(name = "AGROTOXICO",columnDefinition = "VARCHAR(150)",nullable = false)
 	private String agrotoxico;
+	@Column(name = "PROIBIDO",columnDefinition = "BOOLEAN",nullable = false)
+	private Boolean proibido;
 	
 	
 	@ManyToOne
@@ -34,12 +36,17 @@ public class Agrotoxico implements Serializable{
 		
 	}
 
-	public Agrotoxico(Integer id, String agrotoxico, Cadastro cadastro) {
+	
+
+	public Agrotoxico(Integer id, String agrotoxico, Boolean proibido, Cadastro cadastro) {
 		super();
 		this.id = id;
 		this.agrotoxico = agrotoxico;
+		this.proibido = proibido;
 		this.cadastro = cadastro;
 	}
+
+
 
 	public Integer getId() {
 		return id;
@@ -64,5 +71,14 @@ public class Agrotoxico implements Serializable{
 	public void setCadastro(Cadastro cadastro) {
 		this.cadastro = cadastro;
 	}
+
+	public Boolean getProibido() {
+		return proibido;
+	}
+
+	public void setProibido(Boolean proibido) {
+		this.proibido = proibido;
+	}
+	
 	
 }

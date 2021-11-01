@@ -50,7 +50,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <ComboBox fx:id="comboDestino" layoutX="1.0" layoutY="111.0" prefWidth="150.0" promptText="Destino" />
+            <ComboBox fx:id="comboDestino" layoutX="1.0" layoutY="111.0" prefWidth="150.0" />
             <Label layoutX="158.0" layoutY="90.0" text="Nível de Automação">
                <font>
                   <Font size="15.0" />
@@ -64,7 +64,7 @@
             </Label>
             <TextField fx:id="txtQMaquinas" layoutX="1.0" layoutY="156.0" prefHeight="25.0" prefWidth="151.0" />
             <Label layoutX="1.0" layoutY="187.0" text="Propriedade" />
-            <Line endX="56.0" layoutX="274.0" layoutY="204.0" startX="-274.0" startY="-1.0" />
+            <Line endX="84.0" endY="-1.0" layoutX="274.0" layoutY="204.0" startX="-274.0" startY="-1.0" />
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
@@ -99,7 +99,7 @@
                </font>
             </Label>
             <TextField fx:id="txtTaxasFed" layoutX="179.0" layoutY="25.0" prefHeight="25.0" prefWidth="151.0" />
-            <Line endX="635.0" endY="9.5" layoutX="-305.0" layoutY="191.0" startX="305.0" startY="10.0" />
+            <Line endX="663.0" endY="11.0" layoutX="-305.0" layoutY="191.0" startX="305.0" startY="10.0" />
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2147483647">
@@ -155,7 +155,7 @@
             </Label>
             <TextField fx:id="txtEstado" layoutX="114.0" layoutY="117.0" prefHeight="25.0" prefWidth="84.0" />
             <Label layoutX="1.0" layoutY="142.0" text="Valores Fiscais" />
-            <Line endX="614.0" endY="-2.0" layoutX="-288.0" layoutY="161.0" startX="289.0" startY="-2.0" />
+            <Line endX="646.0" endY="-2.0" layoutX="-288.0" layoutY="161.0" startX="289.0" startY="-2.0" />
          </children>
       </AnchorPane>
       <FlowPane alignment="CENTER" columnHalignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="3">

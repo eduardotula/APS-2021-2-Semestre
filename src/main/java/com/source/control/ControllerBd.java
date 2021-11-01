@@ -5,14 +5,9 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
-
-import org.hibernate.Query;
-
 import com.source.Aplicacao;
 import com.source.model.Acesso;
-import com.source.model.AgrotoxicoProibi;
-import com.sun.el.stream.Optional;
+import com.source.model.Agrotoxico;
 
 /**
  * Classe para operações CRUD generico, esta classe não é Thread safe e possui
@@ -101,16 +96,22 @@ public class ControllerBd {
 	}
 
 
-
-	public static AgrotoxicoProibi findAgroProib(String agro) {
+	public static Boolean checkIfProibido(String agro) {
 		try {
-			TypedQuery<AgrotoxicoProibi> q = em
-					.createQuery("SELECT a FROM AGROTOXICO_PROIBI a WHERE a.agrotoxico = ?1", AgrotoxicoProibi.class)
-					.setParameter(1, agro);
-			return q.getSingleResult();
+			em.createQuery("select 1 from AGROTOXICO a where a.agrotoxico = ?1 and a.proibido = true").setParameter(1, agro)
+			.getSingleResult();
+			return true;
 		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	public static Agrotoxico findAgroByName(String agro) {
+		try {
+			return (Agrotoxico) em.createQuery("select a from AGROTOXICO a where a.agrotoxico = ?1").setParameter(1, agro).getSingleResult();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
-
 	}
 }

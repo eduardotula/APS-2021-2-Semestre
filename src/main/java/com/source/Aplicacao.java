@@ -47,6 +47,7 @@ public class Aplicacao extends Application {
 			listFrameRoot.put("Cadastro",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/Cadastro.fxml")));
 			listFrameRoot.put("Registro",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/Registro.fxml")));
 			listFrameRoot.put("Acesso",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/Acesso.fxml")));
+			listFrameRoot.put("teste",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/teste.fxml")));
 			stage.setScene(new Scene(listFrameRoot.get("Login").load(),460,487));
 			stage.setResizable(false);
 			stage.show();

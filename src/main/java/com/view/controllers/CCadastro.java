@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import com.source.Alerts;
 import com.source.control.ControllerBd;
 import com.source.model.Agrotoxico;
-import com.source.model.AgrotoxicoProibi;
 import com.source.model.Cadastro;
 import com.source.model.TableHelpers;
 import com.source.model.TableHelpers.TableAgroHelper;
@@ -20,7 +19,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
@@ -187,10 +185,9 @@ public class CCadastro implements Initializable {
 	public void actBtnRemover() {
 		int index = listAgro.getSelectionModel().getSelectedIndex();
 		if(index > -1) {
-			Agrotoxico agro = c.getAgrotoxicos().get(index);
-			agroModel.remove(agro);
+			Agrotoxico agro = agroModel.get(index);
 			c.removeAgrotoxico(agro);
-			c.checkProibido();
+			agroModel.remove(agro);
 		}
 	}
 
@@ -199,14 +196,9 @@ public class CCadastro implements Initializable {
 		int row = listAgro.getSelectionModel().getSelectedIndex();
 		if(row > -1) {
 			Agrotoxico agro = agroModel.get(row);
-			AgrotoxicoProibi proib = ControllerBd.findAgroProib(agro.getAgrotoxico());
-			if(proib == null) {
-				AgrotoxicoProibi pro = new AgrotoxicoProibi(null, agro.getAgrotoxico());
-				ControllerBd.em.persist(pro);
-				agro.setProibido(true);
-				c.setContemProibido(true);
-				listAgro.refresh();
-			}
+			agro.setProibido(true);
+			c.checkContemProibido();
+			listAgro.refresh();
 		}
 	}
 	@FXML
@@ -214,32 +206,23 @@ public class CCadastro implements Initializable {
 		int row = listAgro.getSelectionModel().getSelectedIndex();
 		if(row > -1) {
 			Agrotoxico agro = agroModel.get(row);
-			AgrotoxicoProibi proib = ControllerBd.findAgroProib(agro.getAgrotoxico());
-			if(proib != null) {
-				ControllerBd.em.remove(proib);
-				agro.setProibido(false);
-				c.checkProibido();
-				listAgro.refresh();
-			}
-
+			agro.setProibido(false);
+			c.checkContemProibido();
+			listAgro.refresh();
 		}
 	}
 	
 	@FXML
 	public void actBtnAdicionar() {
 		try {
-			String agro = txtAgro.getText();
-			if(!agro.isEmpty()) {
-				AgrotoxicoProibi proibido = ControllerBd.findAgroProib(agro);
-				boolean pr = false;
-				if(proibido != null) pr = true;
-				Agrotoxico a = new Agrotoxico(null, agro,pr,c);
-				ControllerBd.em.persist(a);
-				c.addAgrotoxico(a);
-				c.setContemProibido(false);
-				agroModel.add(a);
-				c.checkProibido();
-				txtAgro.clear();
+			String agroS = txtAgro.getText();
+			if(!agroS.isEmpty()) {
+				Agrotoxico agro = ControllerBd.findAgroByName(agroS);
+				if(agro == null) agro = new Agrotoxico(null, agroS, ControllerBd.checkIfProibido(agroS));
+				ControllerBd.em.persist(agro);
+				c.addAgrotoxico(agro);
+				c.checkContemProibido();
+				agroModel.add(agro);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

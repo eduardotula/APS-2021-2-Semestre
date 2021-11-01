@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 /**
  * Modelo para objecto Acesso que é utilizado para representar dados na TableView CRegistro e este modelo esta mapeado com a tabela
@@ -62,7 +62,9 @@ public class Cadastro implements Serializable{
 	@Column(name = "CONTEM_PROIB", columnDefinition = "BOOLEAN")
 	private Boolean contemProibido = false;
 	//Agrotoxico
-	@OneToMany(mappedBy = "cadastro",fetch = FetchType.EAGER)
+	@ManyToMany
+	@JoinTable(name = "CADASTRO_AGRO",joinColumns = @JoinColumn(columnDefinition = "CADASTRO_ID"),
+	inverseJoinColumns = @JoinColumn(columnDefinition = "AGROTOXICO_ID"))
 	private List<Agrotoxico> agrotoxicos = new ArrayList<Agrotoxico>();
 	
 	public Cadastro() {
@@ -329,20 +331,19 @@ public class Cadastro implements Serializable{
 	
 	public void addAgrotoxico(Agrotoxico agro) {
 		agrotoxicos.add(agro);
-		agro.setCadastro(this);
+		agro.getCadastro().add(this);
 	}
 	public void removeAgrotoxico(Agrotoxico agro) {
 		agrotoxicos.remove(agro);
-		agro.setCadastro(null);
+		agro.getCadastro().remove(this);
 	}
 
-	public void checkProibido() {
-		if(agrotoxicos != null) {
-			contemProibido = false;
-			for(Agrotoxico agr : agrotoxicos) {
-				if(agr.getProibido()) contemProibido = true;
-			}
+	public void checkContemProibido() {
+		boolean bol = false;
+		for(Agrotoxico agro : agrotoxicos) {
+			if(agro.getProibido()) bol = true;
 		}
+		contemProibido = bol;
 	}
 	public Boolean getContemProibido() {
 		return contemProibido;

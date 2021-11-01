@@ -1,14 +1,15 @@
 package com.source.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 
 /**
  * Modelo para objecto Acesso que é utilizado para representar uma lista de agrotoxicos e este modelo esta mapeado com a tabela
@@ -28,22 +29,20 @@ public class Agrotoxico implements Serializable{
 	private Boolean proibido;
 	
 	
-	@ManyToOne
-	@JoinColumn(name = "CADASTRO_ID")
-	private Cadastro cadastro;
-	
+	@ManyToMany(mappedBy = "agrotoxicos")
+	private List<Cadastro> cadastro = new ArrayList<Cadastro>();
 	public Agrotoxico() {
 		
 	}
 
 	
 
-	public Agrotoxico(Integer id, String agrotoxico, Boolean proibido, Cadastro cadastro) {
+	public Agrotoxico(Integer id, String agrotoxico, Boolean proibido) {
 		super();
 		this.id = id;
 		this.agrotoxico = agrotoxico;
 		this.proibido = proibido;
-		this.cadastro = cadastro;
+		
 	}
 
 
@@ -64,11 +63,11 @@ public class Agrotoxico implements Serializable{
 		this.agrotoxico = agrotoxico;
 	}
 
-	public Cadastro getCadastro() {
+	public List<Cadastro> getCadastro() {
 		return cadastro;
 	}
 
-	public void setCadastro(Cadastro cadastro) {
+	public void setCadastro(List<Cadastro> cadastro) {
 		this.cadastro = cadastro;
 	}
 

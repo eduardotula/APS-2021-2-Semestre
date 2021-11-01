@@ -14,7 +14,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 				value="org.h2.Driver" />
 			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
-			<property name="hibernate.hbm2ddl.auto" value="update"/>
+			<property name="hibernate.hbm2ddl.auto" value="none"/>
 			<!-- https://docs.jboss.org/hibernate/orm/5.4/javadocs/org/hibernate/dialect/package-summary.html -->
 
 		</properties>

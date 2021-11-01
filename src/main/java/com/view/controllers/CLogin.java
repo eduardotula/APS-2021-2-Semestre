@@ -25,7 +25,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -66,8 +65,9 @@ public class CLogin {
 			FileChooser cho = new FileChooser();
 			File f = cho.showOpenDialog(null);
 			Mat img = opencv_imgcodecs.imread(f.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE);
+			Biometria.cropImg(img);
 			Mat show = img.clone();
-			imagemInput = Biometria.processImg(show);
+			imagemInput = Biometria.processTeste(show);
 			opencv_imgproc.cvtColor(imagemInput, show, opencv_imgproc.COLOR_GRAY2BGR);
 			
 			imgViewInput.setImage(Utilitarios.convertMatToImage(show));
@@ -89,7 +89,7 @@ public class CLogin {
 		stre.forEach(obj -> {
 			
 			Mat img = Utilitarios.createMatByByteArr(obj.getRows(), obj.getCol(), obj.getType(), obj.getImagemByte());
-			Mat resul = b.compare(imagemInput, img,15);
+			Mat resul = b.compareTeste(imagemInput, img,20);
 			if(resul != null) {
 				acesso = obj;
 				imagemResult = img;
@@ -119,10 +119,11 @@ public class CLogin {
 	
 	private void loginConf(Acesso ass) {
 		try {
-			Alerts.showInformation(String.format("Login confirmado, nível de acesso: %d",ass.getNivel()));
+			Alerts.showInformation(String.format("Login confirmado, nível de acesso: %d + %s",ass.getNivel(), ass.getNome()));
 			Stage stage = (Stage) parentPane.getScene().getWindow();
 			FXMLLoader root = Aplicacao.listFrameRoot.get("Registro");
 			stage.setScene(new Scene(root.load(), 600, 500));
+			stage.setResizable(true);
 			CRegistro controller = root.getController();
 			controller.construtor(ass);
 		} catch (IOException e) {

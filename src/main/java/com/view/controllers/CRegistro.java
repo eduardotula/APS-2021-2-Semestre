@@ -21,7 +21,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -38,13 +38,13 @@ public class CRegistro implements Initializable {
 	@FXML
 	public GridPane parentPane;
 	@FXML
-	public MenuItem menuAdicionar;
+	public Button menuAdicionar;
 	@FXML
-	public MenuItem menuExibir;
+	public Button menuExibir;
 	@FXML
-	public MenuItem menuEditar;
+	public Button menuEditar;
 	@FXML
-	public MenuItem menuApagar;
+	public Button menuApagar;
 	@FXML
 	public TableView<Cadastro> tablePro;
 	@FXML
@@ -203,13 +203,14 @@ public class CRegistro implements Initializable {
 	public static void refreshTablePro() {
 		modelPropriedades.clear();
 		ControllerBd.checkTrans();
+		ControllerBd.em.clear();
 		@SuppressWarnings("unchecked")
-		List<Object[]> l = Aplicacao.em.createQuery("select a.id,a.unidade,a.cidade,a.estado,a.destino,a.contemProibido from CADASTRO a ").getResultList();
+		List<Cadastro> l = Aplicacao.em.createQuery("select a from CADASTRO a ").getResultList();
 		if(l.size() > 0) {
-			for(Object[] c : l) {
-				Cadastro cad = new Cadastro((int)c[0], (String)c[1], (String)c[4], (String)c[2], (String)c[3]);
+			for(Cadastro cad : l) {
 				//TODO Atualiar get contem proibido quando atualiar tabela
-				cad.setContemProibido((Boolean)c[5]);
+				cad.checkContemProibido();
+				System.out.println(cad.getContemProibido());
 				modelPropriedades.add(cad);
 			}
 		}

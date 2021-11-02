@@ -110,7 +110,6 @@ public class ControllerBd {
 		try {
 			return (Agrotoxico) em.createQuery("select a from AGROTOXICO a where a.agrotoxico = ?1").setParameter(1, agro).getSingleResult();
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return null;
 	}

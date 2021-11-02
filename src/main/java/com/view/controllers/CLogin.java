@@ -16,6 +16,8 @@ import com.source.control.ControllerBd;
 import com.source.control.Utilitarios;
 import com.source.model.Acesso;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -29,10 +31,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
- * Classe que é utilizada como controlador de listeners para interface GUI Login.fxml*/
+ * Classe que é utilizada como controlador de listeners para interface GUI
+ * Login.fxml
+ */
 @Component
 public class CLogin {
 
+	@FXML
+	private TextField txtAnaliza;
 	@FXML
 	private BorderPane parentPane;
 	@FXML
@@ -52,8 +58,7 @@ public class CLogin {
 
 	private Acesso acesso;
 	private Mat imagemInput;
-	private Mat imagemResult;
-	
+
 	public CLogin() {
 
 	}
@@ -65,14 +70,12 @@ public class CLogin {
 			FileChooser cho = new FileChooser();
 			File f = cho.showOpenDialog(null);
 			Mat img = opencv_imgcodecs.imread(f.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE);
-			Biometria.cropImg(img);
 			Mat show = img.clone();
-			imagemInput = Biometria.processTeste(show);
+			imagemInput = Biometria.processImagem(show);
 			opencv_imgproc.cvtColor(imagemInput, show, opencv_imgproc.COLOR_GRAY2BGR);
-			
+
 			imgViewInput.setImage(Utilitarios.convertMatToImage(show));
 
-			
 			btnIniciarRe.setDisable(false);
 		} catch (Exception e) {
 			Alert a = new Alert(AlertType.ERROR, "Formato de arquivo inválido");
@@ -84,51 +87,80 @@ public class CLogin {
 
 	@FXML
 	private void actBtnIniciarRe() {
-		Biometria b = new Biometria();
 		Stream<Acesso> stre = ControllerBd.getAcessoAsStream();
-		stre.forEach(obj -> {
-			
-			Mat img = Utilitarios.createMatByByteArr(obj.getRows(), obj.getCol(), obj.getType(), obj.getImagemByte());
-			Mat resul = b.compareTeste(imagemInput, img,20);
-			if(resul != null) {
-				acesso = obj;
-				imagemResult = img;
-				imgCompara.setImage(Utilitarios.convertMatToImage(resul));
-			}
-		});
-		if(imagemResult != null) {
-			opencv_imgproc.cvtColor(imagemResult, imagemResult, opencv_imgproc.COLOR_GRAY2BGR);
-			imgViewResul.setImage(Utilitarios.convertMatToImage(imagemResult));
-			try {
-				Thread.sleep(5000);
-				loginConf(acesso);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}else {
-			Alerts.showError("Acesso não autorizado");
-		}
+		ThreadCompara t = new ThreadCompara(imagemInput, stre);
+		new Thread(t).start();
 	}
 
 	@FXML
 	private void actBtnLogin() {
-		
+
 		Acesso ace = new Acesso(null, "Master", 3, null, 0, 0, 0, null);
 		loginConf(ace);
 	}
-	
-	private void loginConf(Acesso ass) {
-		try {
-			Alerts.showInformation(String.format("Login confirmado, nível de acesso: %d + %s",ass.getNivel(), ass.getNome()));
-			Stage stage = (Stage) parentPane.getScene().getWindow();
-			FXMLLoader root = Aplicacao.listFrameRoot.get("Registro");
-			stage.setScene(new Scene(root.load(), 600, 500));
-			stage.setResizable(true);
-			CRegistro controller = root.getController();
-			controller.construtor(ass);
-		} catch (IOException e) {
-			e.printStackTrace();
+
+	private class ThreadCompara extends Task<Void> {
+
+		private Mat img;
+		private Stream<Acesso> stream;
+		private Integer iteracoes = 0;
+		private Biometria b = new Biometria();
+		private Mat imagemResult;
+		private Mat imagemCompa;
+		private Utilitarios ut = new Utilitarios();
+
+		public ThreadCompara(Mat img, Stream<Acesso> stream) {
+			this.img = img;
+			this.stream = stream;
 		}
+
+		@Override
+		protected Void call() throws Exception {
+			txtAnaliza.setText(Integer.toString(iteracoes));
+			stream.forEach(obj -> {
+
+				Mat img = Utilitarios.createMatByByteArr(obj.getRows(), obj.getCol(), obj.getType(),
+						obj.getImagemByte());
+				Mat temp = b.compare(imagemInput, img, 20);
+				if (temp != null) {
+					acesso = obj;
+					imagemResult = img.clone();
+					imagemCompa = temp.clone();
+				}
+				iteracoes++;
+				txtAnaliza.setText(Integer.toString(iteracoes));
+			});
+
+			if (imagemResult != null) {
+				opencv_imgproc.cvtColor(imagemResult, imagemResult, opencv_imgproc.COLOR_GRAY2BGR);
+				imgViewResul.setImage(ut.convertMatToImg(imagemResult));
+				imgCompara.setImage(ut.convertMatToImg(imagemCompa));
+				loginConf(acesso);
+			} else {
+				Alerts.showError("Acesso não autorizado");
+			}
+			return null;
+		}
+	}
+
+	private void loginConf(Acesso ass) {
+
+
+		Platform.runLater(() -> {
+			try {
+				Alerts.showInformation(
+						String.format("Login confirmado, nível de acesso: %d + %s", ass.getNivel(), ass.getNome()));
+				Stage stage = (Stage) parentPane.getScene().getWindow();
+				FXMLLoader root = Aplicacao.listFrameRoot.get("Registro");
+				stage.setScene(new Scene(root.load(), 600, 500));
+				stage.setResizable(true);
+				CRegistro controller = root.getController();
+				controller.construtor(ass);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+
 	}
 
 }

@@ -138,7 +138,7 @@ public class CAcesso implements Initializable{
 		try {
 			imagem = opencv_imgcodecs.imread(new FileChooser().showOpenDialog(null).getAbsolutePath(),
 					opencv_imgcodecs.IMREAD_GRAYSCALE);
-			Mat a = Biometria.processTeste(imagem);
+			Mat a = Biometria.processImagem(imagem);
 			imagem.close();
 			imagem = a.clone();
 			Mat temp = new Mat();

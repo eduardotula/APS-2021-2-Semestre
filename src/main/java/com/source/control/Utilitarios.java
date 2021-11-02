@@ -30,13 +30,15 @@ public class Utilitarios {
 	private static JavaFXFrameConverter fxConverter = new JavaFXFrameConverter();
 	private static OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
 
+	private JavaFXFrameConverter fxConver = new JavaFXFrameConverter();
+	private  OpenCVFrameConverter.ToMat conver = new OpenCVFrameConverter.ToMat();
 	/**
 	 * Converte um vetor de pixels Mat para um objeto javafx image
 	 * 
 	 * @param Mat imagem para ser convertida
 	 * @return imagem javafx
 	 */
-	public static Image convertMatToImage(org.bytedeco.opencv.opencv_core.Mat grabbedImage) {
+	public synchronized static Image convertMatToImage(org.bytedeco.opencv.opencv_core.Mat grabbedImage) {
 		Frame fram = converter.convert(grabbedImage.clone());
 		System.out.println("Fram" + fram.imageWidth);
 		Image img = fxConverter.convert(fram);
@@ -44,6 +46,13 @@ public class Utilitarios {
 		return img;
 	}
 
+	public synchronized Image convertMatToImg(org.bytedeco.opencv.opencv_core.Mat grabbedImage) {
+		Frame fram = conver.convert(grabbedImage.clone());
+		System.out.println("Fram" + fram.imageWidth);
+		Image img = fxConver.convert(fram);
+		fram.close();
+		return img;
+	}
 	public static void showImage(Image img) {
 		Stage stage = new Stage();
 		StackPane pa = new StackPane();

@@ -114,26 +114,25 @@ public class Biometria {
 	
 
 	
-	private static Mat cropImg(Mat img) {
-		if(img.type() > 0) {
-			opencv_imgproc.cvtColor(img, img, opencv_imgproc.COLOR_BGR2GRAY);
-		}
-		Mat kernel = opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_ELLIPSE, new Size(3, 3));
-		
-		Mat temp = new Mat();
-		opencv_core.bitwise_not(img, temp); //Inverter imagem
-		opencv_imgproc.erode(temp, temp, kernel);
-		Rect rec = opencv_imgproc.boundingRect(temp);
-		
-		System.out.println(rec.x() + " " + rec.y() + " " + rec.width() + " " + rec.height());
-
-		Mat i = new Mat(temp.clone(), rec);
-		opencv_imgproc.resize(i, i, new Size(250,300));
-		opencv_core.bitwise_not(i, i); //Inverter imagem
-		temp.close();
-		return i;
-		
-	}
+	/*
+	 * private static Mat cropImg(Mat img) { if(img.type() > 0) {
+	 * opencv_imgproc.cvtColor(img, img, opencv_imgproc.COLOR_BGR2GRAY); } Mat
+	 * kernel = opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_ELLIPSE,
+	 * new Size(3, 3));
+	 * 
+	 * Mat temp = new Mat(); opencv_core.bitwise_not(img, temp); //Inverter imagem
+	 * opencv_imgproc.erode(temp, temp, kernel); Rect rec =
+	 * opencv_imgproc.boundingRect(temp);
+	 * 
+	 * System.out.println(rec.x() + " " + rec.y() + " " + rec.width() + " " +
+	 * rec.height());
+	 * 
+	 * Mat i = new Mat(temp.clone(), rec); opencv_imgproc.resize(i, i, new
+	 * Size(250,300)); opencv_core.bitwise_not(i, i); //Inverter imagem
+	 * temp.close(); return i;
+	 * 
+	 * }
+	 */
 	
 	/**
 	 * Obtem o maior contorno contido na imagem
@@ -167,35 +166,26 @@ public class Biometria {
 		biggeCont.close();
 		return rec;
 	}
-	private static Mat thin(Mat img1) {
-		Mat tresh = img1.clone();
-
-		opencv_imgproc.threshold(tresh, tresh, 0, 255, opencv_imgproc.THRESH_OTSU);
-		
-		Mat element = opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_ELLIPSE, new Size(3, 3));
-		Mat eroded = new Mat();
-		Mat temp = new Mat();
-		Mat skel = new Mat(tresh.rows(), tresh.cols(), opencv_core.CV_8UC1, new Scalar(0));
-
-		int size = img1.cols() * img1.rows();
-		int zeros = 0;
-		boolean a = true;
-
-		while (a) {
-			opencv_imgproc.erode(tresh, eroded, element);
-			opencv_imgproc.dilate(eroded, temp, element);
-			opencv_core.subtract(tresh, temp, temp);
-			opencv_core.bitwise_or(skel, temp, skel);
-			eroded.copyTo(tresh);
-
-			zeros = size - opencv_core.countNonZero(tresh);
-			if (zeros == size)
-				a = false;
-		}
-		temp.close();
-		eroded.close();
-		return skel;
-		
-	}
+	/*
+	 * private static Mat thin(Mat img1) { Mat tresh = img1.clone();
+	 * 
+	 * opencv_imgproc.threshold(tresh, tresh, 0, 255, opencv_imgproc.THRESH_OTSU);
+	 * 
+	 * Mat element =
+	 * opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_ELLIPSE, new
+	 * Size(3, 3)); Mat eroded = new Mat(); Mat temp = new Mat(); Mat skel = new
+	 * Mat(tresh.rows(), tresh.cols(), opencv_core.CV_8UC1, new Scalar(0));
+	 * 
+	 * int size = img1.cols() * img1.rows(); int zeros = 0; boolean a = true;
+	 * 
+	 * while (a) { opencv_imgproc.erode(tresh, eroded, element);
+	 * opencv_imgproc.dilate(eroded, temp, element); opencv_core.subtract(tresh,
+	 * temp, temp); opencv_core.bitwise_or(skel, temp, skel); eroded.copyTo(tresh);
+	 * 
+	 * zeros = size - opencv_core.countNonZero(tresh); if (zeros == size) a = false;
+	 * } temp.close(); eroded.close(); return skel;
+	 * 
+	 * }
+	 */
 
 }

@@ -88,7 +88,7 @@ public class CLogin {
 	@FXML
 	private void actBtnIniciarRe() {
 		Stream<Acesso> stre = ControllerBd.getAcessoAsStream();
-		ThreadCompara t = new ThreadCompara(imagemInput, stre);
+		ThreadCompara t = new ThreadCompara(stre);
 		new Thread(t).start();
 	}
 
@@ -101,7 +101,6 @@ public class CLogin {
 
 	private class ThreadCompara extends Task<Void> {
 
-		private Mat img;
 		private Stream<Acesso> stream;
 		private Integer iteracoes = 0;
 		private Biometria b = new Biometria();
@@ -109,8 +108,7 @@ public class CLogin {
 		private Mat imagemCompa;
 		private Utilitarios ut = new Utilitarios();
 
-		public ThreadCompara(Mat img, Stream<Acesso> stream) {
-			this.img = img;
+		public ThreadCompara(Stream<Acesso> stream) {
 			this.stream = stream;
 		}
 
@@ -137,7 +135,9 @@ public class CLogin {
 				imgCompara.setImage(ut.convertMatToImg(imagemCompa));
 				loginConf(acesso);
 			} else {
-				Alerts.showError("Acesso não autorizado");
+				Platform.runLater(() -> {
+					Alerts.showError("Acesso não autorizado");
+				});
 			}
 			return null;
 		}

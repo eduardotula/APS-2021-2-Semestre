@@ -79,12 +79,14 @@ public class CRegistro implements Initializable {
 			FXMLLoader root = Aplicacao.listFrameRoot.get("Cadastro");
 			frameCadastro.setScene(new Scene(root.load(), 650, 600));
 			frameCadastro.setResizable(false);
+			frameCadastro.getIcons().addAll(Aplicacao.iconsImg);
 			controlerCadastro = root.getController();
 			frameCadastro.setTitle("Cadastro");
 			
 			root = Aplicacao.listFrameRoot.get("Acesso");
 			frameAcesso.setScene(new Scene(root.load(), 360, 360));
 			frameAcesso.setResizable(false);
+			frameAcesso.getIcons().addAll(Aplicacao.iconsImg);
 			controlerAcesso = root.getController();
 			frameAcesso.setTitle("Cadastro Acesso");
 

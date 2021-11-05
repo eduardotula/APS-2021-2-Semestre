@@ -1,23 +1,13 @@
 package com.view.controllers;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.List;
 
-import javax.persistence.PersistenceException;
-
-import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.MatVector;
-import org.bytedeco.opencv.opencv_core.Rect;
-import org.bytedeco.opencv.opencv_core.Size;
-
 import com.source.Aplicacao;
 import com.source.control.Biometria;
 import com.source.control.ControllerBd;
-import com.source.control.Utilitarios;
 import com.source.model.Acesso;
 
 import javafx.fxml.FXML;

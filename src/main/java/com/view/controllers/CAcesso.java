@@ -115,7 +115,7 @@ public class CAcesso implements Initializable{
 				acesso.setImagemByte(acesso.getImagemAsByteArr());
 			}
 
-			
+			System.out.println(acesso.getNivel());
 			if(!flag) ControllerBd.em.persist(acesso);
 			ControllerBd.commit();
 			

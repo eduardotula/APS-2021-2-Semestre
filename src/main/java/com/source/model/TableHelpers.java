@@ -42,8 +42,8 @@ public class TableHelpers {
 
 	public static class TableProHelper {
 		
-		private String iconMorte = getClass().getResource("/morte.png").toString();
-		private String iconSafe = getClass().getResource("/confirm.png").toString();
+		private String iconMorte = getClass().getResource("/Icons/morte.png").toString();
+		private String iconSafe = getClass().getResource("/Icons/confirm.png").toString();
 
 		public TableColumn<Cadastro, Integer> getIdColumn() {
 			TableColumn<Cadastro, Integer> col = new TableColumn<Cadastro, Integer>("Id");
@@ -116,8 +116,8 @@ public class TableHelpers {
 	
 	public static class TableAgroHelper{
 		
-		private String iconMorte = getClass().getResource("/morte.png").toString();
-		private String iconSafe = getClass().getResource("/confirm.png").toString();
+		private String iconMorte = getClass().getResource("/Icons/morte.png").toString();
+		private String iconSafe = getClass().getResource("/Icons/confirm.png").toString();
 		
 		
 		public TableColumn<Agrotoxico, String> getColumAgro() {

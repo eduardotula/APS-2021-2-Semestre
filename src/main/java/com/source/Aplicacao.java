@@ -9,9 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -26,7 +23,6 @@ import javafx.stage.Stage;
 
 public class Aplicacao extends Application {
 	public static List<Image> iconsImg = new ArrayList<Image>();
-	public static ConfigurableApplicationContext applicationContext;
 	public static HashMap<String, FXMLLoader> listFrameRoot = new HashMap<String, FXMLLoader>();
 	private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("aps");
 	public static EntityManager em = emf.createEntityManager();
@@ -35,16 +31,13 @@ public class Aplicacao extends Application {
 	@Override
 	public void init() throws Exception {
 		super.init();
-		applicationContext = new SpringApplicationBuilder(Aps20212SemestreApplication.class).run();
-
 		
 	}
 
 	@Override
 	public void start(Stage stage){
-		
+		Aps20212SemestreApplication.setPreloaderFlag(false);
 		try {
-			applicationContext.publishEvent(new StageReadyEvent(stage));
 			loadIcons();
 			primaryStage = stage;
 			listFrameRoot.put("Login",new FXMLLoader(Thread.currentThread().getContextClassLoader().getResource("com/view/models/Login.fxml")));
@@ -62,14 +55,13 @@ public class Aplicacao extends Application {
 	}
 	
 	public void loadIcons() {
-		Image icon = new Image(getClass().getResource("/Icone64.png").toString());
+		Image icon = new Image(getClass().getResource("/Icons/Icone64.png").toString());
 		iconsImg.add(icon);
 	}
 
 	@Override
 	public void stop() throws Exception {
 		super.stop();
-		applicationContext.close();
 		Platform.exit();
 		System.exit(0);
 	}
@@ -77,15 +69,6 @@ public class Aplicacao extends Application {
 
 
 
-	public class StageReadyEvent extends ApplicationEvent {
-
-		private static final long serialVersionUID = 1L;
-
-		public StageReadyEvent(Stage stage) {
-			super(stage);
-		}
-
-	}
 	
 	/*
 	 * private static void loadImagens() { try { ControllerBd.begin();

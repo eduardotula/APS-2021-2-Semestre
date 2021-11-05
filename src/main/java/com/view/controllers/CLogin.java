@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.springframework.stereotype.Component;
 
 import com.source.Alerts;
 import com.source.Aplicacao;
@@ -34,7 +33,6 @@ import javafx.stage.Stage;
  * Classe que é utilizada como controlador de listeners para interface GUI
  * Login.fxml
  */
-@Component
 public class CLogin {
 
 	@FXML
@@ -69,7 +67,7 @@ public class CLogin {
 
 			FileChooser cho = new FileChooser();
 			File f = cho.showOpenDialog(null);
-			Mat img = opencv_imgcodecs.imread(f.getAbsolutePath(), opencv_imgcodecs.IMREAD_GRAYSCALE);
+			Mat img = opencv_imgcodecs.imread(f.getAbsolutePath());
 			Mat show = img.clone();
 			imagemInput = Biometria.processImagem(show);
 			opencv_imgproc.cvtColor(imagemInput, show, opencv_imgproc.COLOR_GRAY2BGR);
@@ -94,9 +92,14 @@ public class CLogin {
 
 	@FXML
 	private void actBtnLogin() {
+		String senha = txtSenhaMestra.getText();
+		if(senha != null && !senha.isEmpty() && senha.contentEquals("1020304050")) {
+			Acesso ace = new Acesso(null, "Master", 3, null, 0, 0, 0, null);
+			loginConf(ace);
+		}else {
+			Alerts.showError("Senha Incorreta");
+		}
 
-		Acesso ace = new Acesso(null, "Master", 3, null, 0, 0, 0, null);
-		loginConf(ace);
 	}
 
 	private class ThreadCompara extends Task<Void> {

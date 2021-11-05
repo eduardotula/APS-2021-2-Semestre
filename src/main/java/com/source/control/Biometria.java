@@ -86,9 +86,13 @@ public class Biometria {
 	
 	/**
 	 * Processa a imagem para o padrão utilizado na aplicação
-	 * @param imagem para ser processada
+	 * @param img imagem para ser processada
 	 * @return imagem processada com tamanho de (250,300)*/
-	public static Mat processImagem(Mat imagem) {
+	public static Mat processImagem(Mat img) {
+		Mat imagem = img.clone();
+		if(imagem.type() > 0) {
+			opencv_imgproc.cvtColor(imagem, imagem, opencv_imgproc.COLOR_BGR2GRAY);
+		}
 		//Obtem a as dimensões da impressão digital
 		Rect rec = getBigContour(imagem);
 		
@@ -109,6 +113,7 @@ public class Biometria {
 		opencv_imgproc.equalizeHist(temp3.clone(), temp3);
 		temp2.close();
 		imt.close();
+		imagem.close();
 		return temp3;
 	}
 	

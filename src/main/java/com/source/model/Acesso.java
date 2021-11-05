@@ -40,7 +40,7 @@ public class Acesso implements Serializable {
 	@Column(name = "TYPE")
 	private int type;
 	@Transient
-	private Mat imagemMat = new Mat();
+	private transient Mat imagemMat = new Mat();
 
 	public Acesso() {
 

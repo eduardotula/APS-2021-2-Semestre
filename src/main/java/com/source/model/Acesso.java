@@ -112,10 +112,6 @@ public class Acesso implements Serializable {
 		// Aloca um array de bytes de acordo com o tamanho da imagem
 		byte[] bytes = new byte[((int) (imagemMat.total() * imagemMat.elemSize()))];
 		this.imagemMat.data().get(bytes);
-		System.out.println(imagemMat.total());
-		System.out.println(imagemMat.elemSize());
-		System.out.println(imagemMat.type());
-		System.out.println(bytes.length);
 		return bytes;
 	}
 

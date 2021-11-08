@@ -69,10 +69,6 @@ public class Utilitarios {
 		// Aloca um array de bytes de acordo com o tamanho da imagem
 		byte[] bytes = new byte[((int) (img.total() * img.elemSize()))];
 		img.data().get(bytes);
-		System.out.println(img.total());
-		System.out.println(img.elemSize());
-		System.out.println(img.type());
-		System.out.println(bytes.length);
 		return bytes;
 	}
 	

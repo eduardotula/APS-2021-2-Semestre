@@ -39,7 +39,7 @@
                </font>
             </Label>
             <TextField fx:id="txtProdAnual" layoutY="67.0" prefHeight="25.0" prefWidth="151.0" />
-            <Label layoutX="161.0" layoutY="47.0" text="Numero de Empregrados">
+            <Label layoutX="161.0" layoutY="47.0" text="Numero de Empregados">
                <font>
                   <Font size="13.0" />
                </font>
@@ -57,7 +57,7 @@
                </font>
             </Label>
             <TextField fx:id="txtNivelAuto" layoutX="158.0" layoutY="111.0" prefHeight="25.0" prefWidth="151.0" />
-            <Label layoutY="136.0" prefWidth="189.0" text="Q. Máquinas e Implementos">
+            <Label layoutY="136.0" prefWidth="189.0" text="Qtd Máquinas e Implementos">
                <font>
                   <Font size="14.0" />
                </font>
@@ -81,7 +81,7 @@
                </font>
             </Label>
             <TextField fx:id="txtMuniPagos" layoutY="73.0" prefHeight="25.0" prefWidth="151.0" />
-            <Label layoutY="98.0" text="Impostos estuais recolhidos">
+            <Label layoutY="98.0" text="Impostos estaduais recolhidos">
                <font>
                   <Font size="15.0" />
                </font>
@@ -104,7 +104,7 @@
       </AnchorPane>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2147483647">
          <children>
-            <Label layoutX="2.0" layoutY="4.0" text="Agrotoxico">
+            <Label layoutX="2.0" layoutY="4.0" text="Agrotóxico">
                <font>
                   <Font size="15.0" />
                </font>
@@ -142,7 +142,7 @@
                </font>
             </Label>
             <TextField fx:id="txtEndereco" layoutY="71.0" prefHeight="25.0" prefWidth="292.0" />
-            <Label layoutX="1.0" layoutY="96.0" text="Pais">
+            <Label layoutX="1.0" layoutY="96.0" text="País">
                <font>
                   <Font size="15.0" />
                </font>
